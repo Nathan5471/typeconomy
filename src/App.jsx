@@ -1,4 +1,5 @@
 import './App.css'
+import UpgradeShop from './components/UpgradeShop'
 
 function App() {
   return (
@@ -8,10 +9,7 @@ function App() {
         <p className="text-4xl">Cash: $10000234</p>
       </div>
       <div className="h-[calc(90%)] w-screen bg-gray-200 flex flex-row">
-        <div className="bg-white w-[calc(15%)] p-4 rounded shadow-lg">
-          <h2 className="text-2xl mb-4">Upgrade Shop</h2>
-          <p className="text-lg">Here you can buy upgrades for your game.</p>
-        </div>
+        <UpgradeShop />
         <div className="bg-white w-[calc(70%)] p-4 m-4 rounded shadow-lg">
           <h2 className="text-2xl mb-4">Game Area</h2>
           <p className="text-lg">This is where the game will be played.</p>

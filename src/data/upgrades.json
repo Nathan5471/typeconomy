@@ -1,0 +1,46 @@
+{
+    "data": [
+        {
+            "id": "1",
+            "name": "Better Keys",
+            "description": "Increases the amount of money you earn from each word typed.",
+            "baseCost": 100,
+            "costMultiplier": 1.15
+        },
+        {
+            "id": "2",
+            "name": "Longer Words",
+            "description": "Increases the average length of words you are given to type.",
+            "baseCost": 350,
+            "costMultiplier": 1.2
+        },
+        {
+            "id": "3",
+            "name": "Monkey Typist",
+            "description": "The monkey typist will type words for you and earn money passively (affected by better keys).",
+            "baseCost": 1000,
+            "costMultiplier": 1.25
+        },
+        {
+            "id": "4",
+            "name": "Combo Bonus",
+            "description": "Increases the bonus you receive for typing multiple words in a row without mistakes.",
+            "baseCost": 2500,
+            "costMultiplier": 1.3
+        },
+        {
+            "id": "5",
+            "name": "Automatic Keyboard",
+            "description": "Unlocks an automatic keyboard that types words for you, earning money passively (affected by better keys).",
+            "baseCost": 6000,
+            "costMultiplier": 1.35
+        },
+        {
+            "id": "6",
+            "name": "Word Printer",
+            "description": "Unlocks a word printer that prints words for you, earning money passively (affected by better keys).",
+            "baseCost": 15000,
+            "costMultiplier": 1.4
+        }
+    ]
+}
