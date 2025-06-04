@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, calculateWordValue } from '../utils/StorageHandler';
+import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, calculateWordValue } from '../utils/StorageHandler';
 
 const MoneyContext = createContext();
 
@@ -32,6 +32,15 @@ export const MoneyProvider = ({ children }) => {
         setMoney(newMoney);
     }
 
+    const decreaseMoneyBy = (amount) => {
+        if (amount < 0) {
+            console.error('Amount to decrease must be a positive number.');
+            return;
+        }
+        setMoney(prev => Math.max(0, prev - amount));
+        decreaseMoney(amount);
+    }
+
     const increaseStreak = () => {
         setStreak(prev => prev + 1);
         incrementStreak();
@@ -47,6 +56,7 @@ export const MoneyProvider = ({ children }) => {
         wordsTyped,
         streak,
         incrementWordsTyped,
+        decreaseMoneyBy,
         increaseStreak,
         resetStreak,
     }

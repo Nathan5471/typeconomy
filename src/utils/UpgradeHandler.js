@@ -16,12 +16,11 @@ export function buyUpgrade(upgradeId, baseCost, costMultiplier, currentMoney) {
         return currentMoney;
     }
 
-    const newMoney = currentMoney - cost;
     incrementAmountOfUpgrades(upgradeId);
 
     applyUpgradeEffects(upgradeId);
 
-    return newMoney;
+    return cost;
 }
 
 function applyUpgradeEffects(upgradeId) {

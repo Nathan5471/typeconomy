@@ -80,7 +80,7 @@ export function getWordMultiplier() {
 }
 
 export function increaseWordMultiplier(increaseBy) {
-    if (typeof increaseBy !== 'number' || isNaN(increaseBy) || increaseBy < 1) {
+    if (typeof increaseBy !== 'number' || isNaN(increaseBy) || increaseBy < 0) {
         console.error('Invalid increase by amount. It must be a positive number.');
         return;
     }
@@ -94,7 +94,7 @@ export function getAverageLength() {
 }
 
 export function increaseAverageLength(increaseBy) {
-    if (typeof length !== 'number' || isNaN(length) || length < 1) {
+    if (typeof length !== 'number' || isNaN(length) || length < 0) {
         console.error('Invalid increase by amount. It must be a positive number.');
         return;
     }
@@ -142,7 +142,7 @@ export function increaseUpgradeCashPerSecond(upgradeId, increaseBy) {
 }
 
 export function getStreakBonus() {
-    return getStorage('streakBonus') || 0;
+    return getStorage('streakBonus') || 1;
 }
 
 export function increaseStreakBonus(increaseBy) {
