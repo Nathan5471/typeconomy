@@ -26,7 +26,7 @@ export function increaseMoney(amount) {
         return;
     }
     const currentMoney = getMoney();
-    setStorage('money', currentMoney + amount);
+    setStorage('money', Math.floor(currentMoney + amount));
 }
 
 export function decreaseMoney(amount) {
@@ -39,7 +39,7 @@ export function decreaseMoney(amount) {
         console.warn('Insufficient funds to decrease money.');
         return;
     }
-    setStorage('money', currentMoney - amount);
+    setStorage('money', Math.floor(currentMoney - amount));
 }
 
 export function getWordsTyped() {
@@ -128,10 +128,13 @@ export function getUpgradeCashPerSecond(upgradeId) {
 
 export function increaseUpgradeCashPerSecond(upgradeId, increaseBy) {
     if (typeof increaseBy !== 'number' || isNaN(increaseBy) || increaseBy < 0) {
-        console.error('Invalid cash per second value. It must be a non-negative number.');
+        console.error('Invalid increase cash per second by value. It must be a non-negative number.');
         return;
     }
-    const upgrades = getStorage('upgradeCashPerSecond') || {};
+    const upgrades = getStorage('upgradeCashPerSecond') || {[upgradeId]: 0};
+    if (!upgrades[upgradeId]) {
+        upgrades[upgradeId] = 0;
+    }
     upgrades[upgradeId] += increaseBy;
     setStorage('upgradeCashPerSecond', upgrades);
     let totalCps = 0;

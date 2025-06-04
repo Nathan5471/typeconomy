@@ -29,12 +29,12 @@ function applyUpgradeEffects(upgradeId) {
     } else if (upgradeId === '2') {
         increaseAverageLength(.1);
     } else if (upgradeId === '3') {
-        increaseUpgradeCashPerSecond(upgradeId, 75);
+        increaseUpgradeCashPerSecond(upgradeId, 10);
     } else if (upgradeId === '4') {
         increaseStreakBonus(1);
     } else if (upgradeId === '5') {
-        increaseUpgradeCashPerSecond(upgradeId, 600);
+        increaseUpgradeCashPerSecond(upgradeId, 75);
     } else if (upgradeId === '6') {
-        increaseUpgradeCashPerSecond(upgradeId, 1000);
+        increaseUpgradeCashPerSecond(upgradeId, 250);
     }
 }

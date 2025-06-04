@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, calculateWordValue } from '../utils/StorageHandler';
+import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
 
 const MoneyContext = createContext();
 
@@ -50,6 +50,18 @@ export const MoneyProvider = ({ children }) => {
         setStreak(0);
         clearStreak();
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const cashPerSecond = getTotalCashPerSecond();
+            if (cashPerSecond > 0) {
+                increaseMoney(cashPerSecond);
+                const newMoney = getMoney();
+                setMoney(newMoney);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     const contextExport = {
         money,

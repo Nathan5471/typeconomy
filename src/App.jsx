@@ -3,6 +3,7 @@ import React from 'react'
 import { useMoney } from './contexts/MoneyContext'
 import UpgradeShop from './components/UpgradeShop'
 import GameArea from './components/GameArea'
+import Stats from './components/Stats'
 
 function App() {
   const { money } = useMoney()
@@ -15,10 +16,7 @@ function App() {
       <div className="h-[calc(90%)] w-screen bg-gray-200 flex flex-row">
         <UpgradeShop />
         <GameArea />
-        <div className="bg-white w-[calc(15%)] p-4 rounded shadow-lg">
-          <h2 className="text-2xl mb-4">Stats</h2>
-          <p className="text-lg">Player Stats will be displayed here.</p>
-        </div>
+        <Stats />
       </div>
     </div>
   )
