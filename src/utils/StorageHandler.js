@@ -20,19 +20,33 @@ export function getMoney() {
     return getStorage('money') || 0;
 }
 
-export function setMoney(money) {
-    if (typeof money !== 'number' || isNaN(money)) {
-        console.error('Invalid money value. It must be a number.');
+export function increaseMoney(amount) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount < 0) {
+        console.error('Invalid money value. It must be a non-negative number.');
         return;
     }
-    setStorage('money', money);
+    const currentMoney = getMoney();
+    setStorage('money', currentMoney + amount);
+}
+
+export function decreaseMoney(amount) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount < 0) {
+        console.error('Invalid money value. It must be a non-negative number.');
+        return;
+    }
+    const currentMoney = getMoney();
+    if (currentMoney < amount) {
+        console.warn('Insufficient funds to decrease money.');
+        return;
+    }
+    setStorage('money', currentMoney - amount);
 }
 
 export function getWordsTyped() {
     return getStorage('wordsTyped') || 0;
 }
 
-export function incrementWordType() {
+export function incrementWordsType() {
     const wordsTyped = getWordsTyped();
     setStorage('wordsTyped', wordsTyped + 1);
 }
@@ -57,7 +71,7 @@ export function incrementStreak() {
     setStorage('streak', streak + 1);
 }
 
-export function resetStreak() {
+export function clearStreak() {
     setStorage('streak', 0);
 }
 
@@ -167,4 +181,18 @@ export function getRandomWord() {
         }
     }
     return fetchWordByLength(length);
+}
+
+export function calculateWordValue(word) {
+    if (typeof word !== 'string' || word.length === 0) {
+        console.error('Invalid word. It must be a non-empty string.');
+        return 0;
+    }
+    const wordMultiplier = getWordMultiplier();
+    const streakBonus = getStreakBonus();
+    const currentStreak = getStreak();
+
+    const baseValue = Math.pow(word.length, 4/3)
+    const value = baseValue * wordMultiplier + (currentStreak * streakBonus);
+    return Math.floor(value);
 }

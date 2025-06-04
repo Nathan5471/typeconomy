@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getRandomWord } from '../utils/StorageHandler.js';
 
-export default function Word() {
+export default function Word({ handleWordCheck }) {
     const [word, setWord] = useState('');
     const [inputValue, setInputValue] = useState('');
 
@@ -19,10 +19,9 @@ export default function Word() {
 
     const compareWords = useCallback(() => {
         if (inputValue.toLowerCase() === word) {
-            alert('Correct!');
-            setInputValue('');
+            handleWordCheck(true, word);
         } else {
-            alert('Incorrect, try again!');
+            handleWordCheck(false);
         }
         setInputValue('');
         async function fetchNewWord() {
@@ -34,7 +33,7 @@ export default function Word() {
             }
         }
         fetchNewWord();
-    }, [word, inputValue]);
+    }, [word, inputValue, handleWordCheck]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
