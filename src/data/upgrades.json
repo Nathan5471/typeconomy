@@ -23,7 +23,7 @@
         },
         {
             "id": "4",
-            "name": "Combo Bonus",
+            "name": "Streak Bonus",
             "description": "Increases the bonus you receive for typing multiple words in a row without mistakes.",
             "baseCost": 2500,
             "costMultiplier": 1.3
