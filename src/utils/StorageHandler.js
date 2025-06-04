@@ -1,5 +1,3 @@
-import { set } from "mongoose";
-
 function getStorage(key) {
     try {
         const value = localStorage.getItem(key);
@@ -152,5 +150,21 @@ export function generateRandomLength(averageLength) {
 export function getRandomWord() {
     const averageLength = getAverageLength();
     const length = generateRandomLength(averageLength);
-    // TODO: Get list of words with length as a dictionary
+    async function fetchWordByLength(length) {
+        try {
+            const response = await fetch(`/words/words_${length}.txt`)
+            const wordList = await response.text();
+            const words = wordList.split('\n').filter(word => word.trim() !== '');
+            if (words.length === 0) {
+                console.error(`No words found for length ${length}`);
+                return null;
+            }
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            return randomWord.trim();
+        } catch (error) {
+            console.error(`Error fetching words of length ${length}: ${error}`);
+            return null;
+        }
+    }
+    return fetchWordByLength(length);
 }

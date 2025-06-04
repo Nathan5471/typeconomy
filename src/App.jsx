@@ -1,5 +1,7 @@
 import './App.css'
+import React from 'react'
 import UpgradeShop from './components/UpgradeShop'
+import Word from './components/Word'
 
 function App() {
   return (
@@ -12,7 +14,7 @@ function App() {
         <UpgradeShop />
         <div className="bg-white w-[calc(70%)] p-4 m-4 rounded shadow-lg">
           <h2 className="text-2xl mb-4">Game Area</h2>
-          <p className="text-lg">This is where the game will be played.</p>
+          <Word />
         </div>
         <div className="bg-white w-[calc(15%)] p-4 rounded shadow-lg">
           <h2 className="text-2xl mb-4">Stats</h2>
