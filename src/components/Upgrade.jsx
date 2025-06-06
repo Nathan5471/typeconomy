@@ -34,19 +34,21 @@ export default function Upgrade({ upgradeData }) {
     }
 
     return (
-        <div className="outline p-4 rounded shadow-lg">
+        <div className="bg-[#003c18] p-4 rounded shadow-lg">
             <h3 className="text-lg">{name}</h3>
             <p className="text-sm text-gray-600">{descrition}</p>
-            <p className="text-sm text-gray-500">Cost: ${cost}</p>
+            <div className="flex flex-row justify-between items-center mt-2">
+            <p className="text-white text-lg">Buy:</p>
             <button 
-                className={`mt-2 px-4 py-2 rounded ${isAffordable ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                className={`mt-2 px-4 py-2 rounded ${isAffordable ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                 onClick={() => {
                     handleUpgradePurhcase();
                 }}
                 disabled={!isAffordable}
             >
-                {isAffordable ? 'Buy Upgrade' : 'Not Enough Money'}
+                {cost}
             </button>
+            </div>
         </div>
     )
 }

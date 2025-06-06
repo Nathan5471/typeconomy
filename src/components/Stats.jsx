@@ -19,12 +19,17 @@ export default function Stats() {
     }, [wordsTyped]);
 
     return (
-        <div className="bg-white w-[calc(15%)] p-4 rounded shadow-lg">
-            <h2 className="text-2xl mb-4">Stats</h2>
-            <p className="text-lg">Words Typed: {wordsTyped}</p>
-            <p className="text-lg">Word Multiplier: {wordMultiplier.toFixed(1)}</p>
-            <p className="text-lg">Average Word Length: {averageLength.toFixed(1)}</p>
-            <p className="text-lg">Cash Per Second: ${cashPerSecond}</p>
+        <div className="bg-[#005828] text-white text-center w-full h-[calc(100vh-3rem)] p-4 mt-4 rounded shadow-lg">
+            <h2 className="text-3xl">Stats</h2>
+            <hr className="mb-2"/>
+            <h3 className="text-2xl">Words Typed</h3>
+            <p className="text-xl">{wordsTyped}</p>
+            <h3 className="text-2xl mt-2">Word Multiplier</h3>
+            <p className="text-xl">{wordMultiplier}x</p>
+            <h3 className="text-2xl mt-2">Average Word Length</h3>
+            <p className="text-xl">{averageLength} characters</p>
+            <h3 className="text-2xl mt-2">Cash Per Second</h3>
+            <p className="text-xl">${cashPerSecond.toFixed(2)}</p>
         </div>
     )
 }

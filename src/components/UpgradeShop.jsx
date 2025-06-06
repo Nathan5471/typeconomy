@@ -17,11 +17,16 @@ export default function UpgradeShop() {
     }, []);
 
     return (
-        <div className="bg-white w-[calc(15%)] p-4 rounded shadow-lg overflow-scroll">
-            <h2 className="text-2xl mb-4">Upgrade Shop</h2>
-            <div className="flex flex-col gap-4">
-                { upgrades.map((upgrade) => (
-                    <Upgrade key={upgrade.id} upgradeData={upgrade} />
+        <div className="h-[calc(100vh-2rem)]">
+            <div className="bg-[#005828] w-full h-[calc(13%)] text-white p-4 m-4 rounded shadow-lg">
+                <h1 className="text-center text-3xl">Upgrade Shop</h1>
+            </div>
+            <div className="bg-[#005828] w-full h-[calc(80%)] text-white p-4 m-4 rounded shadow-lg flex flex-col gap-4 overflow-y-scroll">
+                {upgrades.map((upgrade) => (
+                    <Upgrade
+                        key={upgrade.id}
+                        upgradeData={upgrade}
+                    />
                 ))}
             </div>
         </div>
