@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
+import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, getHighestStreak, getWordMultiplier, getAverageLength, getAccuracy, addWordToAccuracy, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
 
 const MoneyContext = createContext();
 
@@ -11,25 +11,60 @@ export const useMoney = () => {
 export const MoneyProvider = ({ children }) => {
     const [money, setMoney] = useState(0);
     const [wordsTyped, setWordsTyped] = useState(0);
+    const [wordsTypedCorrectly, setWordsTypedCorrectly] = useState(0);
+    const [wordsTypedIncorrectly, setWordsTypedIncorrectly] = useState(0);
     const [streak, setStreak] = useState(0);
+    const [highestStreak, setHighestStreak] = useState(0);
+    const [wordMultiplier, setWordMultiplier] = useState(1);
+    const [averageLength, setAverageLength] = useState(3);
+    const [accuracy, setAccuracy] = useState(100);
+    const [cashPerSecond, setCashPerSecond] = useState(0);
 
     useEffect(() => {
         const storedMoney = getMoney();
         const storedWordsTyped = getWordsTyped();
         const storedStreak = getStreak();
+        const storedHighestStreak = getHighestStreak();
+        const storedWordMultiplier = getWordMultiplier();
+        const storedAverageLength = getAverageLength();
+        const [storedAccuracy, storedCorrectWords, storedIncorrectWords] = getAccuracy();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
         if (storedStreak) setStreak(Number(storedStreak));
+        if (storedHighestStreak) setHighestStreak(Number(storedHighestStreak));
+        if (storedWordMultiplier) setWordMultiplier(storedWordMultiplier);
+        if (storedAverageLength) setAverageLength(storedAverageLength);
+        if (storedAccuracy) setAccuracy(Number(storedAccuracy));
+        if (storedCorrectWords) setWordsTypedCorrectly(Number(storedCorrectWords));
+        if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
     }, []);
 
-    const incrementWordsTyped = (word) => {
+    const handleCorrectWord = (word) => {
         setWordsTyped(prev => prev + 1);
         incrementWordsType();
+        addWordToAccuracy(true);
+        const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
+        setAccuracy(newAccuracy);
+        setWordsTypedCorrectly(newCorrectWords);
+        setWordsTypedIncorrectly(newIncorrectWords);
         const wordValue = calculateWordValue(word);
         increaseMoney(wordValue);
         const newMoney = getMoney();
         setMoney(newMoney);
+        setStreak(prev => prev + 1);
+        incrementStreak();
+    }
+
+    const handleIncorrectWord = () => {
+        addWordToAccuracy(false);
+        const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
+        setAccuracy(newAccuracy);
+        setWordsTypedCorrectly(newCorrectWords);
+        setWordsTypedIncorrectly(newIncorrectWords);
+        setStreak(0);
+        clearStreak();
+        setHighestStreak(getHighestStreak());
     }
 
     const decreaseMoneyBy = (amount) => {
@@ -39,16 +74,13 @@ export const MoneyProvider = ({ children }) => {
         }
         setMoney(prev => Math.max(0, prev - amount));
         decreaseMoney(amount);
+        refreshEffects();
     }
 
-    const increaseStreak = () => {
-        setStreak(prev => prev + 1);
-        incrementStreak();
-    }
-    
-    const resetStreak = () => {
-        setStreak(0);
-        clearStreak();
+    const refreshEffects = () => {
+        setWordMultiplier(getWordMultiplier());
+        setAverageLength(getAverageLength());
+        setCashPerSecond(getTotalCashPerSecond());
     }
 
     useEffect(() => {
@@ -59,6 +91,7 @@ export const MoneyProvider = ({ children }) => {
                 const newMoney = getMoney();
                 setMoney(newMoney);
             }
+            setCashPerSecond(cashPerSecond);
         }, 1000);
         return () => clearInterval(interval);
     }, []);
@@ -66,11 +99,17 @@ export const MoneyProvider = ({ children }) => {
     const contextExport = {
         money,
         wordsTyped,
+        wordsTypedCorrectly,
+        wordsTypedIncorrectly,
         streak,
-        incrementWordsTyped,
+        highestStreak,
+        wordMultiplier,
+        averageLength,
+        accuracy,
+        cashPerSecond,
+        handleCorrectWord,
+        handleIncorrectWord,
         decreaseMoneyBy,
-        increaseStreak,
-        resetStreak,
     }
 
     return (

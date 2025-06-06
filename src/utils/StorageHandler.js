@@ -72,11 +72,24 @@ export function incrementStreak() {
 }
 
 export function clearStreak() {
+    checkForNewHighestStreak();
     setStorage('streak', 0);
 }
 
+export function getHighestStreak() {
+    return getStorage('highestStreak') || 0;
+}
+
+function checkForNewHighestStreak() {
+    const currentStreak = getStreak();
+    const highestStreak = getHighestStreak();
+    if (currentStreak > highestStreak) {
+        setStorage('highestStreak', currentStreak);
+    }
+}
+
 export function getWordMultiplier() {
-    return getStorage('wordMultiplier') || 1;
+    return Number(getStorage('wordMultiplier')) || 1;
 }
 
 export function increaseWordMultiplier(increaseBy) {
@@ -86,11 +99,11 @@ export function increaseWordMultiplier(increaseBy) {
     }
     const currentMultiplier = getWordMultiplier();
     const newMultiplier = currentMultiplier + increaseBy;
-    setStorage('wordMultiplier', newMultiplier);
+    setStorage('wordMultiplier', newMultiplier.toFixed(1));
 }
 
 export function getAverageLength() {
-    return getStorage('averageLength') || 3;
+    return Number(getStorage('averageLength')) || 3;
 }
 
 export function increaseAverageLength(increaseBy) {
@@ -104,7 +117,27 @@ export function increaseAverageLength(increaseBy) {
         console.warn('Average length cannot exceed 15.');
         return;
     }
-    setStorage('averageLength', newAverage);
+    setStorage('averageLength', newAverage.toFixed(1));
+}
+
+export function getAccuracy() {
+    return getStorage('accuracy') || [100, 0, 0]; // [accuracy, correct, incorrect]
+}
+
+export function addWordToAccuracy(isCorrect) {
+    const [accuracy, correct, incorrect] = getAccuracy();
+    if (isCorrect === true) {
+        const newCorrect = correct + 1;
+        const newAccuracy = ((newCorrect / (newCorrect + incorrect)) * 100).toFixed(1);
+        setStorage('accuracy', [newAccuracy, newCorrect, incorrect]);
+    } else if (isCorrect === false) {
+        const newIncorrect = incorrect + 1;
+        const newAccuracy = ((correct / (correct + newIncorrect)) * 100).toFixed(1);
+        setStorage('accuracy', [newAccuracy, correct, newIncorrect]);
+    } else {
+        console.error('Invalid isCorrect value. It must be true or false.');
+        return;
+    }
 }
 
 export function getTotalCashPerSecond() {
@@ -118,7 +151,7 @@ function setTotalCashPerSecond(cps) {
         console.error('Invalid cash per second value. It must be a non-negative number.');
         return;
     }
-    setStorage('cashPerSecond', cps);
+    setStorage('cashPerSecond', cps.toFixed(0));
 }
 
 export function getUpgradeCashPerSecond(upgradeId) {

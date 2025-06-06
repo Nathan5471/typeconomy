@@ -3,7 +3,7 @@ import { useMoney } from '../contexts/MoneyContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 
 export default function GameArea() {
-    const { money, streak, incrementWordsTyped, increaseStreak, resetStreak } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, handleCorrectWord, handleIncorrectWord } = useMoney();
     const [currentWord, setCurrentWord] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
@@ -22,14 +22,13 @@ export default function GameArea() {
 
     const compareWords = useCallback(() => {
         if (inputValue.toLowerCase() === currentWord) {
-            incrementWordsTyped(currentWord);
-            increaseStreak();
+            handleCorrectWord(currentWord);
         } else {
-            resetStreak();
+            handleIncorrectWord();
         }
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [currentWord, inputValue, incrementWordsTyped, increaseStreak, resetStreak]);
+    }, [inputValue, currentWord, handleCorrectWord, handleIncorrectWord]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -62,7 +61,7 @@ export default function GameArea() {
                 <div className="mt-4 text-2xl flex flex-row">
                     <div className="mr-4 p-2 text-center">
                         <h3>Accuracy</h3>
-                        <p>100%</p>
+                        <p>{accuracy}%</p>
                     </div>
                     <div className="mr-4 p-2 text-center">
                         <h3>Streak</h3>
@@ -70,11 +69,11 @@ export default function GameArea() {
                     </div>
                     <div className="mr-4 p-2 text-center">
                         <h3>Multiplyer</h3>
-                        <p>2.3x</p>
+                        <p>{wordMultiplier}x</p>
                     </div>
                     <div className="p-2 text-center">
                         <h3>Average Length</h3>
-                        <p>5.4</p>
+                        <p>{averageLength}</p>
                     </div>
                 </div>
             </div>
