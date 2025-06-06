@@ -56,9 +56,9 @@ export function getAmountOfUpgrades(upgradeId) {
     return upgrades[upgradeId] || 0;
 }
 
-export function incrementAmountOfUpgrades(upgradeId) {
+export function incrementAmountOfUpgrades(upgradeId, amount) {
     const upgrades = getStorage('upgrades') || {};
-    upgrades[upgradeId] = (upgrades[upgradeId] || 0) + 1;
+    upgrades[upgradeId] = (upgrades[upgradeId] || 0) + amount;
     setStorage('upgrades', upgrades);
 }
 
@@ -94,7 +94,7 @@ export function getWordMultiplier() {
 
 export function increaseWordMultiplier(increaseBy) {
     if (typeof increaseBy !== 'number' || isNaN(increaseBy) || increaseBy < 0) {
-        console.error('Invalid increase by amount. It must be a positive number.');
+        console.error('Invalid increase by amount. It must be a positive number. Amount:', increaseBy);
         return;
     }
     const currentMultiplier = getWordMultiplier();
@@ -108,7 +108,7 @@ export function getAverageLength() {
 
 export function increaseAverageLength(increaseBy) {
     if (typeof length !== 'number' || isNaN(length) || length < 0) {
-        console.error('Invalid increase by amount. It must be a positive number.');
+        console.error('Invalid increase by amount. It must be a positive number. Amount:', increaseBy);
         return;
     }
     const currentAverage = getAverageLength();

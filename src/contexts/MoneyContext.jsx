@@ -57,6 +57,8 @@ export const MoneyProvider = ({ children }) => {
     }
 
     const handleIncorrectWord = () => {
+        setWordsTyped(prev => prev + 1);
+        incrementWordsType();
         addWordToAccuracy(false);
         const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
         setAccuracy(newAccuracy);
