@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMoney } from '../contexts/MoneyContext';
+import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Stats() {
     const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, cashPerSecond } = useMoney();
@@ -17,7 +18,7 @@ export default function Stats() {
             <h3 className="text-xl mt-2">Highest Streak</h3>
             <p className="text-lg">{highestStreak}</p>
             <h3 className="text-xl mt-2">Cash Per Second</h3>
-            <p className="text-lg">${cashPerSecond.toFixed(2)}</p>
+            <p className="text-lg">{FormatMoney(cashPerSecond)}</p>
         </div>
     )
 }

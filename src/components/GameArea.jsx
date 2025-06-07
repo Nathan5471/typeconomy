@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
+import FormatMoney from '../utils/FormatMoney.js';
 
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, handleCorrectWord, handleIncorrectWord } = useMoney();
@@ -47,7 +48,7 @@ export default function GameArea() {
         <div className="h-[calc(100vh-3rem)] w-full">
             <div className="bg-[#005828] w-full h-[calc(13%)] text-white flex flex-row justify-between p-2 m-4 rounded shadow-lg">
                 <h1 className="text-4xl">Typeconomy</h1>
-                <p className="text-4xl">Money: ${money}</p>
+                <p className="text-4xl">Money: {FormatMoney(money)}</p>
             </div>
             <div className="flex flex-col items-center justify-center text-white w-full h-[calc(80%)] p-2 m-4">
                 <h2 className="text-4xl mb-4">{currentWord}</h2>

@@ -2,22 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
 import { getAmountOfUpgrades } from '../utils/StorageHandler';
 import { calculateUpgradeCost, buyUpgrade } from '../utils/UpgradeHandler';
+import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Upgrade({ upgradeData }) {
     const { money, decreaseMoneyBy } = useMoney();
     const { id, name, description, baseCost, costMultiplier} = upgradeData;
     const [purchaseAmount, setPurchaseAmount] = useState(1);
+    const [amountToPurchase, setAmountToPurchase] = useState(1);
     const [cost, setCost] = useState(baseCost);
     const [isAffordable, setIsAffordable] = useState(true);
     const [amountOfUpgrades, setAmountOfUpgrades] = useState(getAmountOfUpgrades(id));
 
     useEffect(() => {
         const getCost = async () => {
-            const calculatedCost = calculateUpgradeCost(baseCost, costMultiplier, id, purchaseAmount);
+            const [calculatedCost, amountToPurchase] = calculateUpgradeCost(baseCost, costMultiplier, id, purchaseAmount, money);
             setCost(calculatedCost);
+            setAmountToPurchase(amountToPurchase);
         }
         getCost();
-    }, [baseCost, costMultiplier, id, purchaseAmount]);
+    }, [baseCost, costMultiplier, id, purchaseAmount, money]);
 
     useEffect(() => {
         const checkAffordability = () => {
@@ -79,7 +82,7 @@ export default function Upgrade({ upgradeData }) {
                 }}
                 disabled={!isAffordable}
             >
-                {cost}
+                {FormatMoney(Number(cost))} ({amountToPurchase}x)
             </button>
             <div className="absolte bottom-full hidden group-hover:flex bg-[#005828] text-white text-sm p-2 rounded shadow-lg mt-2">
                 {description}
