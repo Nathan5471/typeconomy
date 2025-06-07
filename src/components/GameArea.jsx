@@ -5,31 +5,37 @@ import FormatMoney from '../utils/FormatMoney.js';
 
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, handleCorrectWord, handleIncorrectWord } = useMoney();
-    const [currentWord, setCurrentWord] = useState('');
+    const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
 
     useEffect(() => {
-        const fetchWord = async () => {
-            try {
-                const word = await getRandomWord();
-                setCurrentWord(word.toLowerCase());
-            } catch (error) {
-                console.error('Error fetching word:', error);
-            }
+        const fetchNewWords = async () => {
+            const word1 = await getRandomWord();
+            const word2 = await getRandomWord();
+            const word3 = await getRandomWord();
+            setWords([word1.toLowerCase(), word2.toLowerCase(), word3.toLowerCase()]);
         }
-        fetchWord();
+        fetchNewWords();
+    }, []);
+
+    useEffect(() => {
+        const fetchNextWord = async () => {
+            const newWord = await getRandomWord();
+            setWords(prevWords => [newWord.toLowerCase(), ...prevWords.slice(0, 4)]);
+        }
+        fetchNextWord();
     }, [fetchNewWord]);
 
     const compareWords = useCallback(() => {
-        if (inputValue.toLowerCase() === currentWord) {
-            handleCorrectWord(currentWord);
+        if (inputValue.toLowerCase() === words[2]) {
+            handleCorrectWord(words[2]);
         } else {
             handleIncorrectWord();
         }
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [inputValue, currentWord, handleCorrectWord, handleIncorrectWord]);
+    }, [inputValue, words, handleCorrectWord, handleIncorrectWord]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -51,7 +57,13 @@ export default function GameArea() {
                 <p className="text-4xl">Money: {FormatMoney(money)}</p>
             </div>
             <div className="flex flex-col items-center justify-center text-white w-full h-[calc(80%)] p-2 m-4">
-                <h2 className="text-4xl mb-4">{currentWord}</h2>
+                <div className="flex flex-row text-center items-center justify-center w-full">
+                    <p className="text-3xl text-white/33">{words[4]}</p>
+                    <p className="text-3xl text-white/66 ml-3">{words[3]}</p>
+                    <h2 className="text-4xl mb-4 ml-3">{words[2]}</h2>
+                    <p className="text-3xl text-white/66 ml-3">{words[1]}</p>
+                    <p className="text-3xl text-white/33 ml-3">{words[0]}</p>
+                </div>
                 <input
                     type="text"
                     value={inputValue}
