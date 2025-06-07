@@ -192,9 +192,22 @@ export function increaseStreakBonus(increaseBy) {
 }
 
 export function generateRandomLength(averageLength) {
-    const minLength = Math.max(3, averageLength - 2);
-    const maxLength = Math.min(15, averageLength + 2);
-    return Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+    const possibleLengths = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    const weights = possibleLengths.map(length => Math.exp(-Math.abs(length - averageLength)));
+
+    // Normalize weights to sum to 1 for Math.random selection
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const normalizedWeights = weights.map(weight => weight / totalWeight);
+
+    const randomValue = Math.random();
+    let cumulativeWeight = 0;
+
+    for (let i = 0; i < normalizedWeights.length; i++) {
+        cumulativeWeight += normalizedWeights[i];
+        if (randomValue < cumulativeWeight) {
+            return possibleLengths[i];
+        }
+    }
 }
 
 export function getRandomWord() {
