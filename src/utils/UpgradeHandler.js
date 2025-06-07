@@ -47,6 +47,11 @@ export function buyUpgrade(upgradeId, baseCost, costMultiplier, currentMoney, am
     return cost;
 }
 
+export function buyOneTimeUpgrade(upgradeId, cost, currentMoney) {
+    console.log('Implement buyOneTimeUpgrade function');
+    return cost;
+}
+
 function applyUpgradeEffects(upgradeId, amount) {
     console.log(`Applying effects for upgrade ${upgradeId} with amount ${amount}`);
     if (upgradeId === '1') {

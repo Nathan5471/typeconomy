@@ -232,7 +232,7 @@ export function getRandomWord() {
     return fetchWordByLength(length);
 }
 
-export function calculateWordValue(word) {
+export function calculateWordValue(word, isGold) {
     if (typeof word !== 'string' || word.length === 0) {
         console.error('Invalid word. It must be a non-empty string.');
         return 0;
@@ -243,5 +243,9 @@ export function calculateWordValue(word) {
 
     const baseValue = Math.pow(word.length, 4/3)
     const value = baseValue * wordMultiplier + (currentStreak * streakBonus);
+
+    if (isGold) {
+        return Math.floor(value * 10);
+    }
     return Math.floor(value);
 }

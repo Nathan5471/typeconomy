@@ -8,6 +8,7 @@ export default function GameArea() {
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
+    const [isGold, setIsGold] = useState(false);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -29,13 +30,14 @@ export default function GameArea() {
 
     const compareWords = useCallback(() => {
         if (inputValue.toLowerCase() === words[2]) {
-            handleCorrectWord(words[2]);
+            handleCorrectWord(words[2], isGold);
         } else {
             handleIncorrectWord();
         }
+        setIsGold(Math.random() < .01);
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [inputValue, words, handleCorrectWord, handleIncorrectWord]);
+    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -57,12 +59,12 @@ export default function GameArea() {
                 <p className="text-4xl">Money: {FormatMoney(money)}</p>
             </div>
             <div className="flex flex-col items-center justify-center text-white w-full h-[calc(80%)] p-2 m-4">
-                <div className="flex flex-row text-center items-center justify-center w-full">
-                    <p className="text-3xl text-white/33">{words[4]}</p>
-                    <p className="text-3xl text-white/66 ml-3">{words[3]}</p>
-                    <h2 className="text-4xl mb-4 ml-3">{words[2]}</h2>
-                    <p className="text-3xl text-white/66 ml-3">{words[1]}</p>
-                    <p className="text-3xl text-white/33 ml-3">{words[0]}</p>
+                <div className="grid grid-cols-5 text-center items-center justify-center w-full mb-3">
+                    <p className="text-xl text-white/33">{words[4]}</p>
+                    <p className="text-xl text-white/66 ml-3">{words[3]}</p>
+                    <h2 className={`text-2xl ${isGold === true ? "bg-yellow-400/20 text-yellow-400 rounded" : "text-white"}`}>{words[2]}</h2>
+                    <p className="text-xl text-white/66 ml-3">{words[1]}</p>
+                    <p className="text-xl text-white/33 ml-3">{words[0]}</p>
                 </div>
                 <input
                     type="text"

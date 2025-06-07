@@ -40,7 +40,7 @@ export const MoneyProvider = ({ children }) => {
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
     }, []);
 
-    const handleCorrectWord = (word) => {
+    const handleCorrectWord = (word, isGold) => {
         setWordsTyped(prev => prev + 1);
         incrementWordsType();
         addWordToAccuracy(true);
@@ -48,7 +48,7 @@ export const MoneyProvider = ({ children }) => {
         setAccuracy(newAccuracy);
         setWordsTypedCorrectly(newCorrectWords);
         setWordsTypedIncorrectly(newIncorrectWords);
-        const wordValue = calculateWordValue(word);
+        const wordValue = calculateWordValue(word, isGold);
         increaseMoney(wordValue);
         const newMoney = getMoney();
         setMoney(newMoney);

@@ -1,0 +1,10 @@
+{
+    "data": [
+        {
+            "id": "1",
+            "name": "Test",
+            "description": "Testing",
+            "cost": 250
+        }
+    ]
+}
