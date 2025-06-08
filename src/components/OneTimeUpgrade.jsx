@@ -4,9 +4,10 @@ import FormatMoney from '../utils/FormatMoney.js';
 import { buyOneTimeUpgrade } from '../utils/UpgradeHandler.js';
 
 export default function OneTimeUpgrade({ upgradeData }) {
-    const { money, decreaseMoneyBy } = useMoney();
+    const { money, decreaseMoneyBy, purchasedOneTimeUpgrades, purchasedOneTimeUpgrade } = useMoney();
     const { id, name, description, cost } = upgradeData;
     const [isAffordable, setIsAffordable] = useState(false);
+    const [isPurchased, setIsPurchased] = useState(false);
 
     useEffect(() => {
         const checkAffordability = () => {
@@ -20,7 +21,20 @@ export default function OneTimeUpgrade({ upgradeData }) {
         if (isAffordable) {
             buyOneTimeUpgrade(id, cost, money);
             decreaseMoneyBy(cost);
+            purchasedOneTimeUpgrade(id);
+            setIsPurchased(true);
         }
+    }
+
+    useEffect(() => {
+        const purchased = purchasedOneTimeUpgrades.has(id);
+        setIsPurchased(purchased);
+    }, [id, purchasedOneTimeUpgrades]);
+
+    if (isPurchased) {
+        return (
+            null
+        )
     }
 
     return (

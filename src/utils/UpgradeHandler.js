@@ -48,7 +48,12 @@ export function buyUpgrade(upgradeId, baseCost, costMultiplier, currentMoney, am
 }
 
 export function buyOneTimeUpgrade(upgradeId, cost, currentMoney) {
-    console.log('Implement buyOneTimeUpgrade function');
+    if (!canAffordUpgrade(currentMoney, cost)) {
+        console.error(`Not enough money to buy one-time upgrade ${upgradeId}. Required: ${cost}, Available: ${currentMoney}`);
+        return currentMoney;
+    }
+    applyOneTimeUpgradeEffects(upgradeId);
+
     return cost;
 }
 
@@ -66,5 +71,16 @@ function applyUpgradeEffects(upgradeId, amount) {
         increaseUpgradeCashPerSecond(upgradeId, 75 * amount);
     } else if (upgradeId === '6') {
         increaseUpgradeCashPerSecond(upgradeId, 250 * amount);
+    }
+}
+
+function applyOneTimeUpgradeEffects(upgradeId) {
+    console.log(`Applying one-time upgrade effects for ${upgradeId}`);
+    if (upgradeId === '1') {
+        increaseWordMultiplier(1);
+    } else if (upgradeId === '2') {
+        // TODO: Implement changing of the probability of a word being gold
+    } else if (upgradeId === '3') {
+        increaseWordMultiplier(1.5);
     }
 }

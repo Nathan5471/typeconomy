@@ -62,6 +62,21 @@ export function incrementAmountOfUpgrades(upgradeId, amount) {
     setStorage('upgrades', upgrades);
 }
 
+export function getPurchasedOneTimeUpgrades() {
+    const upgrades = getStorage('purchasedOneTimeUpgrades') || [];
+    return upgrades;
+}
+
+export function markOneTimeUpgradeAsPurchased(upgradeId) {
+    const currentUpgrades = getPurchasedOneTimeUpgrades();
+    if (!currentUpgrades.includes(upgradeId)) {
+        currentUpgrades.push(upgradeId);
+        setStorage('purchasedOneTimeUpgrades', currentUpgrades);
+    } else {
+        console.warn(`Upgrade ${upgradeId} has already been purchased.`);
+    }
+}
+
 export function getStreak() {
     return getStorage('streak') || 0;
 }

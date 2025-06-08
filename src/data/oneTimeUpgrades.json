@@ -2,9 +2,21 @@
     "data": [
         {
             "id": "1",
-            "name": "Test",
-            "description": "Testing",
+            "name": "Mechanical Keyboard",
+            "description": "Increase word multiplier by 1x",
             "cost": 250
+        },
+        {
+            "id": "2",
+            "name": "More Gold",
+            "description": "Increases the odds of getting a goldend word",
+            "cost": 500
+        },
+        {
+            "id": "3",
+             "name": "Better Switches",
+             "description": "Increase word multiplier by 1.5x",
+             "cost": 1000
         }
     ]
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getStreak, incrementStreak, clearStreak, getHighestStreak, getWordMultiplier, getAverageLength, getAccuracy, addWordToAccuracy, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
+import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getStreak, incrementStreak, clearStreak, getHighestStreak, getWordMultiplier, getAverageLength, getAccuracy, addWordToAccuracy, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
 
 const MoneyContext = createContext();
 
@@ -19,6 +19,7 @@ export const MoneyProvider = ({ children }) => {
     const [averageLength, setAverageLength] = useState(3);
     const [accuracy, setAccuracy] = useState(100);
     const [cashPerSecond, setCashPerSecond] = useState(0);
+    const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
 
     useEffect(() => {
         const storedMoney = getMoney();
@@ -28,6 +29,7 @@ export const MoneyProvider = ({ children }) => {
         const storedWordMultiplier = getWordMultiplier();
         const storedAverageLength = getAverageLength();
         const [storedAccuracy, storedCorrectWords, storedIncorrectWords] = getAccuracy();
+        const storedOneTimeUpgrades = getPurchasedOneTimeUpgrades();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
@@ -38,6 +40,7 @@ export const MoneyProvider = ({ children }) => {
         if (storedAccuracy) setAccuracy(Number(storedAccuracy));
         if (storedCorrectWords) setWordsTypedCorrectly(Number(storedCorrectWords));
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
+        if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
@@ -85,6 +88,12 @@ export const MoneyProvider = ({ children }) => {
         setCashPerSecond(getTotalCashPerSecond());
     }
 
+    const purchasedOneTimeUpgrade = (upgradeId) => {
+        setPurchasedOneTimeUpgrades(prev => new Set(prev).add(upgradeId));
+        markOneTimeUpgradeAsPurchased(upgradeId);
+        refreshEffects();
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             const cashPerSecond = getTotalCashPerSecond();
@@ -109,9 +118,11 @@ export const MoneyProvider = ({ children }) => {
         averageLength,
         accuracy,
         cashPerSecond,
+        purchasedOneTimeUpgrades,
         handleCorrectWord,
         handleIncorrectWord,
         decreaseMoneyBy,
+        purchasedOneTimeUpgrade,
     }
 
     return (
