@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, getWordsTyped, incrementWordsType, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getStreak, incrementStreak, clearStreak, getHighestStreak, getWordMultiplier, getAverageLength, getAccuracy, addWordToAccuracy, getTotalCashPerSecond, calculateWordValue } from '../utils/StorageHandler';
+import { getMoney, increaseMoney, decreaseMoney, calculateWordValue } from '../utils/StorageHandler.js';
+import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased } from '../utils/EffectsHandler.js';
+import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
 
 const MoneyContext = createContext();
 
@@ -45,7 +47,7 @@ export const MoneyProvider = ({ children }) => {
 
     const handleCorrectWord = (word, isGold) => {
         setWordsTyped(prev => prev + 1);
-        incrementWordsType();
+        incrementWordsTyped();
         addWordToAccuracy(true);
         const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
         setAccuracy(newAccuracy);
@@ -61,7 +63,7 @@ export const MoneyProvider = ({ children }) => {
 
     const handleIncorrectWord = () => {
         setWordsTyped(prev => prev + 1);
-        incrementWordsType();
+        incrementWordsTyped();
         addWordToAccuracy(false);
         const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
         setAccuracy(newAccuracy);

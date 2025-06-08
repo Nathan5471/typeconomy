@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
-import { getAmountOfUpgrades } from '../utils/StorageHandler';
-import { calculateUpgradeCost, buyUpgrade } from '../utils/UpgradeHandler';
+import { getAmountOfUpgrades } from '../utils/EffectsHandler.js';
+import { calculateUpgradeCost, buyUpgrade } from '../utils/UpgradeHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Upgrade({ upgradeData }) {

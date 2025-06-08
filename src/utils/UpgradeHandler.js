@@ -1,4 +1,4 @@
-import { getAmountOfUpgrades, incrementAmountOfUpgrades, increaseWordMultiplier, increaseAverageLength, increaseUpgradeCashPerSecond, increaseStreakBonus } from "./StorageHandler";
+import { getAmountOfUpgrades, incrementAmountOfUpgrades, increaseWordMultiplier, increaseAverageLength, increaseUpgradeCashPerSecond, increaseStreakBonus } from "./EffectsHandler.js";
 
 export function calculateUpgradeCost(baseCost, costMultiplier, upgradeId, amountToBuy, currentMoney) {
     const currentAmount = getAmountOfUpgrades(upgradeId);
