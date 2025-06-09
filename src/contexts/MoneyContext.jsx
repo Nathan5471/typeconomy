@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getMoney, increaseMoney, decreaseMoney, calculateWordValue } from '../utils/StorageHandler.js';
-import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
+import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getDifficulty, changeDifficulty, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
 import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
 
 const MoneyContext = createContext();
@@ -23,6 +23,7 @@ export const MoneyProvider = ({ children }) => {
     const [cashPerSecond, setCashPerSecond] = useState(0);
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
     const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
+    const [difficulty, setDifficulty] = useState({'upper': false, 'numbers': false, 'symbols': false}); // Lowercase is always true
 
     useEffect(() => {
         const storedMoney = getMoney();
@@ -34,6 +35,7 @@ export const MoneyProvider = ({ children }) => {
         const [storedAccuracy, storedCorrectWords, storedIncorrectWords] = getAccuracy();
         const storedOneTimeUpgrades = getPurchasedOneTimeUpgrades();
         const storedUnlockedFeatures = getUnlockedFeatures();
+        const storedDifficulty = getDifficulty();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
@@ -46,6 +48,7 @@ export const MoneyProvider = ({ children }) => {
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
         if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
         if (storedUnlockedFeatures) setUnlockedFeatures(new Set(storedUnlockedFeatures));
+        if (storedDifficulty) setDifficulty(storedDifficulty);
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
@@ -105,6 +108,17 @@ export const MoneyProvider = ({ children }) => {
         refreshEffects();
     }
 
+    const handleChangeDifficulty = (newDifficulty) => {
+        if (typeof newDifficulty !== 'object' || newDifficulty === null) {
+            console.error('Invalid difficulty object. It must be an object with boolean properties.');
+            return;
+        }
+        if (unlockedFeatures.has('difficulty')) {
+            setDifficulty(newDifficulty);
+            changeDifficulty(newDifficulty);
+        }
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             const cashPerSecond = getTotalCashPerSecond();
@@ -131,11 +145,13 @@ export const MoneyProvider = ({ children }) => {
         cashPerSecond,
         purchasedOneTimeUpgrades,
         unlockedFeatures,
+        difficulty,
         handleCorrectWord,
         handleIncorrectWord,
         decreaseMoneyBy,
         purchasedOneTimeUpgrade,
         handleUnlockFeature,
+        handleChangeDifficulty,
     }
 
     return (

@@ -4,7 +4,9 @@ import { useOverlayContext } from '../contexts/OverlayContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
+import DifficultyFormat from '../utils/DifficultFormat.js';
 import TypingTest from './TypingTest.jsx';
+import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
@@ -21,7 +23,7 @@ export default function GameArea() {
             const word1 = await getRandomWord();
             const word2 = await getRandomWord();
             const word3 = await getRandomWord();
-            setWords([word1.toLowerCase(), word2.toLowerCase(), word3.toLowerCase()]);
+            setWords([DifficultyFormat(word1), DifficultyFormat(word2), DifficultyFormat(word3)]);
         }
         fetchNewWords();
     }, []);
@@ -29,13 +31,13 @@ export default function GameArea() {
     useEffect(() => {
         const fetchNextWord = async () => {
             const newWord = await getRandomWord();
-            setWords(prevWords => [newWord.toLowerCase(), ...prevWords.slice(0, 4)]);
+            setWords(prevWords => [DifficultyFormat(newWord), ...prevWords.slice(0, 4)]);
         }
         fetchNextWord();
     }, [fetchNewWord]);
 
     const compareWords = useCallback(() => {
-        if (inputValue.toLowerCase() === words[2]) {
+        if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
         } else {
             handleIncorrectWord();
@@ -63,6 +65,11 @@ export default function GameArea() {
         e.preventDefault();
         setIsTypingTestOpen(true);
         openOverlay(<TypingTest closeTypingTest={() => {setIsTypingTestOpen(false)}}/>);
+    }
+
+    const handleDifficulty = (e) => {
+        e.preventDefault();
+        openOverlay(<Difficulty />);
     }
 
     const handleImportExport = (e) => {
@@ -113,7 +120,7 @@ export default function GameArea() {
             </div>
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
                 <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
-                <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Difficulty</button>
+                <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleDifficulty}>Difficulty</button>
                 <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`} onClick={handleImportExport}>Import/Export</button>
             </div>
         </div>

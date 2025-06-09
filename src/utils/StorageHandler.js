@@ -84,13 +84,14 @@ export async function getRandomWord(count = 1) {
         }
     }
     if (count === 1) {
-        return fetchWordByLength(length);
+        const word = await fetchWordByLength(length);
+        return word.toLowerCase();
     } else if (count > 1) {
         const words = [];
         for (let i = 0; i < count; i++) {
             const word = await fetchWordByLength(length);
             if (word) {
-                words.push(word);
+                words.push(word.toLowerCase());
             }
         }
         return words;

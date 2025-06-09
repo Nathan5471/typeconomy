@@ -124,6 +124,19 @@ export function increaseGoldWordChance(increaseBy) {
     setStorage('goldWordChance', newChance);
 }
 
+export function getDifficulty() {
+    return getStorage('difficulty') || {'upper': false, 'numbers': false, 'symbols': false}
+}
+
+export function changeDifficulty(difficulty) {
+    const unlockedFeatures = getUnlockedFeatures();
+    if (!unlockedFeatures.includes('difficulty')) {
+        console.warn('Difficulty feature is not unlocked. Cannot set difficulty.');
+        return;
+    }
+    setStorage('difficulty', difficulty);
+}
+
 export function getUnlockedFeatures() {
     const features = getStorage('unlockedFeatures') || [];
     return features;
