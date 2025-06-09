@@ -103,3 +103,29 @@ export function calculateWordValue(word, isGold) {
     }
     return Math.floor(value);
 }
+
+export function importSaveFile(saveData) {
+    localStorage.clear();
+    for (const key in saveData) {
+        if (Object.prototype.hasOwnProperty.call(saveData, key)) {
+            setStorage(key, JSON.parse(saveData[key]));
+        }
+    }
+    console.log('Save file imported successfully.');
+    location.reload();
+}
+
+export function exportSaveFile() {
+    const saveData = JSON.stringify(localStorage);
+    const blob = new Blob([saveData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'typeconomySaveFile.json'
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log('Save file exported successfully.');
+}

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
+import { useOverlayContext } from '../contexts/OverlayContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
+import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, handleCorrectWord, handleIncorrectWord } = useMoney();
+    const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
@@ -53,6 +56,11 @@ export default function GameArea() {
         }
     }, [compareWords]);
 
+    const handleImportExport = (e) => {
+        e.preventDefault();
+        openOverlay(<ImportExport />);
+    }
+
     return (
         <div className="h-[calc(100vh-3rem)] w-full">
             <div className="bg-[#005828] w-full h-[calc(13%)] text-white flex flex-row justify-between p-2 m-4 rounded shadow-lg">
@@ -97,8 +105,7 @@ export default function GameArea() {
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
                 <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Typing Test</button>
                 <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Difficulty</button>
-                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`}>Other</button>
-                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`}>Import/Export</button>
+                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`} onClick={handleImportExport}>Import/Export</button>
             </div>
         </div>
     );

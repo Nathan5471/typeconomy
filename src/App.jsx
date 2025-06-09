@@ -1,4 +1,3 @@
-import './App.css'
 import React from 'react'
 import UpgradeShop from './components/UpgradeShop'
 import GameArea from './components/GameArea'
