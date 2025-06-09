@@ -7,19 +7,21 @@ import Overlay from './components/Overlay'
 
 function App() {
   return (
-    <Overlay>
-    <div className="w-screen h-screen flex flex-row bg-[#003916]">
-      <div className="w-[calc(20%)] h-screen p-4">
-        <UpgradeShop />
+    <>
+      <div className="w-screen h-screen flex flex-row bg-[#003916]">
+        <div className="w-[calc(20%)] h-screen p-4">
+          <UpgradeShop />
+        </div>
+        <div className="w-[calc(65%)] h-screen p-4">
+          <GameArea />
+        </div>
+        <div className="w-[calc(15%)] h-screen p-4">
+          <Stats />
+        </div>
       </div>
-      <div className="w-[calc(65%)] h-screen p-4">
-        <GameArea />
-      </div>
-      <div className="w-[calc(15%)] h-screen p-4">
-        <Stats />
-      </div>
-    </div>
-    </Overlay>
+      <Overlay />
+    </>
+    
   )
 }
 
