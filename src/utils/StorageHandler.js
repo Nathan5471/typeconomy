@@ -64,7 +64,7 @@ export function generateRandomLength(averageLength) {
     }
 }
 
-export function getRandomWord() {
+export async function getRandomWord(count = 1) {
     const averageLength = getAverageLength();
     const length = generateRandomLength(averageLength);
     async function fetchWordByLength(length) {
@@ -83,7 +83,18 @@ export function getRandomWord() {
             return null;
         }
     }
-    return fetchWordByLength(length);
+    if (count === 1) {
+        return fetchWordByLength(length);
+    } else if (count > 1) {
+        const words = [];
+        for (let i = 0; i < count; i++) {
+            const word = await fetchWordByLength(length);
+            if (word) {
+                words.push(word);
+            }
+        }
+        return words;
+    }
 }
 
 export function calculateWordValue(word, isGold) {

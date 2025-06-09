@@ -4,6 +4,7 @@ import { useOverlayContext } from '../contexts/OverlayContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
+import TypingTest from './TypingTest.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
@@ -13,6 +14,7 @@ export default function GameArea() {
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
     const [isGold, setIsGold] = useState(false);
+    const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -44,6 +46,7 @@ export default function GameArea() {
     }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
 
     useEffect(() => {
+        if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
         const handleKeyDown = (event) => {
             if (event.key === ' ' || event.key === 'Enter') {
                 event.preventDefault();
@@ -54,7 +57,13 @@ export default function GameArea() {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         }
-    }, [compareWords]);
+    }, [compareWords, isTypingTestOpen]);
+
+    const handleTypingTest = (e) => {
+        e.preventDefault();
+        setIsTypingTestOpen(true);
+        openOverlay(<TypingTest closeTypingTest={() => {setIsTypingTestOpen(false)}}/>);
+    }
 
     const handleImportExport = (e) => {
         e.preventDefault();
@@ -103,7 +112,7 @@ export default function GameArea() {
                 
             </div>
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
-                <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Typing Test</button>
+                <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
                 <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Difficulty</button>
                 <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`} onClick={handleImportExport}>Import/Export</button>
             </div>
