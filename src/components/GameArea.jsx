@@ -5,7 +5,7 @@ import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, handleCorrectWord, handleIncorrectWord } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, handleCorrectWord, handleIncorrectWord } = useMoney();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
@@ -59,7 +59,7 @@ export default function GameArea() {
                 <h1 className="text-4xl">Typeconomy</h1>
                 <p className="text-4xl">Money: {FormatMoney(money)}</p>
             </div>
-            <div className="flex flex-col items-center justify-center text-white w-full h-[calc(80%)] p-2 m-4">
+            <div className="flex flex-col items-center justify-center text-white w-full h-[calc(60%)] p-2 m-4">
                 <div className="grid grid-cols-5 text-center items-center justify-center w-full mb-3">
                     <p className="text-xl text-white/33">{words[4]}</p>
                     <p className="text-xl text-white/66 ml-3">{words[3]}</p>
@@ -92,6 +92,13 @@ export default function GameArea() {
                         <p>{averageLength}</p>
                     </div>
                 </div>
+                
+            </div>
+            <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
+                <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Typing Test</button>
+                <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>Difficulty</button>
+                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`}>Other</button>
+                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`}>Import/Export</button>
             </div>
         </div>
     );

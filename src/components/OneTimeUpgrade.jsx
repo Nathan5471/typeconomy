@@ -4,8 +4,8 @@ import FormatMoney from '../utils/FormatMoney.js';
 import { buyOneTimeUpgrade } from '../utils/UpgradeHandler.js';
 
 export default function OneTimeUpgrade({ upgradeData }) {
-    const { money, decreaseMoneyBy, purchasedOneTimeUpgrades, purchasedOneTimeUpgrade } = useMoney();
-    const { id, name, description, cost } = upgradeData;
+    const { money, decreaseMoneyBy, purchasedOneTimeUpgrades, purchasedOneTimeUpgrade, handleUnlockFeature } = useMoney();
+    const { id, name, description, cost, feature } = upgradeData;
     const [isAffordable, setIsAffordable] = useState(false);
     const [isPurchased, setIsPurchased] = useState(false);
 
@@ -18,11 +18,18 @@ export default function OneTimeUpgrade({ upgradeData }) {
     }, [money, cost]);
 
     const handleUpgradePurchase = () => {
-        if (isAffordable) {
+        if (isAffordable && feature === 'none') {
             buyOneTimeUpgrade(id, cost, money);
             decreaseMoneyBy(cost);
             purchasedOneTimeUpgrade(id);
             setIsPurchased(true);
+        } else if (isAffordable && feature !== 'none') {
+            handleUnlockFeature(feature);
+            decreaseMoneyBy(cost);
+            purchasedOneTimeUpgrade(id);
+            setIsPurchased(true);
+        } else {
+            console.warn(`Upgrade ${name} is not affordable. Current money: ${money}, Upgrade cost: ${cost}`);
         }
     }
 

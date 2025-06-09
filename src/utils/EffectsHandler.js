@@ -123,3 +123,18 @@ export function increaseGoldWordChance(increaseBy) {
     const newChance = Math.min(currentChance + increaseBy, 1); // Cap at 1 (100%)
     setStorage('goldWordChance', newChance);
 }
+
+export function getUnlockedFeatures() {
+    const features = getStorage('unlockedFeatures') || [];
+    return features;
+}
+
+export function unlockFeature(feature) {
+    const currentFeatures = getUnlockedFeatures();
+    if (!currentFeatures.includes(feature)) {
+        currentFeatures.push(feature);
+        setStorage('unlockedFeatures', currentFeatures);
+    } else {
+        console.warn(`Feature ${feature} is already unlocked.`);
+    }
+}

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getMoney, increaseMoney, decreaseMoney, calculateWordValue } from '../utils/StorageHandler.js';
-import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased } from '../utils/EffectsHandler.js';
+import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
 import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
 
 const MoneyContext = createContext();
@@ -22,6 +22,7 @@ export const MoneyProvider = ({ children }) => {
     const [accuracy, setAccuracy] = useState(100);
     const [cashPerSecond, setCashPerSecond] = useState(0);
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
+    const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
 
     useEffect(() => {
         const storedMoney = getMoney();
@@ -32,6 +33,7 @@ export const MoneyProvider = ({ children }) => {
         const storedAverageLength = getAverageLength();
         const [storedAccuracy, storedCorrectWords, storedIncorrectWords] = getAccuracy();
         const storedOneTimeUpgrades = getPurchasedOneTimeUpgrades();
+        const storedUnlockedFeatures = getUnlockedFeatures();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
@@ -43,6 +45,7 @@ export const MoneyProvider = ({ children }) => {
         if (storedCorrectWords) setWordsTypedCorrectly(Number(storedCorrectWords));
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
         if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
+        if (storedUnlockedFeatures) setUnlockedFeatures(new Set(storedUnlockedFeatures));
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
@@ -96,6 +99,12 @@ export const MoneyProvider = ({ children }) => {
         refreshEffects();
     }
 
+    const handleUnlockFeature = (feature) => {
+        setUnlockedFeatures(prev => new Set(prev).add(feature));
+        unlockFeature(feature);
+        refreshEffects();
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             const cashPerSecond = getTotalCashPerSecond();
@@ -121,10 +130,12 @@ export const MoneyProvider = ({ children }) => {
         accuracy,
         cashPerSecond,
         purchasedOneTimeUpgrades,
+        unlockedFeatures,
         handleCorrectWord,
         handleIncorrectWord,
         decreaseMoneyBy,
         purchasedOneTimeUpgrade,
+        handleUnlockFeature,
     }
 
     return (

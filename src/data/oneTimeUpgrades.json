@@ -4,19 +4,43 @@
             "id": "1",
             "name": "Mechanical Keyboard",
             "description": "Increase word multiplier by 1x",
-            "cost": 250
+            "cost": 250,
+            "feature": "none"
         },
         {
             "id": "2",
             "name": "More Gold",
             "description": "Increases the odds of getting a goldend word",
-            "cost": 500
+            "cost": 500,
+            "feature": "none"
         },
         {
             "id": "3",
              "name": "Better Switches",
              "description": "Increase word multiplier by 1.5x",
-             "cost": 1000
+             "cost": 1000,
+             "feature": "none"
+        },
+        {
+            "id": "4",
+            "name": "Typing Test",
+            "description": "Unlocks the typing test feature",
+            "cost":1750,
+            "feature": "typingTest"
+        },
+        {
+            "id": "5",
+            "name": "Even Better Switches",
+            "description": "Increases word multiplier by 1.5x",
+            "cost": 2500,
+            "feature": "none"
+        },
+        {
+            "id": "6",
+            "name": "Difficulty",
+            "description": "Unlocks the difficulty feature",
+            "cost": 3500,
+            "feature": "difficulty"
         }
     ]
 }
