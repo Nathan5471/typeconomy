@@ -107,7 +107,16 @@ export function calculateWordValue(word, isGold) {
     const streakBonus = getStreakBonus();
     const currentStreak = getStreak();
 
-    const baseValue = Math.pow(word.length, 4/3)
+    let baseValue = Math.pow(word.length, 4/3)
+    if (/[A-Z]/.test(word)) {
+        baseValue *= 1.5;
+    }
+    if (/[0-9]/.test(word)) {
+        baseValue *= 1.5;
+    }
+    if (/[!@#$%^&*()_+[]{}|;:,.<>?]/.test(word)) {
+        baseValue *= 2;
+    }
     const value = baseValue * wordMultiplier + (currentStreak * streakBonus);
 
     if (isGold) {
