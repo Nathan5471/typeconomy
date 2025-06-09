@@ -108,3 +108,18 @@ export function increaseStreakBonus(increaseBy) {
     const newBonus = currentBonus + increaseBy;
     setStorage('streakBonus', newBonus);
 }
+
+export function getIsGoldWord() {
+    const chance = getStorage('goldWordChance') || 0.01;
+    return Math.random() < chance;
+}
+
+export function increaseGoldWordChance(increaseBy) {
+    if (typeof increaseBy !== 'number' || isNaN(increaseBy) || increaseBy < 0) {
+        console.error('Invalid increase by value. It must be a non-negative number.');
+        return;
+    }
+    const currentChance = getStorage('goldWordChance') || 0;
+    const newChance = Math.min(currentChance + increaseBy, 1); // Cap at 1 (100%)
+    setStorage('goldWordChance', newChance);
+}

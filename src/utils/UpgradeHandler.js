@@ -1,4 +1,4 @@
-import { getAmountOfUpgrades, incrementAmountOfUpgrades, increaseWordMultiplier, increaseAverageLength, increaseUpgradeCashPerSecond, increaseStreakBonus } from "./EffectsHandler.js";
+import { getAmountOfUpgrades, incrementAmountOfUpgrades, increaseWordMultiplier, increaseAverageLength, increaseUpgradeCashPerSecond, increaseStreakBonus, increaseGoldWordChance } from "./EffectsHandler.js";
 
 export function calculateUpgradeCost(baseCost, costMultiplier, upgradeId, amountToBuy, currentMoney) {
     const currentAmount = getAmountOfUpgrades(upgradeId);
@@ -79,7 +79,7 @@ function applyOneTimeUpgradeEffects(upgradeId) {
     if (upgradeId === '1') {
         increaseWordMultiplier(1);
     } else if (upgradeId === '2') {
-        // TODO: Implement changing of the probability of a word being gold
+        increaseGoldWordChance(0.02);
     } else if (upgradeId === '3') {
         increaseWordMultiplier(1.5);
     }

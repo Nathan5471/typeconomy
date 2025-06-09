@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
+import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function GameArea() {
@@ -34,7 +35,7 @@ export default function GameArea() {
         } else {
             handleIncorrectWord();
         }
-        setIsGold(Math.random() < .01);
+        setIsGold(getIsGoldWord());
         setFetchNewWord(prev => !prev);
         setInputValue('');
     }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
