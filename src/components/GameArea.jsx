@@ -150,7 +150,7 @@ export default function GameArea() {
                 
             </div>
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
-                { typingTestCountdown !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ?
+                { lastTypingTestTime !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ?
                 <button className={`m-2 ${typingTestBoostActive === true ? 'bg-[#005828]' : 'bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>{typingTestCountdown}</button> :
                 <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
                 }
