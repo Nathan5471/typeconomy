@@ -81,7 +81,7 @@ export default function GameArea() {
     const handleCountdown = (startTime, duration ) => { // Duration in milliseconds
         const endTime = new Date(startTime.getTime() + duration);
         const interval = setInterval(() => {
-            const now = Date.now();
+            const now = new Date();
             const remainingTime = Math.max(0, endTime - now);
             if (remainingTime <= 0) {
                 clearInterval(interval);
@@ -100,14 +100,10 @@ export default function GameArea() {
             return;
         }
         if (typingTestBoostActive === true) {
-            console.log("Typing test boost is active");
-            handleCountdown(lastTypingTestTime.getTime(), 60000); // 60 seconds countdown
-        } else if (typingTestBoostActive === false && new Date(lastTypingTestTime.getTime() + 60000) < Date.now() && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now()) {
-            console.log("Typing test boost is not active, but cooldown is active");
-            console.log(lastTypingTestTime)
+            handleCountdown(lastTypingTestTime, 60000); // 60 seconds countdown
+        } else if (typingTestBoostActive === false && new Date(lastTypingTestTime.getTime() + 60000) < new Date() && new Date(lastTypingTestTime.getTime() + 60000 * 11) > new Date()) {
             handleCountdown(new Date(lastTypingTestTime.getTime() + 60000), (60000 * 10)); // 10 minutes cooldown after typing test
         } else {
-            console.log("No typing test boost or cooldown active");
             setTypingTestCountdown(null);
         }
     }, [typingTestBoostActive, lastTypingTestTime]);
