@@ -98,7 +98,7 @@ export async function getRandomWord(count = 1) {
     }
 }
 
-export function calculateWordValue(word, isGold) {
+export function calculateWordValue(word, isGold, typingTestBoost, typingTestBoostIsActive) {
     if (typeof word !== 'string' || word.length === 0) {
         console.error('Invalid word. It must be a non-empty string.');
         return 0;
@@ -122,6 +122,11 @@ export function calculateWordValue(word, isGold) {
     if (isGold) {
         return Math.floor(value * 10);
     }
+
+    if (typingTestBoostIsActive) {
+        return Math.floor(value * typingTestBoost);
+    }
+
     return Math.floor(value);
 }
 

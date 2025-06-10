@@ -24,6 +24,9 @@ export const MoneyProvider = ({ children }) => {
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
     const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
     const [difficulty, setDifficulty] = useState({'upper': false, 'numbers': false, 'symbols': false}); // Lowercase is always true
+    const [typingTestBoost, setTypingTestBoost] = useState(1);
+    const [typingTestBoostActive, setTypingTestBoostActive] = useState(false);
+    const [lastTypingTestTime, setLastTypingTestTime] = useState(null);
 
     useEffect(() => {
         const storedMoney = getMoney();
@@ -59,7 +62,7 @@ export const MoneyProvider = ({ children }) => {
         setAccuracy(newAccuracy);
         setWordsTypedCorrectly(newCorrectWords);
         setWordsTypedIncorrectly(newIncorrectWords);
-        const wordValue = calculateWordValue(word, isGold);
+        const wordValue = calculateWordValue(word, isGold, typingTestBoost, typingTestBoostActive);
         increaseMoney(wordValue);
         const newMoney = getMoney();
         setMoney(newMoney);
@@ -119,6 +122,14 @@ export const MoneyProvider = ({ children }) => {
         }
     }
 
+    const completeTypingTest = (wpm, accuracy, length) => {
+        const boostMultiplier = (wpm / 50) * (length/15) * (accuracy / 100) + 1;
+        setTypingTestBoost(boostMultiplier);
+        setTypingTestBoostActive(true);
+        setLastTypingTestTime(new Date());
+        return boostMultiplier;
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             const cashPerSecond = getTotalCashPerSecond();
@@ -131,6 +142,14 @@ export const MoneyProvider = ({ children }) => {
         }, 1000);
         return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        if (!typingTestBoostActive) return;
+        setTimeout(() => {
+            setTypingTestBoost(1);
+            setTypingTestBoostActive(false);
+        }, 60000); // Reset boost after 60 seconds
+    }, [typingTestBoostActive]);
 
     const contextExport = {
         money,
@@ -146,12 +165,16 @@ export const MoneyProvider = ({ children }) => {
         purchasedOneTimeUpgrades,
         unlockedFeatures,
         difficulty,
+        typingTestBoost,
+        typingTestBoostActive,
+        lastTypingTestTime,
         handleCorrectWord,
         handleIncorrectWord,
         decreaseMoneyBy,
         purchasedOneTimeUpgrade,
         handleUnlockFeature,
         handleChangeDifficulty,
+        completeTypingTest,
     }
 
     return (

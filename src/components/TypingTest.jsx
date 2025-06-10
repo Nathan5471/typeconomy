@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useMoney } from '../contexts/MoneyContext.jsx';
 import { useOverlayContext } from '../contexts/OverlayContext.jsx';
 import { getRandomWord } from '../utils/StorageHandler.js';
 
 export default function TypingTest({closeTypingTest}) {
+    const { completeTypingTest } = useMoney();
     const { closeOverlay } = useOverlayContext();
     const [targetText, setTargetText] = useState('');
     const [inputValue, setInputValue] = useState('');
@@ -11,6 +13,7 @@ export default function TypingTest({closeTypingTest}) {
     const [accuracy, setAccuracy] = useState(0);
     const [wpm, setWpm] = useState(0);
     const [startTime, setStartTime] = useState(null);
+    const [typingTestBoost, setTypingTestBoost] = useState(1);
 
     useEffect(() => {
         const fetchTargetText = async () => {
@@ -26,6 +29,10 @@ export default function TypingTest({closeTypingTest}) {
         fetchTargetText();
     }, []);
 
+    const calculateBoost = useCallback((length) => {
+        setTypingTestBoost((wpm / 50) * (length / 15) * (accuracy / 100) + 1);
+    }, [wpm, accuracy]);
+
     useEffect(() => {
         const calculateStats = () => {
             if (inputValue.length === 0 || targetText.length === 0) return;
@@ -39,14 +46,14 @@ export default function TypingTest({closeTypingTest}) {
             const elapsedTime = (Date.now() - startTime) / 60000;
             setWpm(Math.round((correctChars.length / 5) / elapsedTime));
             if (inputValue.length >= targetText.length) {
+                calculateBoost(targetText.length);
                 setIsFinished(true);
-                setTargetText('');
                 setInputValue('');
                 setStartTime(null);
             }
         }
         calculateStats();
-    }, [inputValue, targetText, startTime]);
+    }, [inputValue, targetText, startTime, calculateBoost]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -54,6 +61,9 @@ export default function TypingTest({closeTypingTest}) {
 
     const handleClose = (e) => {
         e.preventDefault();
+        if (typingTestBoost > 1) {
+            completeTypingTest(wpm, accuracy, targetText.length);
+        }
         setTargetText('');
         setInputValue('');
         setIsFinished(false);
@@ -91,8 +101,17 @@ export default function TypingTest({closeTypingTest}) {
         return (
             <div className="text-white text-center">
                 <h1 className="text-4xl">Test Finished!</h1>
-                <p className="text-xl">Your accuracy: {accuracy}%</p>
-                <p className="text-xl">Your WPM: {wpm}</p>
+                <div className="mt-4 flex flex-row items-center justify-around">
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-2xl">Accuracy</h2>
+                        <p className="text-lg">{accuracy}%</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-2xl">WPM</h2>
+                        <p className="text-lg">{wpm}</p>
+                    </div>
+                </div>
+                <p className="mt-4 text-lg">For the next minute, words you type with be worth {typingTestBoost.toFixed(2)}x</p>
                 <button
                     onClick={handleClose}
                     className="mt-4 bg-blue-500 text-white p-2 rounded"

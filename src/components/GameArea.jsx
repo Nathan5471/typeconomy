@@ -10,13 +10,14 @@ import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, handleCorrectWord, handleIncorrectWord } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, handleCorrectWord, handleIncorrectWord } = useMoney();
     const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
+    const [typingTestCountdown, setTypingTestCountdown] = useState(null);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -77,6 +78,36 @@ export default function GameArea() {
         openOverlay(<ImportExport />);
     }
 
+    const handleCountdown = (startTime, duration ) => { // Duration in milliseconds
+        const endTime = startTime + duration;
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const remainingTime = Math.max(0, endTime - now);
+            if (remainingTime <= 0) {
+                clearInterval(interval);
+                setTypingTestCountdown(null);
+                return;
+            }
+            const totalSeconds = Math.floor(remainingTime / 1000);
+            setTypingTestCountdown(totalSeconds);
+        }, 1000);
+        return () => clearInterval(interval);
+    }
+
+    useEffect(() => {
+        if (lastTypingTestTime === null) {
+            setTypingTestCountdown(null);
+            return;
+        }
+        if (typingTestBoostActive === true) {
+            handleCountdown(lastTypingTestTime.getTime(), 60000); // 60 seconds countdown
+        } else if (typingTestBoostActive === false && new Date(lastTypingTestTime.getTime() + 60000) < Date.now() && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now()) {
+            handleCountdown(Date.now(), (60000 * 10)); // 10 minutes cooldown after typing test
+        } else {
+            setTypingTestCountdown(null);
+        }
+    }, [typingTestBoostActive, lastTypingTestTime]);
+
     return (
         <div className="h-[calc(100vh-3rem)] w-full">
             <div className="bg-[#005828] w-full h-[calc(13%)] text-white flex flex-row justify-between p-2 m-4 rounded shadow-lg">
@@ -119,7 +150,11 @@ export default function GameArea() {
                 
             </div>
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
+                { typingTestCountdown !== null ?
+                <button className={`m-2 ${typingTestBoostActive === true ? 'bg-[#005828]' : 'bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>{typingTestCountdown}</button> :
                 <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
+                }
+                
                 <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleDifficulty}>Difficulty</button>
                 <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`} onClick={handleImportExport}>Import/Export</button>
             </div>
