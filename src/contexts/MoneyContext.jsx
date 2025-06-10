@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, calculateWordValue } from '../utils/StorageHandler.js';
+import { getMoney, increaseMoney, decreaseMoney, calculateWordValue, getTypingTestInformation, updateTypingTestInformation } from '../utils/StorageHandler.js';
 import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getDifficulty, changeDifficulty, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
 import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
 
@@ -39,6 +39,7 @@ export const MoneyProvider = ({ children }) => {
         const storedOneTimeUpgrades = getPurchasedOneTimeUpgrades();
         const storedUnlockedFeatures = getUnlockedFeatures();
         const storedDifficulty = getDifficulty();
+        const storedTypingTestInformation = getTypingTestInformation();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
@@ -52,6 +53,12 @@ export const MoneyProvider = ({ children }) => {
         if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
         if (storedUnlockedFeatures) setUnlockedFeatures(new Set(storedUnlockedFeatures));
         if (storedDifficulty) setDifficulty(storedDifficulty);
+        if (storedTypingTestInformation) {
+            const { typingTestBoost, typingTestBoostIsActive, lastTypingTestTime } = storedTypingTestInformation;
+            setTypingTestBoost(typingTestBoost);
+            setTypingTestBoostActive(typingTestBoostIsActive);
+            setLastTypingTestTime(lastTypingTestTime);
+        }
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
@@ -127,6 +134,7 @@ export const MoneyProvider = ({ children }) => {
         setTypingTestBoost(boostMultiplier);
         setTypingTestBoostActive(true);
         setLastTypingTestTime(new Date());
+        updateTypingTestInformation(boostMultiplier, true, new Date());
         return boostMultiplier;
     }
 
@@ -148,8 +156,9 @@ export const MoneyProvider = ({ children }) => {
         setTimeout(() => {
             setTypingTestBoost(1);
             setTypingTestBoostActive(false);
+            updateTypingTestInformation(1, false, lastTypingTestTime);
         }, 60000); // Reset boost after 60 seconds
-    }, [typingTestBoostActive]);
+    }, [typingTestBoostActive, lastTypingTestTime]);
 
     const contextExport = {
         money,

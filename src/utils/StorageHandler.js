@@ -98,6 +98,38 @@ export async function getRandomWord(count = 1) {
     }
 }
 
+export function getTypingTestInformation() {
+    const typingTestBoost = getStorage('typingTestBoost') || 1;
+    const typingTestBoostIsActive = getStorage('typingTestBoostIsActive') || false;
+    let lastTypingTestTime = null;
+    try {
+        lastTypingTestTime = new Date(getStorage('lastTypingTestTime'));
+    } catch (error) {
+        console.error(`Error parsing lastTypingTestTime: ${error}`);
+        lastTypingTestTime = null;
+    }
+
+    return {
+        typingTestBoost,
+        typingTestBoostIsActive,
+        lastTypingTestTime
+    };
+}
+
+export function updateTypingTestInformation(typingTestBoost, typingTestBoostIsActive, lastTypingTestTime) {
+    if (typeof typingTestBoost !== 'number' || typingTestBoost <= 0) {
+        console.error('Invalid typing test boost value. It must be a positive number.');
+        return;
+    }
+    setStorage('typingTestBoost', typingTestBoost);
+    setStorage('typingTestBoostIsActive', typingTestBoostIsActive);
+    if (lastTypingTestTime instanceof Date) {
+        setStorage('lastTypingTestTime', lastTypingTestTime);
+    } else {
+        setStorage('lastTypingTestTime', null);
+    }
+}
+
 export function calculateWordValue(word, isGold, typingTestBoost, typingTestBoostIsActive) {
     if (typeof word !== 'string' || word.length === 0) {
         console.error('Invalid word. It must be a non-empty string.');

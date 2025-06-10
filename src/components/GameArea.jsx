@@ -79,7 +79,7 @@ export default function GameArea() {
     }
 
     const handleCountdown = (startTime, duration ) => { // Duration in milliseconds
-        const endTime = startTime + duration;
+        const endTime = new Date(startTime.getTime() + duration);
         const interval = setInterval(() => {
             const now = Date.now();
             const remainingTime = Math.max(0, endTime - now);
@@ -100,10 +100,14 @@ export default function GameArea() {
             return;
         }
         if (typingTestBoostActive === true) {
+            console.log("Typing test boost is active");
             handleCountdown(lastTypingTestTime.getTime(), 60000); // 60 seconds countdown
         } else if (typingTestBoostActive === false && new Date(lastTypingTestTime.getTime() + 60000) < Date.now() && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now()) {
-            handleCountdown(Date.now(), (60000 * 10)); // 10 minutes cooldown after typing test
+            console.log("Typing test boost is not active, but cooldown is active");
+            console.log(lastTypingTestTime)
+            handleCountdown(new Date(lastTypingTestTime.getTime() + 60000), (60000 * 10)); // 10 minutes cooldown after typing test
         } else {
+            console.log("No typing test boost or cooldown active");
             setTypingTestCountdown(null);
         }
     }, [typingTestBoostActive, lastTypingTestTime]);
@@ -150,7 +154,7 @@ export default function GameArea() {
                 
             </div>
             <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
-                { typingTestCountdown !== null ?
+                { typingTestCountdown !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ?
                 <button className={`m-2 ${typingTestBoostActive === true ? 'bg-[#005828]' : 'bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>{typingTestCountdown}</button> :
                 <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
                 }
