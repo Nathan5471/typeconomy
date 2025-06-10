@@ -41,6 +41,34 @@
             "description": "Unlocks the difficulty feature",
             "cost": 3500,
             "feature": "difficulty"
+        },
+        {
+            "id": "7",
+            "name": "Event More Gold",
+            "description": "Increases the odds of getting a goldend word",
+            "cost": 5000,
+            "feature": "none"
+        },
+        {
+            "id": "8",
+            "name": "The Best Mechanical Keyboard",
+            "description": "$10000 for a keyboard? Increases word multiplier by 2x",
+            "cost": 10000,
+            "feature": "none"
+        },
+        {
+            "id": "9",
+            "name": "Gold Rush",
+            "description": "Increases the odds of getting a goldend word",
+            "cost": 15000,
+            "feature": "none"
+        },
+        {
+            "id": "10",
+            "name": "Typing Master",
+            "description": "Increases the combo bonus",
+            "cost": 50000,
+            "feature": "none"
         }
     ]
 }

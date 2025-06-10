@@ -41,6 +41,41 @@
             "description": "Increase your cash per second by $250.",
             "baseCost": 15000,
             "costMultiplier": 1.4
+        },
+        {
+            "id": "7",
+            "name": "Word Factory",
+            "description": "Increase your cash per second by $1.5K.",
+            "baseCost": 40000,
+            "costMultiplier": 1.45
+        },
+        {
+            "id": "8",
+            "name": "1000 Monkeys",
+            "description": "Every hear about the infinite monkey theorem? Well, now you have 1000 monkeys typing away. Increase your cash per second by $10K.",
+            "baseCost": 85000,
+            "costMultiplier": 1.5
+        },
+        {
+            "id": "9",
+            "name": "ChatGPT",
+            "description": "An AI that gets you an extra $100K per second.",
+            "baseCost": 500000,
+            "costMultiplier": 1.55
+        },
+        {
+            "id": "10",
+            "name": "Word Bank",
+            "description": "A bank that gives you $1M per second.",
+            "baseCost": 10000000,
+            "costMultiplier": 1.6
+        },
+        {
+            "id": "11",
+            "name": "Word Cartel",
+            "description": "A cartel that gives you $10M per second.",
+            "baseCost": 500000000,
+            "costMultiplier": 1.65
         }
     ]
 }

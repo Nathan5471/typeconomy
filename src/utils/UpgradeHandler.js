@@ -71,6 +71,16 @@ function applyUpgradeEffects(upgradeId, amount) {
         increaseUpgradeCashPerSecond(upgradeId, 75 * amount);
     } else if (upgradeId === '6') {
         increaseUpgradeCashPerSecond(upgradeId, 250 * amount);
+    } else if (upgradeId === '7') {
+        increaseUpgradeCashPerSecond(upgradeId, 1500 * amount);
+    } else if (upgradeId === '8') {
+        increaseUpgradeCashPerSecond(upgradeId, 10000 * amount);
+    } else if (upgradeId === '9') {
+        increaseUpgradeCashPerSecond(upgradeId, 100000 * amount);
+    } else if (upgradeId === '10') {
+        increaseUpgradeCashPerSecond(upgradeId, 1000000 * amount);
+    } else if (upgradeId === '11') {
+        increaseUpgradeCashPerSecond(upgradeId, 10000000 * amount);
     }
 }
 
@@ -82,5 +92,15 @@ function applyOneTimeUpgradeEffects(upgradeId) {
         increaseGoldWordChance(0.02);
     } else if (upgradeId === '3') {
         increaseWordMultiplier(1.5);
+    } else if (upgradeId === '5') {
+        increaseWordMultiplier(1.5);
+    } else if (upgradeId === '7') {
+        increaseGoldWordChance(0.02);
+    } else if (upgradeId === '8') {
+        increaseWordMultiplier(2);
+    } else if (upgradeId === '9') {
+        increaseGoldWordChance(0.05);
+    } else if (upgradeId === '10') {
+        increaseStreakBonus(10);
     }
 }
