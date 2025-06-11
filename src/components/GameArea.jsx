@@ -109,54 +109,133 @@ export default function GameArea() {
     }, [typingTestBoostActive, lastTypingTestTime]);
 
     return (
-        <div className="h-[calc(100vh-3rem)] w-full">
-            <div className="bg-[#005828] w-full h-[calc(13%)] text-white flex flex-row justify-between p-2 m-4 rounded shadow-lg">
-                <h1 className="text-4xl">Typeconomy</h1>
-                <p className="text-4xl">Money: {FormatMoney(money)}</p>
-            </div>
-            <div className="flex flex-col items-center justify-center text-white w-full h-[calc(60%)] p-2 m-4">
-                <div className="grid grid-cols-5 text-center items-center justify-center w-full mb-3">
-                    <p className="text-xl text-white/33">{words[4]}</p>
-                    <p className="text-xl text-white/66 ml-3">{words[3]}</p>
-                    <h2 className={`text-2xl ${isGold === true ? "bg-yellow-400/20 text-yellow-400 rounded" : "text-white"}`}>{words[2]}</h2>
-                    <p className="text-xl text-white/66 ml-3">{words[1]}</p>
-                    <p className="text-xl text-white/33 ml-3">{words[0]}</p>
-                </div>
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="w-1/2 p-2 text-2xl rounded bg-[#003113] text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="Type the word here..."
-                />
-                <div className="mt-4 text-2xl flex flex-row">
-                    <div className="mr-4 p-2 text-center">
-                        <h3>Accuracy</h3>
-                        <p>{accuracy}%</p>
-                    </div>
-                    <div className="mr-4 p-2 text-center">
-                        <h3>Streak</h3>
-                        <p>{streak}</p>
-                    </div>
-                    <div className="mr-4 p-2 text-center">
-                        <h3>Multiplyer</h3>
-                        <p>{wordMultiplier}x</p>
-                    </div>
-                    <div className="p-2 text-center">
-                        <h3>Average Length</h3>
-                        <p>{averageLength}</p>
+        <div className="h-full w-full space-y-8">
+            {/* Header Stats */}
+            <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-white">{FormatMoney(money)}</div>
+                            <div className="text-sm text-white/60">Balance</div>
+                        </div>
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-blue-400">{streak}</div>
+                            <div className="text-sm text-white/60">Streak</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
+                            <div className="text-sm text-white/60">Accuracy</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
+                            <div className="text-sm text-white/60">Multiplier</div>
+                        </div>
                     </div>
                 </div>
-                
             </div>
-            <div className="mt-4 flex flex-row items-center justify-center text-white text-2xl">
-                { lastTypingTestTime !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ?
-                <button className={`m-2 ${typingTestBoostActive === true ? 'bg-[#005828]' : 'bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`}>{typingTestCountdown}</button> :
-                <button className={`m-2 ${unlockedFeatures.has('typingTest') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleTypingTest}>Typing Test</button>
-                }
+
+            {/* Main Typing Area */}
+            <div className="flex flex-col items-center justify-center space-y-8 py-16">
+                {/* Word Display */}
+                <div className="relative">
+                    <div className="flex items-center justify-center space-x-8 text-center">
+                        <div className="text-xl text-white/30 font-medium">{words[4]}</div>
+                        <div className="text-2xl text-white/50 font-medium">{words[3]}</div>
+                        <div className={`text-4xl font-bold px-6 py-3 rounded-xl transition-all duration-300 ${
+                            isGold 
+                                ? "bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-yellow-300 shadow-lg shadow-yellow-500/25 animate-pulse" 
+                                : "text-white bg-white/5"
+                        }`}>
+                            {words[2]}
+                        </div>
+                        <div className="text-2xl text-white/50 font-medium">{words[1]}</div>
+                        <div className="text-xl text-white/30 font-medium">{words[0]}</div>
+                    </div>
+                </div>
+
+                {/* Input Field */}
+                <div className="relative w-full max-w-lg">
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        className="w-full px-6 py-4 text-2xl text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                        placeholder="Start typing..."
+                        autoFocus
+                    />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="w-full max-w-lg">
+                    <div className="flex justify-between text-sm text-white/60 mb-2">
+                        <span>Progress</span>
+                        <span>{inputValue.length}/{words[2]?.length || 0}</span>
+                    </div>
+                    <div className="w-full bg-white/10 rounded-full h-2">
+                        <div 
+                            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${words[2] ? (inputValue.length / words[2].length) * 100 : 0}%` }}
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-center space-x-4">
+                {lastTypingTestTime !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ? (
+                    <button 
+                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                            typingTestBoostActive 
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg' 
+                                : 'bg-white/10 text-white/50 cursor-not-allowed'
+                        }`}
+                        disabled={!typingTestBoostActive}
+                    >
+                        {typingTestCountdown}
+                    </button>
+                ) : (
+                    <button 
+                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                            unlockedFeatures.has('typingTest')
+                                ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+                                : 'bg-white/10 text-white/50 cursor-not-allowed'
+                        }`}
+                        onClick={handleTypingTest}
+                        disabled={!unlockedFeatures.has('typingTest')}
+                    >
+                        <span className="flex items-center space-x-2">
+                            <span>⚡</span>
+                            <span>Typing Test</span>
+                        </span>
+                    </button>
+                )}
                 
-                <button className={`m-2 ${unlockedFeatures.has('difficulty') ? 'bg-[#005828]' : 'disabled cursor-not-allowed bg-gray-300 text-gray-500'} p-2 rounded-lg shadow-lg`} onClick={handleDifficulty}>Difficulty</button>
-                <button className={`m-2 bg-[#005828] p-2 rounded-lg shadow-lg`} onClick={handleImportExport}>Import/Export</button>
+                <button 
+                    className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                        unlockedFeatures.has('difficulty')
+                            ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl'
+                            : 'bg-white/10 text-white/50 cursor-not-allowed'
+                    }`}
+                    onClick={handleDifficulty}
+                    disabled={!unlockedFeatures.has('difficulty')}
+                >
+                    <span className="flex items-center space-x-2">
+                        <span>⚙️</span>
+                        <span>Difficulty</span>
+                    </span>
+                </button>
+                
+                <button 
+                    className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    onClick={handleImportExport}
+                >
+                    <span className="flex items-center space-x-2">
+                        <span>💾</span>
+                        <span>Import/Export</span>
+                    </span>
+                </button>
             </div>
         </div>
     );

@@ -21,29 +21,67 @@ export default function UpgradeShop() {
     }, []);
 
     return (
-        <div className="h-[calc(100vh-2rem)]">
-            <div className="bg-[#005828] w-full h-[calc(7%)] text-white mx-4 my-2 rounded shadow-lg">
-                <h1 className="text-center text-xl">Upgrade Shop</h1>
+        <div className="space-y-8">
+            {/* Header */}
+            <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                <h2 className="text-3xl font-bold text-white mb-2 flex items-center">
+                    <span className="mr-3">🏪</span>
+                    Upgrade Store
+                </h2>
+                <p className="text-white/60">Enhance your typing capabilities</p>
             </div>
-            <div className="bg-[#005828] w-full h-[calc(40%)] text-white p-4 mx-4 my-2 rounded shadow-lg flex flex-col gap-4 overflow-y-scroll">
-                {upgrades.map((upgrade) => (
-                    <Upgrade
-                        key={upgrade.id}
-                        upgradeData={upgrade}
-                    />
-                ))}
+
+            {/* Regular Upgrades */}
+            <div className="space-y-6">
+                <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">⚡</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Power Upgrades</h3>
+                </div>
+                
+                <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                    <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
+                        {upgrades.length > 0 ? upgrades.map((upgrade) => (
+                            <Upgrade
+                                key={upgrade.id}
+                                upgradeData={upgrade}
+                            />
+                        )) : (
+                            <div className="text-center py-8 text-white/60">
+                                <div className="text-4xl mb-2">📦</div>
+                                <div>No upgrades available</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-            <div className="bg-[#005828] w-full h-[calc(7%)] text-white mx-4 my-2 rounded shadow-lg">
-                <h1 className="text-center text-xl">One-Time Upgrades</h1>
-            </div>
-            <div className="bg-[#005828] w-full h-[calc(40%)] text-white p-4 mx-4 my-2 rounded shadow-lg flex flex-col gap-4 overflow-y-scroll">
-                {oneTimeUpgrades.map((upgrade) => (
-                    <OneTimeUpgrade
-                        key={upgrade.id}
-                        upgradeData={upgrade}
-                    />
-                ))}
+
+            {/* One-Time Upgrades */}
+            <div className="space-y-6">
+                <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">💎</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Special Unlocks</h3>
+                </div>
+                
+                <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                    <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
+                        {oneTimeUpgrades.length > 0 ? oneTimeUpgrades.map((upgrade) => (
+                            <OneTimeUpgrade
+                                key={upgrade.id}
+                                upgradeData={upgrade}
+                            />
+                        )) : (
+                            <div className="text-center py-8 text-white/60">
+                                <div className="text-4xl mb-2">🎁</div>
+                                <div>No special upgrades available</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
-    )
+    );
 }

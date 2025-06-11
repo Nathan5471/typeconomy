@@ -46,45 +46,66 @@ export default function Upgrade({ upgradeData }) {
     }
 
     return (
-        <div className="bg-[#003c18] relative group p-4 rounded shadow-lg">
-            <h3 className="text-lg">{name} ({amountOfUpgrades})</h3>
-            <div className="flex flex-row w-full justify-between items-center">
-                <p className="text-white text-lg">Buy:</p>
-                <button
-                    className={`px-1 py-.5 text-sm rounded ${purchaseAmount === 1 ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500'}`}
-                    onClick={(e) => handlePurchaseAmountChange(e, 1)}
-                >
-                    1
-                </button>
-                <button
-                    className={`px-1 py-.5 text-sm rounded ${purchaseAmount === 10 ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500'}`}
-                    onClick={(e) => handlePurchaseAmountChange(e, 10)}
-                >
-                    10
-                </button>
-                <button
-                    className={`px-1 py-.5 text-sm rounded ${purchaseAmount === 100 ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500'}`}
-                    onClick={(e) => handlePurchaseAmountChange(e, 100)}
-                >
-                    100
-                </button>
-                <button
-                    className={`px-1 py-.5 text-sm rounded ${purchaseAmount === 'max' ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500'}`}
-                    onClick={(e) => handlePurchaseAmountChange(e, 'max')}
-                >
-                    max
-                </button>
+        <div className="glass-dark rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 group">
+            <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+                        {name}
+                    </h3>
+                    <div className="flex items-center space-x-2 mt-1">
+                        <span className="text-sm text-white/60">Owned:</span>
+                        <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-sm font-medium rounded-full">
+                            {amountOfUpgrades}
+                        </span>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <div className="text-lg font-bold text-white">
+                        {FormatMoney(Number(cost))}
+                    </div>
+                    {amountToPurchase > 1 && (
+                        <div className="text-xs text-white/60">
+                            ({amountToPurchase}x)
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* Purchase Amount Selector */}
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-white/70">Amount:</span>
+                <div className="flex space-x-1">
+                    {[1, 10, 100, 'max'].map((amount) => (
+                        <button
+                            key={amount}
+                            className={`px-3 py-1 text-sm rounded-lg transition-all duration-200 ${
+                                purchaseAmount === amount
+                                    ? 'bg-blue-500 text-white shadow-lg'
+                                    : 'bg-white/10 text-white/70 hover:bg-white/20'
+                            }`}
+                            onClick={(e) => handlePurchaseAmountChange(e, amount)}
+                        >
+                            {amount}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Purchase Button */}
             <button 
-                className={`mt-2 px-4 py-2 w-full rounded ${isAffordable ? 'bg-[#005e2a] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                onClick={() => {
-                    handleUpgradePurhcase();
-                }}
+                className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    isAffordable
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+                        : 'bg-white/10 text-white/50 cursor-not-allowed'
+                }`}
+                onClick={handleUpgradePurhcase}
                 disabled={!isAffordable}
             >
-                {FormatMoney(Number(cost))} ({amountToPurchase}x)
+                {isAffordable ? 'Purchase' : 'Insufficient Funds'}
             </button>
-            <div className="absolte bottom-full hidden group-hover:flex bg-[#005828] text-white text-sm p-2 rounded shadow-lg mt-2">
+
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-0 right-0 mb-2 px-3 py-2 bg-gray-900/90 backdrop-blur-sm text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 {description}
             </div>
         </div>
