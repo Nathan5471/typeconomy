@@ -225,20 +225,6 @@ export default function GameArea() {
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
-
-                {/* Progress Indicator */}
-                <div className="w-full max-w-lg">
-                    <div className="flex justify-between text-sm text-white/60 mb-2">
-                        <span>Progress</span>
-                        <span>{inputValue.length}/{words[2]?.length || 0}</span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-2">
-                        <div 
-                            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${words[2] ? (inputValue.length / words[2].length) * 100 : 0}%` }}
-                        ></div>
-                    </div>
-                </div>
             </div>
 
             {/* Action Buttons */}
