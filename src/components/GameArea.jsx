@@ -10,7 +10,7 @@ import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity } = useMoney();
     const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
@@ -80,7 +80,7 @@ export default function GameArea() {
     };
 
     // Function to create success sound effect for completed words
-    const playSuccessSound = (isGold = false) => {
+    const playSuccessSound = (isGold = false, currentStreak = 0) => {
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
@@ -98,13 +98,51 @@ export default function GameArea() {
                         oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
                         oscillator.type = 'sine';
                         
-                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
                         gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.6);
                         
                         oscillator.start(audioContext.currentTime);
                         oscillator.stop(audioContext.currentTime + 0.6);
                     }, index * 120);
                 });
+            } else if (currentStreak >= 20) {
+                // Epic streak sound - multiple harmonious tones
+                const frequencies = [440, 554, 659, 880]; // A4, C#5, E5, A5
+                frequencies.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        oscillator.type = 'sine';
+                        
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.4);
+                    }, index * 80);
+                });
+            } else if (currentStreak >= 10) {
+                // Great streak sound - uplifting progression
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1047, audioContext.currentTime + 0.3);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.35);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.35);
             } else {
                 // Regular success - pleasant rising tone
                 const oscillator = audioContext.createOscillator();
@@ -133,19 +171,26 @@ export default function GameArea() {
         if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
             
-            // Play success sound effect
-            playSuccessSound(isGold);
+            // Play success sound effect with current streak
+            playSuccessSound(isGold, streak + 1); // +1 because streak will be incremented
         } else {
             handleIncorrectWord();
         }
         setIsGold(getIsGoldWord());
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
+    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak]);
 
     // Handle direct keyboard input (Monkeytype style)
     const handleKeyDown = useCallback((event) => {
         if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
+        
+        // Quick restart with Tab key
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setInputValue('');
+            return;
+        }
         
         // Prevent default behavior for most keys to avoid page scrolling, etc.
         if (event.key.length === 1 || event.key === 'Backspace' || event.key === ' ' || event.key === 'Enter') {
@@ -156,15 +201,17 @@ export default function GameArea() {
             compareWords();
         } else if (event.key === 'Backspace') {
             setInputValue(prev => prev.slice(0, -1));
+            updateTypingActivity(); // Track backspace as typing activity
         } else if (event.key.length === 1) {
             // Only allow single character keys (letters, numbers, symbols)
             const newValue = inputValue + event.key;
             setInputValue(newValue);
             
-            // Play double-click keyboard sound when typing
+            // Track typing activity and play sound
+            updateTypingActivity();
             playKeyboardSound();
         }
-    }, [inputValue, compareWords, isTypingTestOpen, playKeyboardSound]);
+    }, [inputValue, compareWords, isTypingTestOpen, playKeyboardSound, updateTypingActivity]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -226,20 +273,30 @@ export default function GameArea() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-6">
                         <div className="text-center">
-                            <div className="text-3xl font-bold text-white">{FormatMoney(money)}</div>
+                            <div className="text-3xl font-bold text-white flex items-center justify-center">
+                                <span className="mr-2">💰</span>
+                                <span className={`transition-all duration-500 ${isTyping ? 'animate-pulse text-green-400' : ''}`}>
+                                    {FormatMoney(money)}
+                                </span>
+                            </div>
                             <div className="text-sm text-white/60">Balance</div>
                         </div>
                         <div className="w-px h-12 bg-white/20"></div>
                         <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-400">{streak}</div>
+                            <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400 animate-bounce' : 'text-blue-400'}`}>{streak}</div>
                             <div className="text-sm text-white/60">Streak</div>
                             {streak >= 3 && (
-                                <div className="text-xs text-cyan-400 font-semibold">
-                                    {streak >= 50 ? '3.0x' : 
-                                     streak >= 25 ? '2.5x' : 
-                                     streak >= 15 ? '2.0x' : 
-                                     streak >= 10 ? '1.8x' : 
-                                     streak >= 5 ? '1.5x' : '1.2x'} XP
+                                <div className={`text-xs font-semibold transition-all duration-300 ${
+                                    streak >= 50 ? 'text-purple-400 animate-pulse' : 
+                                    streak >= 25 ? 'text-yellow-400 animate-pulse' : 
+                                    streak >= 15 ? 'text-orange-400' : 
+                                    streak >= 10 ? 'text-green-400' : 'text-cyan-400'
+                                }`}>
+                                    {streak >= 50 ? '🔥🔥🔥 3.0x' : 
+                                     streak >= 25 ? '🔥🔥 2.5x' : 
+                                     streak >= 15 ? '🔥 2.0x' :
+                                     streak >= 10 ? '⚡ 1.8x' : 
+                                     streak >= 5 ? '✨ 1.5x' : '💫 1.2x'} XP
                                 </div>
                             )}
                         </div>
@@ -248,8 +305,13 @@ export default function GameArea() {
                             <div className="text-sm text-white/60">Accuracy</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-2xl font-bold text-orange-400">{wpm}</div>
+                            <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400 animate-pulse' : 'text-orange-400/60'}`}>{wpm}</div>
                             <div className="text-sm text-white/60">WPM</div>
+                            {isTyping && (
+                                <div className="text-xs text-orange-400 animate-pulse">
+                                    🔥 Active
+                                </div>
+                            )}
                         </div>
                         <div className="text-center">
                             <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
@@ -260,18 +322,33 @@ export default function GameArea() {
                     {/* Level and XP Display */}
                     <div className="flex items-center space-x-6">
                         <div className="text-center">
-                            <div className="text-2xl font-bold text-yellow-400">Level {level}</div>
+                            <div className={`text-2xl font-bold transition-all duration-300 ${
+                                level >= 50 ? 'text-purple-400 animate-pulse' :
+                                level >= 25 ? 'text-yellow-400' :
+                                level >= 10 ? 'text-orange-400' : 'text-yellow-400'
+                            }`}>
+                                Level {level}
+                                {level >= 50 && <span className="ml-1">👑</span>}
+                                {level >= 25 && level < 50 && <span className="ml-1">💎</span>}
+                                {level >= 10 && level < 25 && <span className="ml-1">⭐</span>}
+                            </div>
                             <div className="text-sm text-white/60">Current Level</div>
                         </div>
                         <div className="text-center min-w-[120px]">
                             <div className="text-lg font-bold text-cyan-400">{xp} XP</div>
                             <div className="w-full bg-white/10 rounded-full h-2 mt-1">
                                 <div 
-                                    className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-500"
+                                    className={`h-2 rounded-full transition-all duration-500 ${
+                                        xpProgress >= 90 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse' :
+                                        'bg-gradient-to-r from-cyan-400 to-blue-500'
+                                    }`}
                                     style={{ width: `${xpProgress}%` }}
                                 ></div>
                             </div>
-                            <div className="text-xs text-white/50 mt-1">{Math.round(xpProgress)}% to next level</div>
+                            <div className="text-xs text-white/50 mt-1">
+                                {Math.round(xpProgress)}% to next level
+                                {xpProgress >= 90 && <span className="ml-1 animate-bounce">🎯</span>}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -290,9 +367,9 @@ export default function GameArea() {
                     {/* Current Word with Typing Indicator */}
                     <div className={`relative px-8 py-6 rounded-2xl text-4xl font-bold transition-all duration-300 inline-block ${
                         isGold 
-                            ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30" 
+                            ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 shadow-lg shadow-yellow-500/25" 
                             : "text-white bg-white/5 border border-white/10"
-                    }`}>
+                    } ${isTyping ? 'scale-105 shadow-2xl' : 'scale-100'}`}>
                         <div className="relative">
                             {/* Render each character of the current word */}
                             {words[2] && words[2].split('').map((char, index) => {
@@ -300,13 +377,13 @@ export default function GameArea() {
                                 if (index < inputValue.length) {
                                     // Character has been typed
                                     if (inputValue[index] === char) {
-                                        className = 'text-green-400'; // Correct character
+                                        className = 'text-green-400 animate-pulse'; // Correct character with pulse
                                     } else {
-                                        className = 'text-red-400 bg-red-500/20 px-1 rounded'; // Incorrect character
+                                        className = 'text-red-400 bg-red-500/30 px-1 rounded animate-shake'; // Incorrect character with shake
                                     }
                                 } else if (index === inputValue.length) {
                                     // Current character (cursor position)
-                                    className = 'bg-white/50 text-black animate-pulse px-1 rounded';
+                                    className = 'bg-white/70 text-black animate-pulse px-1 rounded shadow-lg';
                                 } else {
                                     // Untyped character
                                     className = isGold ? 'text-yellow-400/50' : 'text-white/50';
@@ -321,21 +398,26 @@ export default function GameArea() {
                             
                             {/* Show cursor after the word if we've typed more than the word length */}
                             {inputValue.length >= (words[2] || '').length && (
-                                <span className="bg-white/50 text-transparent animate-pulse ml-1 px-1 rounded">|</span>
+                                <span className="bg-red-500/70 text-white animate-pulse ml-1 px-1 rounded">|</span>
                             )}
                         </div>
                         
                         {isGold && (
-                            <div className="text-xs text-yellow-400 font-semibold mt-2">
-                                2x XP & Money!
+                            <div className="text-xs text-yellow-400 font-semibold mt-2 animate-bounce">
+                                💰 2x Money & XP! 💰
                             </div>
                         )}
                         
                         {/* Show what user has typed if it exceeds word length */}
                         {inputValue.length > (words[2] || '').length && (
-                            <div className="text-sm text-red-400 mt-2">
-                                Extra: {inputValue.slice((words[2] || '').length)}
+                            <div className="text-sm text-red-400 mt-2 animate-shake">
+                                ❌ Extra: {inputValue.slice((words[2] || '').length)}
                             </div>
+                        )}
+                        
+                        {/* Typing speed indicator */}
+                        {isTyping && (
+                            <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
                         )}
                     </div>
                     
@@ -346,9 +428,32 @@ export default function GameArea() {
                     </div>
                 </div>
 
-                {/* Typing Instructions */}
-                <div className="text-center text-white/40 text-sm">
-                    Start typing to begin • Press Space or Enter to submit word
+                {/* Dynamic Typing Instructions */}
+                <div className="text-center space-y-1">
+                    {!isTyping ? (
+                        <div className="text-white/40 text-sm animate-pulse">
+                            💤 Start typing to earn money and XP! 
+                        </div>
+                    ) : streak >= 20 ? (
+                        <div className="text-purple-400 text-sm font-semibold animate-bounce">
+                            🔥 ON FIRE! Keep the streak alive! 🔥
+                        </div>
+                    ) : streak >= 10 ? (
+                        <div className="text-yellow-400 text-sm font-semibold">
+                            ⚡ Amazing streak! You're in the zone! ⚡
+                        </div>
+                    ) : streak >= 5 ? (
+                        <div className="text-green-400 text-sm">
+                            ✨ Great streak! Keep it up! ✨
+                        </div>
+                    ) : (
+                        <div className="text-cyan-400 text-sm">
+                            🚀 Press Space or Enter to submit word 🚀
+                        </div>
+                    )}
+                    <div className="text-white/20 text-xs">
+                        Press Tab to restart • Backspace to delete
+                    </div>
                 </div>
             </div>
 

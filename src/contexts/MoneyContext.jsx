@@ -21,6 +21,8 @@ export const MoneyProvider = ({ children }) => {
     const [averageLength, setAverageLength] = useState(3);
     const [accuracy, setAccuracy] = useState(100);
     const [wpm, setWPM] = useState(0);
+    const [isTyping, setIsTyping] = useState(false);
+    const [lastTypingTime, setLastTypingTime] = useState(Date.now());
     const [cashPerSecond, setCashPerSecond] = useState(0);
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
     const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
@@ -76,6 +78,9 @@ export const MoneyProvider = ({ children }) => {
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
+        // Update typing activity timestamp
+        setLastTypingTime(Date.now());
+        
         setWordsTyped(prev => prev + 1);
         incrementWordsTyped();
         addWordToAccuracy(true);
@@ -192,14 +197,23 @@ export const MoneyProvider = ({ children }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Update WPM periodically
+    // Update WPM periodically with idle detection
     useEffect(() => {
         const interval = setInterval(() => {
-            const currentWPM = calculateWPM();
-            setWPM(currentWPM);
+            // Only update WPM if user has been typing recently (within last 3 seconds)
+            const timeSinceLastTyping = Date.now() - lastTypingTime;
+            if (timeSinceLastTyping < 3000) {
+                const currentWPM = calculateWPM();
+                setWPM(currentWPM);
+                setIsTyping(true);
+            } else {
+                // User is idle, gradually decrease WPM
+                setIsTyping(false);
+                setWPM(prev => Math.max(0, Math.floor(prev * 0.95))); // Decay WPM when not typing
+            }
         }, 2000); // Update every 2 seconds
         return () => clearInterval(interval);
-    }, []);
+    }, [lastTypingTime]);
 
     useEffect(() => {
         if (!typingTestBoostActive) return;
@@ -209,6 +223,10 @@ export const MoneyProvider = ({ children }) => {
             updateTypingTestInformation(1, false, lastTypingTestTime);
         }, 60000); // Reset boost after 60 seconds
     }, [typingTestBoostActive, lastTypingTestTime]);
+
+    const updateTypingActivity = () => {
+        setLastTypingTime(Date.now());
+    };
 
     const contextExport = {
         money,
@@ -221,6 +239,7 @@ export const MoneyProvider = ({ children }) => {
         averageLength,
         accuracy,
         wpm,
+        isTyping,
         cashPerSecond,
         purchasedOneTimeUpgrades,
         unlockedFeatures,
@@ -239,6 +258,7 @@ export const MoneyProvider = ({ children }) => {
         handleUnlockFeature,
         handleChangeDifficulty,
         completeTypingTest,
+        updateTypingActivity,
     }
 
     return (
