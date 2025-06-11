@@ -18,7 +18,6 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
-    const inputRef = useRef(null);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -28,13 +27,6 @@ export default function GameArea() {
             setWords([DifficultyFormat(word1), DifficultyFormat(word2), DifficultyFormat(word3)]);
         }
         fetchNewWords();
-        
-        // Focus the input field when component mounts
-        setTimeout(() => {
-            if (inputRef.current) {
-                inputRef.current.focus();
-            }
-        }, 100);
     }, []);
 
     useEffect(() => {
@@ -151,30 +143,35 @@ export default function GameArea() {
         setInputValue('');
     }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
 
-    // Handle input change and play keyboard sounds
-    const handleInputChange = (e) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
+    // Handle direct keyboard input (Monkeytype style)
+    const handleKeyDown = useCallback((event) => {
+        if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
         
-        // Play double-click keyboard sound when typing
-        if (newValue.length > inputValue.length) {
+        // Prevent default behavior for most keys to avoid page scrolling, etc.
+        if (event.key.length === 1 || event.key === 'Backspace' || event.key === ' ' || event.key === 'Enter') {
+            event.preventDefault();
+        }
+        
+        if (event.key === ' ' || event.key === 'Enter') {
+            compareWords();
+        } else if (event.key === 'Backspace') {
+            setInputValue(prev => prev.slice(0, -1));
+        } else if (event.key.length === 1) {
+            // Only allow single character keys (letters, numbers, symbols)
+            const newValue = inputValue + event.key;
+            setInputValue(newValue);
+            
+            // Play double-click keyboard sound when typing
             playKeyboardSound();
         }
-    };
+    }, [inputValue, compareWords, isTypingTestOpen, playKeyboardSound]);
 
     useEffect(() => {
-        if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
-        const handleKeyDown = (event) => {
-            if (event.key === ' ' || event.key === 'Enter') {
-                event.preventDefault();
-                compareWords();
-            }
-        }
         window.addEventListener('keydown', handleKeyDown);
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-        }
-    }, [compareWords, isTypingTestOpen]);
+        };
+    }, [handleKeyDown]);
 
     const handleTypingTest = (e) => {
         e.preventDefault();
@@ -223,15 +220,7 @@ export default function GameArea() {
     }, [typingTestBoostActive, lastTypingTestTime]);
 
     return (
-        <div 
-            className="h-full w-full space-y-8 relative"
-            onClick={() => {
-                // Focus input when clicking anywhere on the game area (except when overlay is open)
-                if (!isTypingTestOpen && inputRef.current) {
-                    inputRef.current.focus();
-                }
-            }}
-        >
+        <div className="h-full w-full space-y-8 relative">
             {/* Header Stats */}
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <div className="flex items-center justify-between">
@@ -290,46 +279,76 @@ export default function GameArea() {
 
             {/* Main Typing Area */}
             <div className="flex flex-col items-center justify-center space-y-8 py-16">
-                {/* Word Display */}
-                <div className="relative">
-                    <div className="flex items-center justify-center space-x-8 text-center">
+                {/* Words Display with Direct Typing */}
+                <div className="text-center space-y-6">
+                    {/* Future words */}
+                    <div className="space-y-3">
                         <div className="text-xl text-white/30 font-medium">{words[4]}</div>
                         <div className="text-2xl text-white/50 font-medium">{words[3]}</div>
-                        <div className={`text-4xl font-bold px-6 py-3 rounded-xl transition-all duration-300 ${
-                            isGold 
-                                ? "bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-yellow-300 shadow-lg shadow-yellow-500/25 animate-pulse" 
-                                : "text-white bg-white/5"
-                        }`}>
-                            {words[2]}
-                            {isGold && (
-                                <div className="text-xs text-yellow-400 font-semibold mt-1">
-                                    2x XP & Money!
-                                </div>
+                    </div>
+                    
+                    {/* Current Word with Typing Indicator */}
+                    <div className={`relative px-8 py-6 rounded-2xl text-4xl font-bold transition-all duration-300 inline-block ${
+                        isGold 
+                            ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30" 
+                            : "text-white bg-white/5 border border-white/10"
+                    }`}>
+                        <div className="relative">
+                            {/* Render each character of the current word */}
+                            {words[2] && words[2].split('').map((char, index) => {
+                                let className = '';
+                                if (index < inputValue.length) {
+                                    // Character has been typed
+                                    if (inputValue[index] === char) {
+                                        className = 'text-green-400'; // Correct character
+                                    } else {
+                                        className = 'text-red-400 bg-red-500/20 px-1 rounded'; // Incorrect character
+                                    }
+                                } else if (index === inputValue.length) {
+                                    // Current character (cursor position)
+                                    className = 'bg-white/50 text-black animate-pulse px-1 rounded';
+                                } else {
+                                    // Untyped character
+                                    className = isGold ? 'text-yellow-400/50' : 'text-white/50';
+                                }
+                                
+                                return (
+                                    <span key={index} className={`${className} transition-all duration-150`}>
+                                        {char}
+                                    </span>
+                                );
+                            })}
+                            
+                            {/* Show cursor after the word if we've typed more than the word length */}
+                            {inputValue.length >= (words[2] || '').length && (
+                                <span className="bg-white/50 text-transparent animate-pulse ml-1 px-1 rounded">|</span>
                             )}
                         </div>
+                        
+                        {isGold && (
+                            <div className="text-xs text-yellow-400 font-semibold mt-2">
+                                2x XP & Money!
+                            </div>
+                        )}
+                        
+                        {/* Show what user has typed if it exceeds word length */}
+                        {inputValue.length > (words[2] || '').length && (
+                            <div className="text-sm text-red-400 mt-2">
+                                Extra: {inputValue.slice((words[2] || '').length)}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Past words */}
+                    <div className="space-y-3">
                         <div className="text-2xl text-white/50 font-medium">{words[1]}</div>
                         <div className="text-xl text-white/30 font-medium">{words[0]}</div>
                     </div>
                 </div>
 
-                {/* Input Field */}
-                <div className="relative w-full max-w-lg">
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        className="w-full px-6 py-4 text-2xl text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
-                        placeholder="Start typing..."
-                        autoFocus
-                        onBlur={(e) => {
-                            // Re-focus when clicked away (except when overlay is open)
-                            if (!isTypingTestOpen) {
-                                setTimeout(() => e.target.focus(), 10);
-                            }
-                        }}
-                    />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                {/* Typing Instructions */}
+                <div className="text-center text-white/40 text-sm">
+                    Start typing to begin • Press Space or Enter to submit word
                 </div>
             </div>
 
