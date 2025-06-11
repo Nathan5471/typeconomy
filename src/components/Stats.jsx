@@ -3,7 +3,7 @@ import { useMoney } from '../contexts/MoneyContext';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Stats() {
-    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, cashPerSecond } = useMoney();
+    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, cashPerSecond, level, xp, xpProgress } = useMoney();
 
     const stats = [
         { label: 'Words Typed', value: wordsTyped, icon: '⌨️', color: 'from-blue-500 to-cyan-500' },
@@ -11,6 +11,8 @@ export default function Stats() {
         { label: 'Incorrect Words', value: wordsTypedIncorrectly, icon: '❌', color: 'from-red-500 to-rose-500' },
         { label: 'Highest Streak', value: highestStreak, icon: '🔥', color: 'from-orange-500 to-yellow-500' },
         { label: 'Cash Per Second', value: FormatMoney(cashPerSecond), icon: '💰', color: 'from-purple-500 to-pink-500' },
+        { label: 'Current Level', value: level, icon: '⭐', color: 'from-yellow-500 to-orange-500' },
+        { label: 'Total XP', value: xp, icon: '🚀', color: 'from-cyan-500 to-blue-500' },
     ];
 
     const accuracy = wordsTyped > 0 ? Math.round((wordsTypedCorrectly / wordsTyped) * 100) : 0;
@@ -66,6 +68,51 @@ export default function Stats() {
                                     <div className="text-xs text-white/60">Accuracy</div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Leveling Progress */}
+            <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                    <span className="mr-2">🎯</span>
+                    Leveling Progress
+                </h3>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                <span className="text-2xl font-bold text-black">{level}</span>
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-white">Level {level}</div>
+                                <div className="text-white/60">{xp} Total XP</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-white/60">
+                            <span>Progress to Level {level + 1}</span>
+                            <span>{Math.round(xpProgress)}%</span>
+                        </div>
+                        <div className="w-full bg-white/10 rounded-full h-3">
+                            <div 
+                                className="bg-gradient-to-r from-cyan-400 to-blue-500 h-3 rounded-full transition-all duration-500 animate-glow"
+                                style={{ width: `${xpProgress}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                        <div className="text-center p-3 bg-white/5 rounded-lg">
+                            <div className="text-lg font-bold text-cyan-400">1.0x - 3.0x</div>
+                            <div className="text-xs text-white/60">Streak XP Bonus</div>
+                        </div>
+                        <div className="text-center p-3 bg-white/5 rounded-lg">
+                            <div className="text-lg font-bold text-yellow-400">2x</div>
+                            <div className="text-xs text-white/60">Gold Word XP</div>
                         </div>
                     </div>
                 </div>

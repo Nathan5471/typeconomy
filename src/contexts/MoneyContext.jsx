@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getMoney, increaseMoney, decreaseMoney, calculateWordValue, getTypingTestInformation, updateTypingTestInformation } from '../utils/StorageHandler.js';
+import { getMoney, increaseMoney, decreaseMoney, calculateWordValue, getTypingTestInformation, updateTypingTestInformation, getLevel, getXP, addXP, checkLevelUp, getXPProgress, calculateWordXP, calculateStreakXPBonus } from '../utils/StorageHandler.js';
 import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getDifficulty, changeDifficulty, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
 import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
 
@@ -27,6 +27,11 @@ export const MoneyProvider = ({ children }) => {
     const [typingTestBoost, setTypingTestBoost] = useState(1);
     const [typingTestBoostActive, setTypingTestBoostActive] = useState(false);
     const [lastTypingTestTime, setLastTypingTestTime] = useState(null);
+    // Leveling system states
+    const [level, setLevel] = useState(1);
+    const [xp, setXP] = useState(0);
+    const [xpProgress, setXPProgress] = useState(0);
+    const [levelUpNotification, setLevelUpNotification] = useState(false);
 
     useEffect(() => {
         const storedMoney = getMoney();
@@ -40,6 +45,9 @@ export const MoneyProvider = ({ children }) => {
         const storedUnlockedFeatures = getUnlockedFeatures();
         const storedDifficulty = getDifficulty();
         const storedTypingTestInformation = getTypingTestInformation();
+        // Load leveling data
+        const storedLevel = getLevel();
+        const storedXP = getXP();
 
         if (storedMoney) setMoney(Number(storedMoney));
         if (storedWordsTyped) setWordsTyped(Number(storedWordsTyped));
@@ -53,6 +61,11 @@ export const MoneyProvider = ({ children }) => {
         if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
         if (storedUnlockedFeatures) setUnlockedFeatures(new Set(storedUnlockedFeatures));
         if (storedDifficulty) setDifficulty(storedDifficulty);
+        if (storedLevel) setLevel(Number(storedLevel));
+        if (storedXP) {
+            setXP(Number(storedXP));
+            setXPProgress(getXPProgress(Number(storedXP), Number(storedLevel)));
+        }
         if (storedTypingTestInformation) {
             const { typingTestBoost, typingTestBoostIsActive, lastTypingTestTime } = storedTypingTestInformation;
             setTypingTestBoost(typingTestBoost);
@@ -73,8 +86,29 @@ export const MoneyProvider = ({ children }) => {
         increaseMoney(wordValue);
         const newMoney = getMoney();
         setMoney(newMoney);
-        setStreak(prev => prev + 1);
+        
+        // Update streak first
+        const newStreak = streak + 1;
+        setStreak(newStreak);
         incrementStreak();
+        
+        // Calculate and add XP with streak bonus
+        const xpGained = calculateWordXP(word, isGold, newStreak);
+        const newXP = addXP(xpGained);
+        setXP(newXP);
+        
+        // Check for level up
+        const leveledUp = checkLevelUp(newXP, level);
+        if (leveledUp) {
+            const newLevel = level + 1;
+            setLevel(newLevel);
+            setLevelUpNotification(true);
+            // Hide level up notification after 3 seconds
+            setTimeout(() => setLevelUpNotification(false), 3000);
+        }
+        
+        // Update XP progress
+        setXPProgress(getXPProgress(newXP, leveledUp ? level + 1 : level));
     }
 
     const handleIncorrectWord = () => {
@@ -177,6 +211,10 @@ export const MoneyProvider = ({ children }) => {
         typingTestBoost,
         typingTestBoostActive,
         lastTypingTestTime,
+        level,
+        xp,
+        xpProgress,
+        levelUpNotification,
         handleCorrectWord,
         handleIncorrectWord,
         decreaseMoneyBy,

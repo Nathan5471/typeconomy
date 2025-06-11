@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMoney } from '../contexts/MoneyContext';
 import { useOverlayContext } from '../contexts/OverlayContext';
-import { getRandomWord } from '../utils/StorageHandler.js'
+import { getRandomWord, calculateWordXP } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 import DifficultyFormat from '../utils/DifficultFormat.js';
@@ -10,7 +10,7 @@ import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, handleCorrectWord, handleIncorrectWord } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, levelUpNotification, handleCorrectWord, handleIncorrectWord } = useMoney();
     const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
@@ -18,6 +18,7 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
+    const [xpGainNotification, setXPGainNotification] = useState({ show: false, amount: 0 });
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -40,13 +41,18 @@ export default function GameArea() {
     const compareWords = useCallback(() => {
         if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
+            
+            // Show XP gain notification
+            const xpGained = calculateWordXP(words[2], isGold, streak + 1);
+            setXPGainNotification({ show: true, amount: xpGained });
+            setTimeout(() => setXPGainNotification({ show: false, amount: 0 }), 2000);
         } else {
             handleIncorrectWord();
         }
         setIsGold(getIsGoldWord());
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold]);
+    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak]);
 
     useEffect(() => {
         if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
@@ -122,6 +128,15 @@ export default function GameArea() {
                         <div className="text-center">
                             <div className="text-2xl font-bold text-blue-400">{streak}</div>
                             <div className="text-sm text-white/60">Streak</div>
+                            {streak >= 3 && (
+                                <div className="text-xs text-cyan-400 font-semibold">
+                                    {streak >= 50 ? '3.0x' : 
+                                     streak >= 25 ? '2.5x' : 
+                                     streak >= 15 ? '2.0x' : 
+                                     streak >= 10 ? '1.8x' : 
+                                     streak >= 5 ? '1.5x' : '1.2x'} XP
+                                </div>
+                            )}
                         </div>
                         <div className="text-center">
                             <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
@@ -132,8 +147,47 @@ export default function GameArea() {
                             <div className="text-sm text-white/60">Multiplier</div>
                         </div>
                     </div>
+                    
+                    {/* Level and XP Display */}
+                    <div className="flex items-center space-x-6">
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-yellow-400">Level {level}</div>
+                            <div className="text-sm text-white/60">Current Level</div>
+                        </div>
+                        <div className="text-center min-w-[120px]">
+                            <div className="text-lg font-bold text-cyan-400">{xp} XP</div>
+                            <div className="w-full bg-white/10 rounded-full h-2 mt-1">
+                                <div 
+                                    className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${xpProgress}%` }}
+                                ></div>
+                            </div>
+                            <div className="text-xs text-white/50 mt-1">{Math.round(xpProgress)}% to next level</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {/* XP Gain Notification */}
+            {xpGainNotification.show && (
+                <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 animate-float-up">
+                    <div className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-4 py-2 rounded-lg shadow-lg border border-cyan-300">
+                        <span className="font-bold">+{xpGainNotification.amount} XP</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Level Up Notification */}
+            {levelUpNotification && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 animate-bounce">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-4 rounded-2xl shadow-2xl border-4 border-yellow-300">
+                        <div className="text-center">
+                            <div className="text-2xl font-bold">🎉 LEVEL UP! 🎉</div>
+                            <div className="text-lg font-semibold mt-1">You reached Level {level}!</div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Main Typing Area */}
             <div className="flex flex-col items-center justify-center space-y-8 py-16">
@@ -148,6 +202,11 @@ export default function GameArea() {
                                 : "text-white bg-white/5"
                         }`}>
                             {words[2]}
+                            {isGold && (
+                                <div className="text-xs text-yellow-400 font-semibold mt-1">
+                                    2x XP & Money!
+                                </div>
+                            )}
                         </div>
                         <div className="text-2xl text-white/50 font-medium">{words[1]}</div>
                         <div className="text-xl text-white/30 font-medium">{words[0]}</div>

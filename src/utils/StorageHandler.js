@@ -187,3 +187,77 @@ export function exportSaveFile() {
     URL.revokeObjectURL(url);
     console.log('Save file exported successfully.');
 }
+
+// Leveling System Functions
+export function getLevel() {
+    return getStorage('level') || 1;
+}
+
+export function getXP() {
+    return getStorage('xp') || 0;
+}
+
+export function setLevel(level) {
+    setStorage('level', level);
+}
+
+export function setXP(xp) {
+    setStorage('xp', xp);
+}
+
+export function addXP(amount) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount < 0) {
+        console.error('Invalid XP value. It must be a non-negative number.');
+        return;
+    }
+    const currentXP = getXP();
+    const newXP = currentXP + amount;
+    setXP(newXP);
+    return newXP;
+}
+
+export function calculateXPForLevel(level) {
+    // XP required for each level: level^2 * 100
+    // Level 1: 100 XP, Level 2: 400 XP, Level 3: 900 XP, etc.
+    return Math.floor(Math.pow(level, 2) * 100);
+}
+
+export function getXPForNextLevel(currentLevel) {
+    return calculateXPForLevel(currentLevel + 1);
+}
+
+export function getXPProgress(currentXP, currentLevel) {
+    const currentLevelXP = currentLevel > 1 ? calculateXPForLevel(currentLevel) : 0;
+    const nextLevelXP = calculateXPForLevel(currentLevel + 1);
+    const progressXP = currentXP - currentLevelXP;
+    const requiredXP = nextLevelXP - currentLevelXP;
+    return Math.min(100, Math.max(0, (progressXP / requiredXP) * 100));
+}
+
+export function checkLevelUp(currentXP, currentLevel) {
+    const nextLevelXP = calculateXPForLevel(currentLevel + 1);
+    if (currentXP >= nextLevelXP) {
+        setLevel(currentLevel + 1);
+        return true;
+    }
+    return false;
+}
+
+export function calculateStreakXPBonus(streak) {
+    // Better streak = better XP multiplier
+    if (streak >= 50) return 3.0;
+    if (streak >= 25) return 2.5;
+    if (streak >= 15) return 2.0;
+    if (streak >= 10) return 1.8;
+    if (streak >= 5) return 1.5;
+    if (streak >= 3) return 1.2;
+    return 1.0;
+}
+
+export function calculateWordXP(word, isGold, streak) {
+    const baseXP = word.length * 2; // 2 XP per character
+    const goldBonus = isGold ? 2.0 : 1.0;
+    const streakBonus = calculateStreakXPBonus(streak);
+    
+    return Math.floor(baseXP * goldBonus * streakBonus);
+}
