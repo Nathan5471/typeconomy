@@ -10,7 +10,7 @@ import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity } = useMoney();
     const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
@@ -271,8 +271,8 @@ export default function GameArea() {
             {/* Header Stats */}
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-6">
-                        <div className="text-center">
+                    <div className="flex items-center">
+                        <div className="text-center px-6">
                             <div className="text-3xl font-bold text-white flex items-center justify-center">
                                 <span className="mr-2">💰</span>
                                 <span className={`transition-all duration-500 ${isTyping ? 'animate-pulse text-green-400' : ''}`}>
@@ -282,13 +282,13 @@ export default function GameArea() {
                             <div className="text-sm text-white/60">Balance</div>
                         </div>
                         <div className="w-px h-12 bg-white/20"></div>
-                        <div className="text-center">
-                            <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400 animate-bounce' : 'text-blue-400'}`}>{streak}</div>
+                        <div className="text-center px-6">
+                            <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400' : 'text-blue-400'}`}>{streak}</div>
                             <div className="text-sm text-white/60">Streak</div>
                             {streak >= 3 && (
                                 <div className={`text-xs font-semibold transition-all duration-300 ${
-                                    streak >= 50 ? 'text-purple-400 animate-pulse' : 
-                                    streak >= 25 ? 'text-yellow-400 animate-pulse' : 
+                                    streak >= 50 ? 'text-purple-400' : 
+                                    streak >= 25 ? 'text-yellow-400' : 
                                     streak >= 15 ? 'text-orange-400' : 
                                     streak >= 10 ? 'text-green-400' : 'text-cyan-400'
                                 }`}>
@@ -300,30 +300,49 @@ export default function GameArea() {
                                 </div>
                             )}
                         </div>
-                        <div className="text-center">
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="text-center px-6">
                             <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
                             <div className="text-sm text-white/60">Accuracy</div>
                         </div>
-                        <div className="text-center">
-                            <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400 animate-pulse' : 'text-orange-400/60'}`}>{wpm}</div>
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="text-center px-6">
+                            <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400' : 'text-orange-400/60'}`}>{wpm}</div>
                             <div className="text-sm text-white/60">WPM</div>
                             {isTyping && (
-                                <div className="text-xs text-orange-400 animate-pulse">
+                                <div className="text-xs text-orange-400">
                                     🔥 Active
                                 </div>
                             )}
                         </div>
-                        <div className="text-center">
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="text-center px-6">
                             <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
                             <div className="text-sm text-white/60">Multiplier</div>
                         </div>
+                        {cashPerSecond > 0 && (
+                            <>
+                                <div className="w-px h-12 bg-white/20"></div>
+                                <div className="text-center px-6">
+                                    <div className="text-2xl font-bold text-emerald-400 flex items-center justify-center">
+                                        <span className="mr-1">💸</span>
+                                        <span>{FormatMoney(cashPerSecond)}</span>
+                                    </div>
+                                    <div className="text-sm text-white/60">Per Second</div>
+                                    <div className="text-xs text-emerald-400">
+                                        🤖 Passive
+                                    </div>
+                                </div>
+                                <div className="w-px h-12 bg-white/20"></div>
+                            </>
+                        )}
                     </div>
                     
                     {/* Level and XP Display */}
                     <div className="flex items-center space-x-6">
                         <div className="text-center">
                             <div className={`text-2xl font-bold transition-all duration-300 ${
-                                level >= 50 ? 'text-purple-400 animate-pulse' :
+                                level >= 50 ? 'text-purple-400' :
                                 level >= 25 ? 'text-yellow-400' :
                                 level >= 10 ? 'text-orange-400' : 'text-yellow-400'
                             }`}>
@@ -347,7 +366,7 @@ export default function GameArea() {
                             </div>
                             <div className="text-xs text-white/50 mt-1">
                                 {Math.round(xpProgress)}% to next level
-                                {xpProgress >= 90 && <span className="ml-1 animate-bounce">🎯</span>}
+                                {xpProgress >= 90 && <span className="ml-1">🎯</span>}
                             </div>
                         </div>
                     </div>
@@ -403,7 +422,7 @@ export default function GameArea() {
                         </div>
                         
                         {isGold && (
-                            <div className="text-xs text-yellow-400 font-semibold mt-2 animate-bounce">
+                            <div className="text-xs text-yellow-400 font-semibold mt-2">
                                 💰 2x Money & XP! 💰
                             </div>
                         )}
@@ -435,7 +454,7 @@ export default function GameArea() {
                             💤 Start typing to earn money and XP! 
                         </div>
                     ) : streak >= 20 ? (
-                        <div className="text-purple-400 text-sm font-semibold animate-bounce">
+                        <div className="text-purple-400 text-sm font-semibold">
                             🔥 ON FIRE! Keep the streak alive! 🔥
                         </div>
                     ) : streak >= 10 ? (
