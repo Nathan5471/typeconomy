@@ -3,14 +3,13 @@ import { useMoney } from '../contexts/MoneyContext';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Stats() {
-    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, cashPerSecond, level, xp, xpProgress } = useMoney();
+    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, level, xp, xpProgress } = useMoney();
 
     const stats = [
         { label: 'Words Typed', value: wordsTyped, icon: '⌨️', color: 'from-blue-500 to-cyan-500' },
         { label: 'Correct Words', value: wordsTypedCorrectly, icon: '✅', color: 'from-green-500 to-emerald-500' },
         { label: 'Incorrect Words', value: wordsTypedIncorrectly, icon: '❌', color: 'from-red-500 to-rose-500' },
         { label: 'Highest Streak', value: highestStreak, icon: '🔥', color: 'from-orange-500 to-yellow-500' },
-        { label: 'Cash Per Second', value: FormatMoney(cashPerSecond), icon: '💰', color: 'from-purple-500 to-pink-500' },
         { label: 'Current Level', value: level, icon: '⭐', color: 'from-yellow-500 to-orange-500' },
         { label: 'Total XP', value: xp, icon: '🚀', color: 'from-cyan-500 to-blue-500' },
     ];
@@ -135,21 +134,6 @@ export default function Stats() {
                         </div>
                     </div>
                 ))}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="glass-dark rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                    <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2">
-                        <span>🎯</span>
-                        <span>Practice Mode</span>
-                    </button>
-                    <button className="w-full px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2">
-                        <span>📈</span>
-                        <span>View History</span>
-                    </button>
-                </div>
             </div>
         </div>
     );
