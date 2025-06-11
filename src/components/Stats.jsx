@@ -3,7 +3,7 @@ import { useMoney } from '../contexts/MoneyContext';
 import FormatMoney from '../utils/FormatMoney.js';
 
 export default function Stats() {
-    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, level, xp, xpProgress } = useMoney();
+    const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, level, xp, xpProgress, wpm } = useMoney();
 
     const stats = [
         { label: 'Words Typed', value: wordsTyped, icon: '⌨️', color: 'from-blue-500 to-cyan-500' },
@@ -31,40 +31,82 @@ export default function Stats() {
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold text-white mb-4">Performance Overview</h3>
                 <div className="space-y-4">
-                    {/* Accuracy Circle */}
-                    <div className="flex items-center justify-center">
-                        <div className="relative w-32 h-32">
-                            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                                <circle
-                                    cx="60"
-                                    cy="60"
-                                    r="50"
-                                    stroke="rgba(255,255,255,0.1)"
-                                    strokeWidth="8"
-                                    fill="none"
-                                />
-                                <circle
-                                    cx="60"
-                                    cy="60"
-                                    r="50"
-                                    stroke="url(#gradient-accuracy)"
-                                    strokeWidth="8"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeDasharray={`${(accuracy / 100) * 314} 314`}
-                                    className="transition-all duration-1000"
-                                />
-                                <defs>
-                                    <linearGradient id="gradient-accuracy" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#3B82F6" />
-                                        <stop offset="100%" stopColor="#8B5CF6" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-white">{accuracy}%</div>
-                                    <div className="text-xs text-white/60">Accuracy</div>
+                    {/* Performance Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Accuracy Circle */}
+                        <div className="flex items-center justify-center">
+                            <div className="relative w-32 h-32">
+                                <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="50"
+                                        stroke="rgba(255,255,255,0.1)"
+                                        strokeWidth="8"
+                                        fill="none"
+                                    />
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="50"
+                                        stroke="url(#gradient-accuracy)"
+                                        strokeWidth="8"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeDasharray={`${(accuracy / 100) * 314} 314`}
+                                        className="transition-all duration-1000"
+                                    />
+                                    <defs>
+                                        <linearGradient id="gradient-accuracy" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#3B82F6" />
+                                            <stop offset="100%" stopColor="#8B5CF6" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-white">{accuracy}%</div>
+                                        <div className="text-xs text-white/60">Accuracy</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* WPM Display */}
+                        <div className="flex items-center justify-center">
+                            <div className="relative w-32 h-32">
+                                <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="50"
+                                        stroke="rgba(255,255,255,0.1)"
+                                        strokeWidth="8"
+                                        fill="none"
+                                    />
+                                    <circle
+                                        cx="60"
+                                        cy="60"
+                                        r="50"
+                                        stroke="url(#gradient-wpm)"
+                                        strokeWidth="8"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                        strokeDasharray={`${Math.min(wpm / 100, 1) * 314} 314`}
+                                        className="transition-all duration-1000"
+                                    />
+                                    <defs>
+                                        <linearGradient id="gradient-wpm" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#F97316" />
+                                            <stop offset="100%" stopColor="#EAB308" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-orange-400">{wpm}</div>
+                                        <div className="text-xs text-white/60">WPM</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

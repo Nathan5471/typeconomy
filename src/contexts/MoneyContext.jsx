@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getMoney, increaseMoney, decreaseMoney, calculateWordValue, getTypingTestInformation, updateTypingTestInformation, getLevel, getXP, addXP, checkLevelUp, getXPProgress, calculateWordXP, calculateStreakXPBonus } from '../utils/StorageHandler.js';
 import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getDifficulty, changeDifficulty, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
-import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy } from '../utils/StatsHandler.js';
+import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy, addWordForWPM, calculateWPM } from '../utils/StatsHandler.js';
 
 const MoneyContext = createContext();
 
@@ -20,6 +20,7 @@ export const MoneyProvider = ({ children }) => {
     const [wordMultiplier, setWordMultiplier] = useState(1);
     const [averageLength, setAverageLength] = useState(3);
     const [accuracy, setAccuracy] = useState(100);
+    const [wpm, setWPM] = useState(0);
     const [cashPerSecond, setCashPerSecond] = useState(0);
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
     const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
@@ -78,6 +79,12 @@ export const MoneyProvider = ({ children }) => {
         setWordsTyped(prev => prev + 1);
         incrementWordsTyped();
         addWordToAccuracy(true);
+        
+        // Add word for WPM calculation
+        addWordForWPM(word.length);
+        const newWPM = calculateWPM();
+        setWPM(newWPM);
+        
         const [newAccuracy, newCorrectWords, newIncorrectWords] = getAccuracy();
         setAccuracy(newAccuracy);
         setWordsTypedCorrectly(newCorrectWords);
@@ -185,6 +192,15 @@ export const MoneyProvider = ({ children }) => {
         return () => clearInterval(interval);
     }, []);
 
+    // Update WPM periodically
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const currentWPM = calculateWPM();
+            setWPM(currentWPM);
+        }, 2000); // Update every 2 seconds
+        return () => clearInterval(interval);
+    }, []);
+
     useEffect(() => {
         if (!typingTestBoostActive) return;
         setTimeout(() => {
@@ -204,6 +220,7 @@ export const MoneyProvider = ({ children }) => {
         wordMultiplier,
         averageLength,
         accuracy,
+        wpm,
         cashPerSecond,
         purchasedOneTimeUpgrades,
         unlockedFeatures,
