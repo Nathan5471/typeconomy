@@ -78,40 +78,67 @@ export default function Stats() {
                     <span className="mr-2">🎯</span>
                     Leveling Progress
                 </h3>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                                <span className="text-2xl font-bold text-black">{level}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Current Level Status */}
+                    <div className="space-y-4">
+                        <h4 className="text-lg font-semibold text-white flex items-center">
+                            <span className="mr-2">📊</span>
+                            Current Progress
+                        </h4>
+                        <div className="bg-white/5 rounded-lg p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-white/70">Level</span>
+                                <span className="text-yellow-400 font-bold">{level}</span>
                             </div>
-                            <div>
-                                <div className="text-2xl font-bold text-white">Level {level}</div>
-                                <div className="text-white/60">{xp} Total XP</div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-white/70">Total XP</span>
+                                <span className="text-cyan-400 font-bold">{xp}</span>
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-white/60">Next Level Progress</span>
+                                    <span className="text-white/60">{Math.round(xpProgress)}%</span>
+                                </div>
+                                <div className="w-full bg-white/10 rounded-full h-3">
+                                    <div 
+                                        className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500 animate-glow"
+                                        style={{ width: `${xpProgress}%` }}
+                                    ></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-white/60">
-                            <span>Progress to Level {level + 1}</span>
-                            <span>{Math.round(xpProgress)}%</span>
-                        </div>
-                        <div className="w-full bg-white/10 rounded-full h-3">
-                            <div 
-                                className="bg-gradient-to-r from-cyan-400 to-blue-500 h-3 rounded-full transition-all duration-500 animate-glow"
-                                style={{ width: `${xpProgress}%` }}
-                            ></div>
-                        </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                        <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <div className="text-lg font-bold text-cyan-400">1.0x - 3.0x</div>
-                            <div className="text-xs text-white/60">Streak XP Bonus</div>
-                        </div>
-                        <div className="text-center p-3 bg-white/5 rounded-lg">
-                            <div className="text-lg font-bold text-yellow-400">2x</div>
-                            <div className="text-xs text-white/60">Gold Word XP</div>
+
+                    {/* XP Bonuses Guide */}
+                    <div className="space-y-4">
+                        <h4 className="text-lg font-semibold text-white flex items-center">
+                            <span className="mr-2">🚀</span>
+                            XP Bonus System
+                        </h4>
+                        <div className="space-y-2">
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-white/70 text-sm">Base XP</span>
+                                    <span className="text-blue-400 font-semibold">2 XP per character</span>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-white/70 text-sm">Gold Words</span>
+                                    <span className="text-yellow-400 font-semibold">2x XP Multiplier</span>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 rounded-lg p-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-white/70 text-sm">Streak Bonus</span>
+                                    <span className="text-green-400 font-semibold">1.0x - 3.0x XP</span>
+                                </div>
+                            </div>
+                            <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg p-3 border border-cyan-500/20">
+                                <div className="text-xs text-cyan-400 font-semibold">
+                                    💡 Tip: Maintain long streaks for maximum XP gains!
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
