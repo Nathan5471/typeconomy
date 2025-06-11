@@ -18,7 +18,8 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
-    const [xpGainNotification, setXPGainNotification] = useState({ show: false, amount: 0 });
+    const [particles, setParticles] = useState([]);
+    const [typingParticles, setTypingParticles] = useState([]);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -38,14 +39,81 @@ export default function GameArea() {
         fetchNextWord();
     }, [fetchNewWord]);
 
+    // Function to create money sound effect
+    const playMoneySound = (baseFreq = 440, isGold = false) => {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            if (isGold) {
+                // Special gold sound - ascending notes
+                const frequencies = [523, 659, 784]; // C5, E5, G5
+                frequencies.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        oscillator.type = 'triangle';
+                        
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.15);
+                    }, index * 80);
+                });
+            } else {
+                // Regular money sound - coin clink
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, audioContext.currentTime + 0.1);
+                oscillator.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            }
+        } catch (e) {
+            // Audio not supported, continue silently
+        }
+    };
+
     const compareWords = useCallback(() => {
         if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
             
-            // Show XP gain notification
+            // Generate purple particles at bottom based on XP amount
             const xpGained = calculateWordXP(words[2], isGold, streak + 1);
-            setXPGainNotification({ show: true, amount: xpGained });
-            setTimeout(() => setXPGainNotification({ show: false, amount: 0 }), 2000);
+            const numParticles = Math.min(xpGained, 15); // Cap at 15 particles for performance
+            
+            const newParticles = [];
+            for (let i = 0; i < numParticles; i++) {
+                newParticles.push({
+                    id: Date.now() + i,
+                    x: 20 + Math.random() * 60, // Random X position between 20% and 80%
+                    delay: i * 80, // Stagger the particles
+                    size: isGold ? 'w-3 h-3' : 'w-2 h-2'
+                });
+            }
+            
+            setParticles(newParticles);
+            
+            // Clean up particles after animation
+            setTimeout(() => setParticles([]), 3500);
+            
+            // Play money sound effect
+            const baseFreq = 440 + (xpGained * 20);
+            playMoneySound(baseFreq, isGold);
         } else {
             handleIncorrectWord();
         }
@@ -53,6 +121,29 @@ export default function GameArea() {
         setFetchNewWord(prev => !prev);
         setInputValue('');
     }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak]);
+
+    // Handle input change and create typing particles
+    const handleInputChange = (e) => {
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        
+        // Create typing particles when typing
+        if (newValue.length > inputValue.length) {
+            const newTypingParticle = {
+                id: Date.now() + Math.random(),
+                x: 45 + Math.random() * 10, // Around the input field
+                y: 45 + Math.random() * 10,
+                delay: 0
+            };
+            
+            setTypingParticles(prev => [...prev, newTypingParticle]);
+            
+            // Clean up typing particle after animation
+            setTimeout(() => {
+                setTypingParticles(prev => prev.filter(p => p.id !== newTypingParticle.id));
+            }, 1500);
+        }
+    };
 
     useEffect(() => {
         if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
@@ -115,7 +206,23 @@ export default function GameArea() {
     }, [typingTestBoostActive, lastTypingTestTime]);
 
     return (
-        <div className="h-full w-full space-y-8">
+        <div className="h-full w-full space-y-8 relative">
+            {/* Background Purple Dots */}
+            <div className="fixed bottom-0 left-0 right-0 h-32 pointer-events-none z-10">
+                {[...Array(20)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-purple-400/30 rounded-full animate-fade-pulse"
+                        style={{
+                            left: `${5 + (i * 4.5)}%`,
+                            bottom: `${10 + Math.sin(i) * 15}px`,
+                            animationDelay: `${i * 0.3}s`,
+                            animationDuration: `${2 + Math.random() * 2}s`
+                        }}
+                    ></div>
+                ))}
+            </div>
+
             {/* Header Stats */}
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <div className="flex items-center justify-between">
@@ -168,22 +275,38 @@ export default function GameArea() {
                 </div>
             </div>
 
-            {/* XP Gain Notification */}
-            {xpGainNotification.show && (
-                <div className="fixed top-20 right-6 z-40 animate-float-up">
-                    <div className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-3 py-2 rounded-lg shadow-lg border border-cyan-300 text-sm font-semibold">
-                        +{xpGainNotification.amount} XP
-                    </div>
-                </div>
-            )}
+            {/* Purple XP Particles at Bottom */}
+            {particles.map((particle) => (
+                <div
+                    key={particle.id}
+                    className={`fixed bottom-4 z-30 pointer-events-none animate-particle-bottom ${particle.size} bg-purple-500 rounded-full opacity-70`}
+                    style={{
+                        left: `${particle.x}%`,
+                        animationDelay: `${particle.delay}ms`
+                    }}
+                ></div>
+            ))}
 
-            {/* Level Up Notification */}
+            {/* Typing Particles */}
+            {typingParticles.map((particle) => (
+                <div
+                    key={particle.id}
+                    className="fixed z-20 pointer-events-none animate-typing-particle w-1 h-1 bg-purple-400 rounded-full opacity-60"
+                    style={{
+                        left: `${particle.x}%`,
+                        top: `${particle.y}%`,
+                        animationDelay: `${particle.delay}ms`
+                    }}
+                ></div>
+            ))}
+
+            {/* Simple Level Up Notification */}
             {levelUpNotification && (
-                <div className="fixed top-6 right-6 z-50 animate-bounce">
-                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-3 rounded-xl shadow-2xl border-2 border-yellow-300">
-                        <div className="text-center">
-                            <div className="text-lg font-bold">🎉 LEVEL UP!</div>
-                            <div className="text-sm font-semibold">Level {level}!</div>
+                <div className="fixed top-6 right-6 z-40 animate-level-up-simple pointer-events-none">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-lg shadow-lg border-2 border-yellow-300">
+                        <div className="flex items-center space-x-2">
+                            <span className="text-lg">🎉</span>
+                            <span className="font-bold">Level {level}!</span>
                         </div>
                     </div>
                 </div>
@@ -218,12 +341,12 @@ export default function GameArea() {
                     <input
                         type="text"
                         value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        className="w-full px-6 py-4 text-2xl text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                        onChange={handleInputChange}
+                        className="w-full px-6 py-4 text-2xl text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
                         placeholder="Start typing..."
                         autoFocus
                     />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
             </div>
 
