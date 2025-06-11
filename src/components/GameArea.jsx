@@ -337,10 +337,10 @@ export default function GameArea() {
             <div className="flex justify-center space-x-4">
                 {lastTypingTestTime !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ? (
                     <button 
-                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                        className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
                             typingTestBoostActive 
-                                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg' 
-                                : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                ? 'glass-dark border border-green-500/30 text-green-400 hover:border-green-500/50 hover:bg-green-500/10 shadow-lg' 
+                                : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
                         }`}
                         disabled={!typingTestBoostActive}
                     >
@@ -348,10 +348,10 @@ export default function GameArea() {
                     </button>
                 ) : (
                     <button 
-                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                        className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
                             unlockedFeatures.has('typingTest')
-                                ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
-                                : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                ? 'glass-dark border border-blue-500/30 text-blue-400 hover:border-blue-500/50 hover:bg-blue-500/10 shadow-lg hover:shadow-xl'
+                                : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
                         }`}
                         onClick={handleTypingTest}
                         disabled={!unlockedFeatures.has('typingTest')}
@@ -364,10 +364,10 @@ export default function GameArea() {
                 )}
                 
                 <button 
-                    className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
                         unlockedFeatures.has('difficulty')
-                            ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl'
-                            : 'bg-white/10 text-white/50 cursor-not-allowed'
+                            ? 'glass-dark border border-orange-500/30 text-orange-400 hover:border-orange-500/50 hover:bg-orange-500/10 shadow-lg hover:shadow-xl'
+                            : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
                     }`}
                     onClick={handleDifficulty}
                     disabled={!unlockedFeatures.has('difficulty')}
@@ -379,7 +379,7 @@ export default function GameArea() {
                 </button>
                 
                 <button 
-                    className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="px-6 py-3 rounded-2xl font-medium glass-dark border border-gray-500/30 text-gray-400 hover:border-gray-500/50 hover:bg-gray-500/10 shadow-lg hover:shadow-xl transition-all duration-300"
                     onClick={handleImportExport}
                 >
                     <span className="flex items-center space-x-2">

@@ -99,54 +99,89 @@ export default function TypingTest({closeTypingTest}) {
     }
     if (isFinished) {
         return (
-            <div className="text-white text-center">
-                <h1 className="text-4xl">Test Finished!</h1>
-                <div className="mt-4 flex flex-row items-center justify-around">
-                    <div className="flex flex-col items-center">
-                        <h2 className="text-2xl">Accuracy</h2>
-                        <p className="text-lg">{accuracy}%</p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <h2 className="text-2xl">WPM</h2>
-                        <p className="text-lg">{wpm}</p>
+            <div className="text-white space-y-6">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-white mb-4 flex items-center justify-center">
+                        <span className="mr-3">🎉</span>
+                        Test Complete!
+                    </h1>
+                </div>
+                
+                <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-blue-400 mb-2">{accuracy}%</div>
+                            <div className="text-white/70">Accuracy</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl font-bold text-orange-400 mb-2">{wpm}</div>
+                            <div className="text-white/70">WPM</div>
+                        </div>
                     </div>
                 </div>
-                <p className="mt-4 text-lg">For the next minute, words you type with be worth {typingTestBoost.toFixed(2)}x</p>
+                
+                <div className="glass-dark rounded-2xl p-6 border border-green-500/30">
+                    <div className="text-center">
+                        <div className="text-green-400 font-semibold mb-2">🚀 Boost Earned!</div>
+                        <div className="text-white">
+                            For the next minute, words will be worth 
+                            <span className="text-green-400 font-bold mx-1">{typingTestBoost.toFixed(2)}x</span>
+                            multiplier
+                        </div>
+                    </div>
+                </div>
+                
                 <button
                     onClick={handleClose}
-                    className="mt-4 bg-blue-500 text-white p-2 rounded"
+                    className="w-full glass-dark border border-blue-500/30 text-blue-400 hover:border-blue-500/50 hover:bg-blue-500/10 px-6 py-3 rounded-2xl font-medium transition-all duration-300"
                 >
-                    Close
+                    Continue Typing
                 </button>
             </div>
         )
     }
     return (
-        <div className="text-white">
-            <h1 className="text-4xl text-center">Typing Test</h1>
-            <p className="text-xl">{getFormattedText()}</p>
-            <input
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                className="border p-2 rounded-md text-lg w-full"
-                autoFocus
-            />
-            <div className="mt-4 flex flex-row items-center justify-around">
-                <div className="flex flex-col items-center">
-                    <h2 className="text-2xl">Accuracy</h2>
-                    <p className="text-lg">{accuracy}%</p>
+        <div className="text-white space-y-6">
+            <div className="text-center">
+                <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center">
+                    <span className="mr-3">⚡</span>
+                    Typing Test
+                </h1>
+                <p className="text-white/70">Type the text as quickly and accurately as possible</p>
+            </div>
+            
+            <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                <div className="text-lg text-white/90 leading-relaxed font-mono bg-white/5 rounded-xl p-4 mb-4">
+                    {getFormattedText()}
                 </div>
-                <div className="flex flex-col items-center">
-                    <h2 className="text-2xl">WPM</h2>
-                    <p className="text-lg">{wpm}</p>
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 text-lg bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300"
+                    placeholder="Start typing here..."
+                    autoFocus
+                />
+            </div>
+            
+            <div className="glass-dark rounded-2xl p-6 border border-white/10">
+                <div className="grid grid-cols-2 gap-6">
+                    <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-400 mb-1">{accuracy}%</div>
+                        <div className="text-white/70">Accuracy</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-400 mb-1">{wpm}</div>
+                        <div className="text-white/70">WPM</div>
+                    </div>
                 </div>
             </div>
+            
             <button
                 onClick={handleClose}
-                className="mt-4 bg-[#005828] text-white p-2 rounded w-full text-xl"
+                className="w-full glass-dark border border-gray-500/30 text-gray-400 hover:border-gray-500/50 hover:bg-gray-500/10 px-6 py-3 rounded-2xl font-medium transition-all duration-300"
             >
-                Close
+                Cancel Test
             </button>
         </div>
     )
