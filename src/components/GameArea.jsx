@@ -9,6 +9,7 @@ import DifficultyFormat from '../utils/DifficultFormat.js';
 import TypingTest from './TypingTest.jsx';
 import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
+import Tooltip from './Tooltip.jsx';
 
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity, typingTestBoost } = useMoney();
@@ -19,6 +20,36 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
+
+    // Helper functions for tooltip calculations
+    const calculateExampleWordValue = (wordLength = 5) => {
+        const exampleWord = 'a'.repeat(wordLength);
+        return calculateWordValue(exampleWord, false, typingTestBoost, typingTestBoostActive);
+    };
+
+    const calculateExampleXP = (wordLength = 5) => {
+        const exampleWord = 'a'.repeat(wordLength);
+        return calculateWordXP(exampleWord, false, streak + 1);
+    };
+
+    const getStreakXPMultiplier = () => {
+        if (streak >= 50) return 3.0;
+        if (streak >= 25) return 2.5;
+        if (streak >= 15) return 2.0;
+        if (streak >= 10) return 1.8;
+        if (streak >= 5) return 1.5;
+        if (streak >= 3) return 1.2;
+        return 1.0;
+    };
+
+    const getLevelBenefits = () => {
+        const benefits = [];
+        if (level >= 5) benefits.push("Unlocked Difficulty Settings");
+        if (level >= 10) benefits.push("Unlocked Typing Tests");
+        if (level >= 15) benefits.push("Higher Gold Word Chance");
+        if (level >= 20) benefits.push("Better Streak Bonuses");
+        return benefits.length > 0 ? benefits : ["No special benefits yet"];
+    };
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -273,67 +304,169 @@ export default function GameArea() {
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="text-center px-6">
-                            <div className="text-3xl font-bold text-white flex items-center justify-center">
-                                <span className="mr-2">💰</span>
-                                <span className={`transition-all duration-500 ${isTyping ? 'animate-pulse text-green-400' : ''}`}>
-                                    {FormatMoney(money)}
-                                </span>
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">💰 Current Balance</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• 5-letter word: +{FormatMoney(calculateExampleWordValue(5))}</div>
+                                        <div>• 7-letter word: +{FormatMoney(calculateExampleWordValue(7))}</div>
+                                        <div>• Gold word: 10x multiplier!</div>
+                                        <div>• Multiplier: {wordMultiplier}x</div>
+                                        {typingTestBoostActive && <div className="text-green-400">• Test Boost: {typingTestBoost.toFixed(1)}x</div>}
+                                    </div>
+                                </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center px-6 cursor-help">
+                                <div className="text-3xl font-bold text-white flex items-center justify-center">
+                                    <span className="mr-2">💰</span>
+                                    <span className={`transition-all duration-500 ${isTyping ? 'animate-pulse text-green-400' : ''}`}>
+                                        {FormatMoney(money)}
+                                    </span>
+                                </div>
+                                <div className="text-sm text-white/60">Balance</div>
                             </div>
-                            <div className="text-sm text-white/60">Balance</div>
-                        </div>
+                        </Tooltip>
                         <div className="w-px h-12 bg-white/20"></div>
-                        <div className="text-center px-6">
-                            <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400' : 'text-blue-400'}`}>{streak}</div>
-                            <div className="text-sm text-white/60">Streak</div>
-                            {streak >= 3 && (
-                                <div className={`text-xs font-semibold transition-all duration-300 ${
-                                    streak >= 50 ? 'text-purple-400' : 
-                                    streak >= 25 ? 'text-yellow-400' : 
-                                    streak >= 15 ? 'text-orange-400' : 
-                                    streak >= 10 ? 'text-green-400' : 'text-cyan-400'
-                                }`}>
-                                    {streak >= 50 ? '🔥🔥🔥 3.0x' : 
-                                     streak >= 25 ? '🔥🔥 2.5x' : 
-                                     streak >= 15 ? '🔥 2.0x' :
-                                     streak >= 10 ? '⚡ 1.8x' : 
-                                     streak >= 5 ? '✨ 1.5x' : '💫 1.2x'} XP
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">🔥 Typing Streak</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Current XP multiplier: {getStreakXPMultiplier()}x</div>
+                                        <div>• Lose streak on any mistake</div>
+                                        <div>• Higher streaks = more XP!</div>
+                                        <div className="mt-2 text-white/80">Streak Milestones:</div>
+                                        <div>• 5+ words: 1.5x XP</div>
+                                        <div>• 10+ words: 1.8x XP</div>
+                                        <div>• 25+ words: 2.5x XP</div>
+                                        <div>• 50+ words: 3.0x XP</div>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center px-6 cursor-help">
+                                <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400' : 'text-blue-400'}`}>{streak}</div>
+                                <div className="text-sm text-white/60">Streak</div>
+                                {streak >= 3 && (
+                                    <div className={`text-xs font-semibold transition-all duration-300 ${
+                                        streak >= 50 ? 'text-purple-400' : 
+                                        streak >= 25 ? 'text-yellow-400' : 
+                                        streak >= 15 ? 'text-orange-400' : 
+                                        streak >= 10 ? 'text-green-400' : 'text-cyan-400'
+                                    }`}>
+                                        {streak >= 50 ? '🔥🔥🔥 3.0x' : 
+                                         streak >= 25 ? '🔥🔥 2.5x' : 
+                                         streak >= 15 ? '🔥 2.0x' :
+                                         streak >= 10 ? '⚡ 1.8x' : 
+                                         streak >= 5 ? '✨ 1.5x' : '💫 1.2x'} XP
+                                    </div>
+                                )}
+                            </div>
+                        </Tooltip>
                         <div className="w-px h-12 bg-white/20"></div>
-                        <div className="text-center px-6">
-                            <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
-                            <div className="text-sm text-white/60">Accuracy</div>
-                        </div>
-                        <div className="w-px h-12 bg-white/20"></div>
-                        <div className="text-center px-6">
-                            <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400' : 'text-orange-400/60'}`}>{wpm}</div>
-                            <div className="text-sm text-white/60">WPM</div>
-                            {isTyping && (
-                                <div className="text-xs text-orange-400">
-                                    🔥 Active
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">✅ Typing Accuracy</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Calculated from all-time performance</div>
+                                        <div>• Perfect words improve accuracy</div>
+                                        <div>• Mistakes lower accuracy</div>
+                                        <div>• Higher accuracy = better typing tests</div>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center px-6 cursor-help">
+                                <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
+                                <div className="text-sm text-white/60">Accuracy</div>
+                            </div>
+                        </Tooltip>
                         <div className="w-px h-12 bg-white/20"></div>
-                        <div className="text-center px-6">
-                            <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
-                            <div className="text-sm text-white/60">Multiplier</div>
-                        </div>
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">⚡ Words Per Minute</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Based on last 5 minutes of typing</div>
+                                        <div>• Calculated using standard 5-char method</div>
+                                        <div>• Decays when not actively typing</div>
+                                        <div>• Higher WPM = better typing test scores</div>
+                                        <div className="mt-2 text-white/80">WPM Benchmarks:</div>
+                                        <div>• 40+ WPM: Good</div>
+                                        <div>• 60+ WPM: Great</div>
+                                        <div>• 80+ WPM: Excellent</div>
+                                    </div>
+                                </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center px-6 cursor-help">
+                                <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400' : 'text-orange-400/60'}`}>{wpm}</div>
+                                <div className="text-sm text-white/60">WPM</div>
+                                {isTyping && (
+                                    <div className="text-xs text-orange-400">
+                                        🔥 Active
+                                    </div>
+                                )}
+                            </div>
+                        </Tooltip>
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">⚡ Word Value Multiplier</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Increases money from each word</div>
+                                        <div>• Buy "Better Keys" upgrades to increase</div>
+                                        <div>• Example with current multiplier:</div>
+                                        <div className="ml-2">→ 5-letter word: {FormatMoney(calculateExampleWordValue(5))}</div>
+                                        <div className="ml-2">→ 7-letter word: {FormatMoney(calculateExampleWordValue(7))}</div>
+                                    </div>
+                                </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center px-6 cursor-help">
+                                <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
+                                <div className="text-sm text-white/60">Multiplier</div>
+                            </div>
+                        </Tooltip>
                         {cashPerSecond > 0 && (
                             <>
                                 <div className="w-px h-12 bg-white/20"></div>
-                                <div className="text-center px-6">
-                                    <div className="text-2xl font-bold text-emerald-400 flex items-center justify-center">
-                                        <span className="mr-1">💸</span>
-                                        <span>{FormatMoney(cashPerSecond)}</span>
+                                <Tooltip 
+                                    content={
+                                        <div>
+                                            <div className="font-semibold mb-1">💸 Passive Income</div>
+                                            <div className="text-xs space-y-1">
+                                                <div>• Earn money automatically</div>
+                                                <div>• Buy passive income upgrades in shop</div>
+                                                <div>• Works even when not typing</div>
+                                                <div>• Balanced to supplement, not replace typing</div>
+                                                <div className="mt-2 text-emerald-400">Per minute: {FormatMoney(cashPerSecond * 60)}</div>
+                                                <div className="text-emerald-400">Per hour: {FormatMoney(cashPerSecond * 3600)}</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    position="bottom"
+                                >
+                                    <div className="text-center px-6 cursor-help">
+                                        <div className="text-2xl font-bold text-emerald-400 flex items-center justify-center">
+                                            <span className="mr-1">💸</span>
+                                            <span>{FormatMoney(cashPerSecond)}</span>
+                                        </div>
+                                        <div className="text-sm text-white/60">Per Second</div>
+                                        <div className="text-xs text-emerald-400">
+                                            🤖 Passive
+                                        </div>
                                     </div>
-                                    <div className="text-sm text-white/60">Per Second</div>
-                                    <div className="text-xs text-emerald-400">
-                                        🤖 Passive
-                                    </div>
-                                </div>
+                                </Tooltip>
                                 <div className="w-px h-12 bg-white/20"></div>
                             </>
                         )}
@@ -341,35 +474,69 @@ export default function GameArea() {
                     
                     {/* Level and XP Display */}
                     <div className="flex items-center space-x-6">
-                        <div className="text-center">
-                            <div className={`text-2xl font-bold transition-all duration-300 ${
-                                level >= 50 ? 'text-purple-400' :
-                                level >= 25 ? 'text-yellow-400' :
-                                level >= 10 ? 'text-orange-400' : 'text-yellow-400'
-                            }`}>
-                                Level {level}
-                                {level >= 50 && <span className="ml-1">👑</span>}
-                                {level >= 25 && level < 50 && <span className="ml-1">💎</span>}
-                                {level >= 10 && level < 25 && <span className="ml-1">⭐</span>}
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">🌟 Current Level</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Level up by earning XP</div>
+                                        <div>• XP from typing words correctly</div>
+                                        <div className="mt-2 text-white/80">Level Benefits:</div>
+                                        {getLevelBenefits().map((benefit, index) => (
+                                            <div key={index}>• {benefit}</div>
+                                        ))}
+                                        <div className="mt-2 text-cyan-400">Example XP: 5-letter word = {calculateExampleXP(5)} XP</div>
+                                    </div>
+                                </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center cursor-help">
+                                <div className={`text-2xl font-bold transition-all duration-300 ${
+                                    level >= 50 ? 'text-purple-400' :
+                                    level >= 25 ? 'text-yellow-400' :
+                                    level >= 10 ? 'text-orange-400' : 'text-yellow-400'
+                                }`}>
+                                    Level {level}
+                                    {level >= 50 && <span className="ml-1">👑</span>}
+                                    {level >= 25 && level < 50 && <span className="ml-1">💎</span>}
+                                    {level >= 10 && level < 25 && <span className="ml-1">⭐</span>}
+                                </div>
+                                <div className="text-sm text-white/60">Current Level</div>
                             </div>
-                            <div className="text-sm text-white/60">Current Level</div>
-                        </div>
-                        <div className="text-center min-w-[120px]">
-                            <div className="text-lg font-bold text-cyan-400">{xp} XP</div>
-                            <div className="w-full bg-white/10 rounded-full h-2 mt-1">
-                                <div 
-                                    className={`h-2 rounded-full transition-all duration-500 ${
-                                        xpProgress >= 90 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse' :
-                                        'bg-gradient-to-r from-cyan-400 to-blue-500'
-                                    }`}
-                                    style={{ width: `${xpProgress}%` }}
-                                ></div>
+                        </Tooltip>
+                        <Tooltip 
+                            content={
+                                <div>
+                                    <div className="font-semibold mb-1">⭐ Experience Points</div>
+                                    <div className="text-xs space-y-1">
+                                        <div>• Gain XP by typing words correctly</div>
+                                        <div>• XP = word length × 2 × streak multiplier</div>
+                                        <div>• Gold words give 2x XP</div>
+                                        <div>• Higher streaks = more XP per word</div>
+                                        <div className="mt-2 text-white/80">Current streak multiplier: {getStreakXPMultiplier()}x</div>
+                                    </div>
+                                </div>
+                            }
+                            position="bottom"
+                        >
+                            <div className="text-center min-w-[120px] cursor-help">
+                                <div className="text-lg font-bold text-cyan-400">{xp} XP</div>
+                                <div className="w-full bg-white/10 rounded-full h-2 mt-1">
+                                    <div 
+                                        className={`h-2 rounded-full transition-all duration-500 ${
+                                            xpProgress >= 90 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse' :
+                                            'bg-gradient-to-r from-cyan-400 to-blue-500'
+                                        }`}
+                                        style={{ width: `${xpProgress}%` }}
+                                    ></div>
+                                </div>
+                                <div className="text-xs text-white/50 mt-1">
+                                    {Math.round(xpProgress)}% to next level
+                                    {xpProgress >= 90 && <span className="ml-1">🎯</span>}
+                                </div>
                             </div>
-                            <div className="text-xs text-white/50 mt-1">
-                                {Math.round(xpProgress)}% to next level
-                                {xpProgress >= 90 && <span className="ml-1">🎯</span>}
-                            </div>
-                        </div>
+                        </Tooltip>
                     </div>
                 </div>
             </div>

@@ -61,7 +61,9 @@ export function increaseAverageLength(increaseBy) {
 export function getTotalCashPerSecond() {
     const cashPerSecond = getStorage('cashPerSecond');
     const wordMultiplier = getWordMultiplier();
-    return (cashPerSecond || 0) * wordMultiplier;
+    const result = (cashPerSecond || 0) * wordMultiplier;
+    // Round to 2 decimal places to avoid floating point precision errors
+    return Math.round(result * 100) / 100;
 }
 
 function setTotalCashPerSecond(cps) {
