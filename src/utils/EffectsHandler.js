@@ -62,7 +62,6 @@ export function getTotalCashPerSecond() {
     const cashPerSecond = getStorage('cashPerSecond');
     const wordMultiplier = getWordMultiplier();
     const result = (cashPerSecond || 0) * wordMultiplier;
-    // Round to 2 decimal places to avoid floating point precision errors
     return Math.round(result * 100) / 100;
 }
 
@@ -122,7 +121,7 @@ export function increaseGoldWordChance(increaseBy) {
         return;
     }
     const currentChance = getStorage('goldWordChance') || 0;
-    const newChance = Math.min(currentChance + increaseBy, 1); // Cap at 1 (100%)
+    const newChance = Math.min(currentChance + increaseBy, 1);
     setStorage('goldWordChance', newChance);
 }
 

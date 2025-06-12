@@ -11,12 +11,9 @@ export default function UpgradeShop() {
     const [upgrades, setUpgrades] = useState([]);
     const [oneTimeUpgrades, setOneTimeUpgrades] = useState([]);
 
-    // ...existing code...
-
     useEffect(() => {
         const fetchUpgrades = async () => {
             try {
-                // Sort upgrades by cost in ascending order
                 const sortedUpgrades = [...upgradesData.data].sort((a, b) => a.baseCost - b.baseCost);
                 const sortedOneTimeUpgrades = [...oneTimeUpgradesData.data].sort((a, b) => a.cost - b.cost);
                 

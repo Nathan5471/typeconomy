@@ -49,7 +49,6 @@ export function generateRandomLength(averageLength) {
     const possibleLengths = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     const weights = possibleLengths.map(length => Math.exp(-Math.abs(length - averageLength)));
 
-    // Normalize weights to sum to 1 for Math.random selection
     const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
     const normalizedWeights = weights.map(weight => weight / totalWeight);
 
@@ -69,16 +68,13 @@ export async function getRandomWord(count = 1) {
     const length = generateRandomLength(averageLength);
     async function fetchWordByLength(length) {
         try {
-            // For lengths > 15, use the 15-letter word file but filter for longer words
             const fileLength = length > 15 ? 15 : length;
             const response = await fetch(`/words/words_${fileLength}.txt`)
             const wordList = await response.text();
             let words = wordList.split('\n').filter(word => word.trim() !== '');
             
-            // If we need words longer than 15 letters, filter the 15-letter file
             if (length > 15) {
                 words = words.filter(word => word.trim().length >= length);
-                // If no words of desired length found, fallback to any long words
                 if (words.length === 0) {
                     words = wordList.split('\n').filter(word => word.trim().length >= 12);
                 }
@@ -200,7 +196,6 @@ export function exportSaveFile() {
     console.log('Save file exported successfully.');
 }
 
-// Leveling System Functions
 export function getLevel() {
     return getStorage('level') || 1;
 }
@@ -229,8 +224,6 @@ export function addXP(amount) {
 }
 
 export function calculateXPForLevel(level) {
-    // XP required for each level: level^2 * 100
-    // Level 1: 100 XP, Level 2: 400 XP, Level 3: 900 XP, etc.
     return Math.floor(Math.pow(level, 2) * 100);
 }
 
@@ -256,7 +249,6 @@ export function checkLevelUp(currentXP, currentLevel) {
 }
 
 export function calculateStreakXPBonus(streak) {
-    // Better streak = better XP multiplier
     if (streak >= 50) return 3.0;
     if (streak >= 25) return 2.5;
     if (streak >= 15) return 2.0;
@@ -267,7 +259,7 @@ export function calculateStreakXPBonus(streak) {
 }
 
 export function calculateWordXP(word, isGold, streak) {
-    const baseXP = word.length * 2; // 2 XP per character
+    const baseXP = word.length * 2;
     const goldBonus = isGold ? 2.0 : 1.0;
     const streakBonus = calculateStreakXPBonus(streak);
     

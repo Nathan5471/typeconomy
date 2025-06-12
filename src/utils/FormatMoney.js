@@ -10,7 +10,6 @@ export default function FormatMoney(money) {
     }
     const index = Math.floor(Math.log10(money) / 3);
     if (index === 0) {
-        // For amounts less than 1000, show up to 2 decimal places but remove trailing zeros
         if (money >= 100) {
             return `$${Math.floor(money)}`;
         } else if (money >= 10) {

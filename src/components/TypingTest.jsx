@@ -14,18 +14,17 @@ export default function TypingTest({closeTypingTest}) {
     const [wpm, setWpm] = useState(0);
     const [startTime, setStartTime] = useState(null);
     const [typingTestBoost, setTypingTestBoost] = useState(1);
-    const [sessionLength, setSessionLength] = useState(50); // Default 50 words
-    const [testMode, setTestMode] = useState('normal'); // normal, marathon, sprint
+    const [sessionLength, setSessionLength] = useState(50);
+    const [testMode, setTestMode] = useState('normal');
 
     useEffect(() => {
         const fetchTargetText = async () => {
             try {
-                // Determine word count based on test mode and session length
                 let wordCount = sessionLength;
                 if (testMode === 'marathon' && unlockedFeatures.has('marathonMode')) {
-                    wordCount = Math.max(sessionLength, 200); // Minimum 200 for marathon
+                    wordCount = Math.max(sessionLength, 200);
                 } else if (testMode === 'sprint') {
-                    wordCount = 25; // Quick 25-word sprint
+                    wordCount = 25;
                 }
                 
                 const words = await getRandomWord(wordCount);
@@ -42,14 +41,12 @@ export default function TypingTest({closeTypingTest}) {
     const calculateBoost = useCallback((length) => {
         let baseBoost = (wpm / 50) * (length / 15) * (accuracy / 100) + 1;
         
-        // Mode-specific bonuses
         if (testMode === 'marathon' && length >= 200) {
-            baseBoost *= 1.5; // 50% bonus for marathon sessions
+            baseBoost *= 1.5;
         } else if (testMode === 'sprint' && wpm >= 60) {
-            baseBoost *= 1.3; // 30% bonus for fast sprint sessions
+            baseBoost *= 1.3;
         }
         
-        // Length bonuses
         if (length >= 1000) baseBoost *= 2.0;
         else if (length >= 500) baseBoost *= 1.7;
         else if (length >= 200) baseBoost *= 1.4;

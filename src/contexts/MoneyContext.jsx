@@ -26,11 +26,10 @@ export const MoneyProvider = ({ children }) => {
     const [cashPerSecond, setCashPerSecond] = useState(0);
     const [purchasedOneTimeUpgrades, setPurchasedOneTimeUpgrades] = useState(new Set());
     const [unlockedFeatures, setUnlockedFeatures] = useState(new Set());
-    const [difficulty, setDifficulty] = useState({'upper': false, 'numbers': false, 'symbols': false}); // Lowercase is always true
+    const [difficulty, setDifficulty] = useState({'upper': false, 'numbers': false, 'symbols': false});
     const [typingTestBoost, setTypingTestBoost] = useState(1);
     const [typingTestBoostActive, setTypingTestBoostActive] = useState(false);
     const [lastTypingTestTime, setLastTypingTestTime] = useState(null);
-    // Leveling system states
     const [level, setLevel] = useState(1);
     const [xp, setXP] = useState(0);
     const [xpProgress, setXPProgress] = useState(0);
@@ -48,7 +47,6 @@ export const MoneyProvider = ({ children }) => {
         const storedUnlockedFeatures = getUnlockedFeatures();
         const storedDifficulty = getDifficulty();
         const storedTypingTestInformation = getTypingTestInformation();
-        // Load leveling data
         const storedLevel = getLevel();
         const storedXP = getXP();
 
@@ -62,7 +60,6 @@ export const MoneyProvider = ({ children }) => {
         if (storedCorrectWords) setWordsTypedCorrectly(Number(storedCorrectWords));
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
         
-        // Load average session WPM instead of current WPM
         const avgSessionWPM = getAverageSessionWPM();
         setWPM(avgSessionWPM);
         
@@ -83,14 +80,12 @@ export const MoneyProvider = ({ children }) => {
     }, []);
 
     const handleCorrectWord = (word, isGold) => {
-        // Update typing activity timestamp
         setLastTypingTime(Date.now());
         
         setWordsTyped(prev => prev + 1);
         incrementWordsTyped();
         addWordToAccuracy(true);
         
-        // Add word for WPM calculation
         addWordForWPM(word.length);
         const newWPM = calculateWPM();
         setWPM(newWPM);
@@ -104,27 +99,22 @@ export const MoneyProvider = ({ children }) => {
         const newMoney = getMoney();
         setMoney(newMoney);
         
-        // Update streak first
         const newStreak = streak + 1;
         setStreak(newStreak);
         incrementStreak();
         
-        // Calculate and add XP with streak bonus
         const xpGained = calculateWordXP(word, isGold, newStreak);
         const newXP = addXP(xpGained);
         setXP(newXP);
         
-        // Check for level up
         const leveledUp = checkLevelUp(newXP, level);
         if (leveledUp) {
             const newLevel = level + 1;
             setLevel(newLevel);
             setLevelUpNotification(true);
-            // Hide level up notification after 3 seconds
             setTimeout(() => setLevelUpNotification(false), 3000);
         }
         
-        // Update XP progress
         setXPProgress(getXPProgress(newXP, leveledUp ? level + 1 : level));
     }
 
@@ -202,23 +192,19 @@ export const MoneyProvider = ({ children }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Update WPM periodically with idle detection
     useEffect(() => {
         const interval = setInterval(() => {
-            // Check if user is actively typing
             const timeSinceLastTyping = Date.now() - lastTypingTime;
             if (timeSinceLastTyping < 3000) {
-                // User is actively typing - show current session WPM
                 const currentWPM = calculateWPM();
                 setWPM(currentWPM);
                 setIsTyping(true);
             } else {
-                // User is idle - show average session WPM from completed sessions
                 const avgSessionWPM = getAverageSessionWPM();
                 setWPM(avgSessionWPM);
                 setIsTyping(false);
             }
-        }, 2000); // Update every 2 seconds
+        }, 2000);
         return () => clearInterval(interval);
     }, [lastTypingTime]);
 
@@ -228,7 +214,7 @@ export const MoneyProvider = ({ children }) => {
             setTypingTestBoost(1);
             setTypingTestBoostActive(false);
             updateTypingTestInformation(1, false, lastTypingTestTime);
-        }, 60000); // Reset boost after 60 seconds
+        }, 60000);
     }, [typingTestBoostActive, lastTypingTestTime]);
 
     const updateTypingActivity = () => {

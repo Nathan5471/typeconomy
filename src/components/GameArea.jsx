@@ -16,32 +16,28 @@ import Tooltip from './Tooltip.jsx';
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity, typingTestBoost } = useMoney();
     const { openOverlay, closeOverlay } = useOverlayContext();
-    const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
+    const [words, setWords] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
     
-    // Session control states
     const [sessionActive, setSessionActive] = useState(false);
     const [sessionStartTime, setSessionStartTime] = useState(null);
     const [sessionWordsTyped, setSessionWordsTyped] = useState(0);
     const [sessionMoney, setSessionMoney] = useState(0);
     const [sessionDuration, setSessionDuration] = useState(0);
-    const [targetWordCount, setTargetWordCount] = useState(100); // Default session length
+    const [targetWordCount, setTargetWordCount] = useState(100);
     const [sessionAccuracy, setSessionAccuracy] = useState(100);
     const [sessionCorrectWords, setSessionCorrectWords] = useState(0);
     const [sessionIncorrectWords, setSessionIncorrectWords] = useState(0);
     const [sessionPeakStreak, setSessionPeakStreak] = useState(0);
 
-    // Create a single, persistent AudioContext instance
     const audioContextRef = useRef(null);
     
-    // Session timer ref
     const sessionTimerRef = useRef(null);
     
-    // Initialize AudioContext once
     useEffect(() => {
         try {
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -49,7 +45,6 @@ export default function GameArea() {
             console.warn('Audio not supported');
         }
         
-        // Cleanup on unmount
         return () => {
             if (audioContextRef.current) {
                 audioContextRef.current.close();
@@ -60,7 +55,6 @@ export default function GameArea() {
         };
     }, []);
 
-    // Helper functions for tooltip calculations
     const calculateExampleWordValue = (wordLength = 5) => {
         const exampleWord = 'a'.repeat(wordLength);
         return calculateWordValue(exampleWord, false, typingTestBoost, typingTestBoostActive);
@@ -90,7 +84,6 @@ export default function GameArea() {
         return benefits.length > 0 ? benefits : ["No special benefits yet"];
     };
 
-    // Session control functions
     const startSession = () => {
         setSessionActive(true);
         setSessionStartTime(new Date());
@@ -102,7 +95,6 @@ export default function GameArea() {
         setSessionIncorrectWords(0);
         setSessionPeakStreak(0);
         
-        // Start session timer
         sessionTimerRef.current = setInterval(() => {
             setSessionDuration(prev => prev + 1);
         }, 1000);
@@ -115,11 +107,9 @@ export default function GameArea() {
             sessionTimerRef.current = null;
         }
         
-        // Calculate final session stats
         const avgWPM = sessionDuration > 0 ? Math.round((sessionWordsTyped * 60) / sessionDuration) : 0;
         const finalAccuracy = sessionWordsTyped > 0 ? (sessionCorrectWords / sessionWordsTyped) * 100 : 100;
         
-        // Save session WPM to history for stats display
         addSessionWPM(avgWPM);
         
         const sessionStats = {
@@ -131,7 +121,6 @@ export default function GameArea() {
             streak: sessionPeakStreak
         };
         
-        // Show session summary
         openOverlay(<SessionSummary sessionStats={sessionStats} onClose={() => closeOverlay()} />);
     };
 
@@ -172,18 +161,15 @@ export default function GameArea() {
         fetchNextWord();
     }, [fetchNewWord]);
 
-    // Function to create double-click keyboard sound effect
     const playKeyboardSound = () => {
         try {
             const audioContext = audioContextRef.current;
             if (!audioContext || audioContext.state === 'closed') return;
             
-            // Resume audio context if suspended (required by browser policy)
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
             
-            // Create double-click sound (two quick clicks)
             const createClick = (delay = 0) => {
                 setTimeout(() => {
                     const oscillator = audioContext.createOscillator();
@@ -194,12 +180,10 @@ export default function GameArea() {
                     filter.connect(gainNode);
                     gainNode.connect(audioContext.destination);
                     
-                    // Sharp, crisp keyboard click
                     oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(1800, audioContext.currentTime + 0.005);
                     oscillator.type = 'square';
                     
-                    // High-pass filter for crispness
                     filter.type = 'highpass';
                     filter.frequency.setValueAtTime(800, audioContext.currentTime);
                     
@@ -211,29 +195,24 @@ export default function GameArea() {
                 }, delay);
             };
             
-            // Create double-click: first click immediately, second click after 50ms
             createClick(0);
             createClick(50);
             
         } catch (e) {
-            // Audio not supported, continue silently
         }
     };
 
-    // Function to create success sound effect for completed words
     const playSuccessSound = (isGold = false, currentStreak = 0) => {
         try {
             const audioContext = audioContextRef.current;
             if (!audioContext || audioContext.state === 'closed') return;
             
-            // Resume audio context if suspended (required by browser policy)
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
             
             if (isGold) {
-                // Special gold success - triumphant chord progression
-                const frequencies = [523, 659, 784, 1047]; // C5, E5, G5, C6
+                const frequencies = [523, 659, 784, 1047];
                 frequencies.forEach((freq, index) => {
                     setTimeout(() => {
                         const oscillator = audioContext.createOscillator();
@@ -253,8 +232,7 @@ export default function GameArea() {
                     }, index * 120);
                 });
             } else if (currentStreak >= 20) {
-                // Epic streak sound - multiple harmonious tones
-                const frequencies = [440, 554, 659, 880]; // A4, C#5, E5, A5
+                const frequencies = [440, 554, 659, 880];
                 frequencies.forEach((freq, index) => {
                     setTimeout(() => {
                         const oscillator = audioContext.createOscillator();
@@ -274,7 +252,6 @@ export default function GameArea() {
                     }, index * 80);
                 });
             } else if (currentStreak >= 10) {
-                // Great streak sound - uplifting progression
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
@@ -291,14 +268,12 @@ export default function GameArea() {
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.35);
             } else {
-                // Regular success - pleasant rising tone
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                // Rising frequency for success feeling
                 oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
                 oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
                 oscillator.type = 'sine';
@@ -310,7 +285,6 @@ export default function GameArea() {
                 oscillator.stop(audioContext.currentTime + 0.25);
             }
         } catch (e) {
-            // Audio not supported, continue silently
         }
     };
 
@@ -319,37 +293,30 @@ export default function GameArea() {
             const wordValue = calculateWordValue(words[2], isGold, typingTestBoost, typingTestBoostActive);
             handleCorrectWord(words[2], isGold);
             
-            // Track session progress
             if (sessionActive) {
                 setSessionWordsTyped(prev => prev + 1);
                 setSessionMoney(prev => prev + wordValue);
                 setSessionCorrectWords(prev => prev + 1);
                 
-                // Update peak streak
                 if (streak + 1 > sessionPeakStreak) {
                     setSessionPeakStreak(streak + 1);
                 }
                 
-                // Auto-stop session if target reached
                 if (sessionWordsTyped + 1 >= targetWordCount) {
-                    // Small delay to let stats update
                     setTimeout(() => stopSession(), 100);
                 }
             }
             
-            // Play success sound effect with current streak
-            playSuccessSound(isGold, streak + 1); // +1 because streak will be incremented
+            playSuccessSound(isGold, streak + 1);
         } else {
             handleIncorrectWord();
             
-            // Track session mistakes
             if (sessionActive) {
                 setSessionWordsTyped(prev => prev + 1);
                 setSessionIncorrectWords(prev => prev + 1);
             }
         }
         
-        // Update session accuracy in real time
         if (sessionActive) {
             const totalWords = sessionWordsTyped + 1;
             const correctWords = inputValue === words[2] ? sessionCorrectWords + 1 : sessionCorrectWords;
@@ -361,23 +328,19 @@ export default function GameArea() {
         setInputValue('');
     }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak, sessionActive, sessionWordsTyped, sessionCorrectWords, sessionPeakStreak, targetWordCount, typingTestBoost, typingTestBoostActive, stopSession]);
 
-    // Handle direct keyboard input (Monkeytype style)
     const handleKeyDown = useCallback((event) => {
-        if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
+        if (isTypingTestOpen) return;
         
-        // Prevent typing when session is not active (except for session control keys)
         if (!sessionActive && event.key !== 'F1' && event.key !== 'F2') {
             return;
         }
         
-        // Quick restart with Tab key
         if (event.key === 'Tab') {
             event.preventDefault();
             setInputValue('');
             return;
         }
         
-        // Session controls
         if (event.key === 'F1') {
             event.preventDefault();
             if (!sessionActive) {
@@ -394,7 +357,6 @@ export default function GameArea() {
             return;
         }
         
-        // Prevent default behavior for most keys to avoid page scrolling, etc.
         if (event.key.length === 1 || event.key === 'Backspace' || event.key === ' ' || event.key === 'Enter') {
             event.preventDefault();
         }
@@ -403,13 +365,11 @@ export default function GameArea() {
             compareWords();
         } else if (event.key === 'Backspace') {
             setInputValue(prev => prev.slice(0, -1));
-            updateTypingActivity(); // Track backspace as typing activity
+            updateTypingActivity();
         } else if (event.key.length === 1) {
-            // Only allow single character keys (letters, numbers, symbols)
             const newValue = inputValue + event.key;
             setInputValue(newValue);
             
-            // Track typing activity and play sound
             updateTypingActivity();
             playKeyboardSound();
         }
@@ -438,7 +398,7 @@ export default function GameArea() {
         openOverlay(<ImportExport />);
     }
 
-    const handleCountdown = (startTime, duration ) => { // Duration in milliseconds
+    const handleCountdown = (startTime, duration ) => {
         const endTime = new Date(startTime.getTime() + duration);
         const interval = setInterval(() => {
             const now = new Date();
@@ -460,9 +420,9 @@ export default function GameArea() {
             return;
         }
         if (typingTestBoostActive === true) {
-            handleCountdown(lastTypingTestTime, 60000); // 60 seconds countdown
+            handleCountdown(lastTypingTestTime, 60000);
         } else if (typingTestBoostActive === false && new Date(lastTypingTestTime.getTime() + 60000) < new Date() && new Date(lastTypingTestTime.getTime() + 60000 * 11) > new Date()) {
-            handleCountdown(new Date(lastTypingTestTime.getTime() + 60000), (60000 * 10)); // 10 minutes cooldown after typing test
+            handleCountdown(new Date(lastTypingTestTime.getTime() + 60000), (60000 * 10));
         } else {
             setTypingTestCountdown(null);
         }
@@ -815,21 +775,18 @@ export default function GameArea() {
                                     let className = 'transition-all duration-150';
                                     
                                     if (index < inputValue.length) {
-                                        // Character has been typed
                                         if (inputValue[index] === char) {
-                                            style.color = 'var(--accent-green)'; // Correct character
+                                            style.color = 'var(--accent-green)';
                                         } else {
                                             style.color = 'var(--accent-red)';
                                             style.backgroundColor = 'var(--accent-red-bg)';
-                                            className += ' px-1 rounded'; // Incorrect character
+                                            className += ' px-1 rounded';
                                         }
                                     } else if (index === inputValue.length) {
-                                        // Current character (cursor position)
                                         style.backgroundColor = 'var(--cursor-bg)';
                                         style.color = 'var(--cursor-text)';
                                         className += ' animate-pulse px-1 rounded shadow-lg';
                                     } else {
-                                        // Untyped character
                                         style.color = isGold ? 'var(--accent-yellow-muted)' : 'var(--text-muted)';
                                     }
                                     

@@ -14,14 +14,12 @@ export const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState('dark');
     const [isDark, setIsDark] = useState(true);
 
-    // Load theme from localStorage or default to dark
     useEffect(() => {
         const savedTheme = localStorage.getItem('typeconomy-theme') || 'dark';
         setTheme(savedTheme);
         setIsDark(savedTheme === 'dark');
     }, []);
 
-    // Apply theme to document
     useEffect(() => {
         if (isDark) {
             document.documentElement.classList.add('dark');

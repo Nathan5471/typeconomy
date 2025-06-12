@@ -36,7 +36,7 @@ function checkForNewHighestStreak() {
 }
 
 export function getAccuracy() {
-    return getStorage('accuracy') || [100, 0, 0]; // [accuracy, correct, incorrect]
+    return getStorage('accuracy') || [100, 0, 0];
 }
 
 export function addWordToAccuracy(isCorrect) {
@@ -55,7 +55,6 @@ export function addWordToAccuracy(isCorrect) {
     }
 }
 
-// WPM Calculation Functions
 export function getWPMData() {
     return getStorage('wpmData') || { words: [], sessionStart: null, lastWordTime: null };
 }
@@ -64,24 +63,20 @@ export function addWordForWPM(wordLength) {
     const wpmData = getWPMData();
     const now = Date.now();
     
-    // Initialize session start time if this is the first word or if there's been a long gap
     const timeSinceLastWord = wpmData.lastWordTime ? now - wpmData.lastWordTime : 0;
-    const isNewSession = !wpmData.sessionStart || timeSinceLastWord > 10000; // 10 second gap = new session
+    const isNewSession = !wpmData.sessionStart || timeSinceLastWord > 10000;
     
     if (isNewSession) {
         wpmData.sessionStart = now;
-        wpmData.words = []; // Reset for new session
+        wpmData.words = [];
     }
     
-    // Add word with timestamp
     wpmData.words.push({ length: wordLength, timestamp: now });
     wpmData.lastWordTime = now;
     
-    // Keep only last 2 minutes of data for WPM calculation (standard practice)
     const twoMinutesAgo = now - (2 * 60 * 1000);
     wpmData.words = wpmData.words.filter(word => word.timestamp > twoMinutesAgo);
     
-    // Update session start if we filtered out too much data
     if (wpmData.words.length > 0 && wpmData.sessionStart < twoMinutesAgo) {
         wpmData.sessionStart = wpmData.words[0].timestamp;
     }
@@ -93,41 +88,33 @@ export function calculateWPM() {
     const wpmData = getWPMData();
     
     if (!wpmData.words.length || !wpmData.sessionStart) {
-        return 0;
-    }
+        return 0;    }
     
-    // Require at least 3 words for a meaningful WPM calculation
     if (wpmData.words.length < 3) {
         return 0;
     }
     
-    // Use actual typing session time, not current time
-    const sessionDurationMs = Math.max(wpmData.lastWordTime - wpmData.sessionStart, 5000); // Minimum 5 seconds
+    const sessionDurationMs = Math.max(wpmData.lastWordTime - wpmData.sessionStart, 5000);
     const sessionDurationMinutes = sessionDurationMs / (1000 * 60);
-    
+
     if (sessionDurationMinutes <= 0) {
         return 0;
     }
     
-    // Calculate WPM using standard method: (total characters / 5) / time in minutes
     const totalCharacters = wpmData.words.reduce((sum, word) => sum + word.length, 0);
-    const standardWords = totalCharacters / 5; // Standard word length is 5 characters
+    const standardWords = totalCharacters / 5;
     let wpm = Math.round(standardWords / sessionDurationMinutes);
     
-    // Apply smoothing for very short sessions (less than 30 seconds)
     if (sessionDurationMs < 30000) {
-        // Reduce WPM for very short bursts to avoid inflated numbers
-        const smoothingFactor = sessionDurationMs / 30000; // 0.0 to 1.0
-        wpm = Math.round(wpm * (0.7 + 0.3 * smoothingFactor)); // Scale between 70% and 100%
+        const smoothingFactor = sessionDurationMs / 30000;
+        wpm = Math.round(wpm * (0.7 + 0.3 * smoothingFactor));
     }
     
-    // Cap maximum WPM at reasonable limit to avoid unrealistic numbers
     wpm = Math.min(wpm, 300);
     
     return Math.max(0, wpm);
 }
 
-// Session WPM Average Functions
 export function getSessionWPMHistory() {
     return getStorage('sessionWPMHistory') || [];
 }
@@ -138,7 +125,6 @@ export function addSessionWPM(avgWPM) {
     const history = getSessionWPMHistory();
     history.push(avgWPM);
     
-    // Keep only last 50 sessions to prevent unlimited growth
     if (history.length > 50) {
         history.shift();
     }
