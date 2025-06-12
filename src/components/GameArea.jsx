@@ -401,76 +401,81 @@ export default function GameArea() {
 
             {/* Main Typing Area */}
             <div className="flex flex-col items-center justify-center space-y-8 py-16">
-                {/* Words Display with Direct Typing */}
-                <div className="text-center space-y-6">
-                    {/* Future words */}
-                    <div className="space-y-3">
-                        <div className="text-xl text-white/30 font-medium">{words[4]}</div>
-                        <div className="text-2xl text-white/50 font-medium">{words[3]}</div>
-                    </div>
-                    
-                    {/* Current Word with Typing Indicator */}
-                    <div className={`relative px-8 py-6 rounded-2xl text-4xl font-bold transition-all duration-300 inline-block ${
-                        isGold 
-                            ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 shadow-lg shadow-yellow-500/25" 
-                            : "text-white bg-white/5 border border-white/10"
-                    } ${isTyping ? 'scale-105 shadow-2xl' : 'scale-100'}`}>
-                        <div className="relative">
-                            {/* Render each character of the current word */}
-                            {words[2] && words[2].split('').map((char, index) => {
-                                let className = '';
-                                if (index < inputValue.length) {
-                                    // Character has been typed
-                                    if (inputValue[index] === char) {
-                                        className = 'text-green-400 animate-pulse'; // Correct character with pulse
+                {/* Horizontal Word Flow */}
+                <div className="max-w-4xl mx-auto px-8">
+                    <div className="flex items-center justify-center space-x-4 text-2xl font-medium overflow-hidden">
+                        {/* Upcoming words (start from the right) */}
+                        <div className="flex space-x-4 text-white/40">
+                            <span>{words[4]}</span>
+                            <span>{words[3]}</span>
+                        </div>
+                        
+                        {/* Current Word with enhanced styling */}
+                        <div className={`relative px-6 py-4 rounded-xl transition-all duration-300 ${
+                            isGold 
+                                ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 shadow-lg shadow-yellow-500/25" 
+                                : "text-white bg-white/10 border border-white/20"
+                        } ${isTyping ? 'scale-105 shadow-2xl' : 'scale-100'}`}>
+                            <div className="relative text-3xl font-bold">
+                                {/* Render each character of the current word */}
+                                {words[2] && words[2].split('').map((char, index) => {
+                                    let className = '';
+                                    if (index < inputValue.length) {
+                                        // Character has been typed
+                                        if (inputValue[index] === char) {
+                                            className = 'text-green-400'; // Correct character
+                                        } else {
+                                            className = 'text-red-400 bg-red-500/30 px-1 rounded'; // Incorrect character
+                                        }
+                                    } else if (index === inputValue.length) {
+                                        // Current character (cursor position)
+                                        className = 'bg-white/70 text-black animate-pulse px-1 rounded shadow-lg';
                                     } else {
-                                        className = 'text-red-400 bg-red-500/30 px-1 rounded animate-shake'; // Incorrect character with shake
+                                        // Untyped character
+                                        className = isGold ? 'text-yellow-400/70' : 'text-white/70';
                                     }
-                                } else if (index === inputValue.length) {
-                                    // Current character (cursor position)
-                                    className = 'bg-white/70 text-black animate-pulse px-1 rounded shadow-lg';
-                                } else {
-                                    // Untyped character
-                                    className = isGold ? 'text-yellow-400/50' : 'text-white/50';
-                                }
+                                    
+                                    return (
+                                        <span key={index} className={`${className} transition-all duration-150`}>
+                                            {char}
+                                        </span>
+                                    );
+                                })}
                                 
-                                return (
-                                    <span key={index} className={`${className} transition-all duration-150`}>
-                                        {char}
-                                    </span>
-                                );
-                            })}
+                                {/* Show cursor after the word only if there are extra characters beyond the word length */}
+                                {inputValue.length > (words[2] || '').length && (
+                                    <span className="bg-red-500/70 text-white animate-pulse ml-1 px-1 rounded">|</span>
+                                )}
+                            </div>
                             
-                            {/* Show cursor after the word only if there are extra characters beyond the word length */}
-                            {inputValue.length > (words[2] || '').length && (
-                                <span className="bg-red-500/70 text-white animate-pulse ml-1 px-1 rounded">|</span>
+                            {/* Gold indicator */}
+                            {isGold && (
+                                <div className="absolute -top-2 -right-2 text-xs font-bold text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded-full border border-yellow-500/30">
+                                    2x
+                                </div>
+                            )}
+                            
+                            {/* Typing speed indicator */}
+                            {isTyping && (
+                                <div className="absolute -top-1 -left-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
                             )}
                         </div>
                         
-                        {isGold && (
-                            <div className="text-xs text-yellow-400 font-semibold mt-2">
-                                💰 2x Money & XP! 💰
-                            </div>
-                        )}
-                        
-                        {/* Show what user has typed if it exceeds word length */}
-                        {inputValue.length > (words[2] || '').length && (
-                            <div className="text-sm text-red-400 mt-2 animate-shake">
-                                ❌ Extra: {inputValue.slice((words[2] || '').length)}
-                            </div>
-                        )}
-                        
-                        {/* Typing speed indicator */}
-                        {isTyping && (
-                            <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
-                        )}
+                        {/* Completed words (move to the left after completion) */}
+                        <div className="flex space-x-4 text-white/20">
+                            <span>{words[1]}</span>
+                            <span>{words[0]}</span>
+                        </div>
                     </div>
                     
-                    {/* Past words */}
-                    <div className="space-y-3">
-                        <div className="text-2xl text-white/50 font-medium">{words[1]}</div>
-                        <div className="text-xl text-white/30 font-medium">{words[0]}</div>
-                    </div>
+                    {/* Error message for extra characters */}
+                    {inputValue.length > (words[2] || '').length && (
+                        <div className="text-center mt-4">
+                            <div className="text-sm text-red-400 animate-shake inline-block px-3 py-1 bg-red-500/10 rounded-lg border border-red-500/20">
+                                ❌ Extra characters: {inputValue.slice((words[2] || '').length)}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Dynamic Typing Instructions */}
