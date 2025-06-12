@@ -424,14 +424,16 @@ export default function GameArea() {
                                 <div>
                                     <div className="font-semibold mb-1">⚡ Words Per Minute</div>
                                     <div className="text-xs space-y-1">
-                                        <div>• Based on last 5 minutes of typing</div>
-                                        <div>• Calculated using standard 5-char method</div>
-                                        <div>• Decays when not actively typing</div>
-                                        <div>• Higher WPM = better typing test scores</div>
+                                        <div>• Based on current typing session</div>
+                                        <div>• Uses standard 5-character word method</div>
+                                        <div>• Requires minimum 3 words for accuracy</div>
+                                        <div>• Session resets after 10 second pause</div>
+                                        <div>• Smoothed for realistic measurements</div>
                                         <div className="mt-2 text-white/80">WPM Benchmarks:</div>
                                         <div>• 40+ WPM: Good</div>
                                         <div>• 60+ WPM: Great</div>
                                         <div>• 80+ WPM: Excellent</div>
+                                        <div>• 100+ WPM: Expert</div>
                                     </div>
                                 </div>
                             }

@@ -200,16 +200,17 @@ export const MoneyProvider = ({ children }) => {
     // Update WPM periodically with idle detection
     useEffect(() => {
         const interval = setInterval(() => {
+            // Always update WPM from the calculation (no decay needed as it's session-based)
+            const currentWPM = calculateWPM();
+            setWPM(currentWPM);
+            
             // Only update WPM if user has been typing recently (within last 3 seconds)
             const timeSinceLastTyping = Date.now() - lastTypingTime;
             if (timeSinceLastTyping < 3000) {
-                const currentWPM = calculateWPM();
-                setWPM(currentWPM);
                 setIsTyping(true);
             } else {
-                // User is idle, gradually decrease WPM
+                // User is idle
                 setIsTyping(false);
-                setWPM(prev => Math.max(0, Math.floor(prev * 0.95))); // Decay WPM when not typing
             }
         }, 2000); // Update every 2 seconds
         return () => clearInterval(interval);

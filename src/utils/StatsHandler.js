@@ -57,24 +57,34 @@ export function addWordToAccuracy(isCorrect) {
 
 // WPM Calculation Functions
 export function getWPMData() {
-    return getStorage('wpmData') || { words: [], startTime: null };
+    return getStorage('wpmData') || { words: [], sessionStart: null, lastWordTime: null };
 }
 
 export function addWordForWPM(wordLength) {
     const wpmData = getWPMData();
     const now = Date.now();
     
-    // Initialize start time if this is the first word
-    if (!wpmData.startTime) {
-        wpmData.startTime = now;
+    // Initialize session start time if this is the first word or if there's been a long gap
+    const timeSinceLastWord = wpmData.lastWordTime ? now - wpmData.lastWordTime : 0;
+    const isNewSession = !wpmData.sessionStart || timeSinceLastWord > 10000; // 10 second gap = new session
+    
+    if (isNewSession) {
+        wpmData.sessionStart = now;
+        wpmData.words = []; // Reset for new session
     }
     
     // Add word with timestamp
     wpmData.words.push({ length: wordLength, timestamp: now });
+    wpmData.lastWordTime = now;
     
-    // Keep only last 5 minutes of data for accurate WPM calculation
-    const fiveMinutesAgo = now - (5 * 60 * 1000);
-    wpmData.words = wpmData.words.filter(word => word.timestamp > fiveMinutesAgo);
+    // Keep only last 2 minutes of data for WPM calculation (standard practice)
+    const twoMinutesAgo = now - (2 * 60 * 1000);
+    wpmData.words = wpmData.words.filter(word => word.timestamp > twoMinutesAgo);
+    
+    // Update session start if we filtered out too much data
+    if (wpmData.words.length > 0 && wpmData.sessionStart < twoMinutesAgo) {
+        wpmData.sessionStart = wpmData.words[0].timestamp;
+    }
     
     setStorage('wpmData', wpmData);
 }
@@ -82,32 +92,37 @@ export function addWordForWPM(wordLength) {
 export function calculateWPM() {
     const wpmData = getWPMData();
     
-    if (!wpmData.words.length || !wpmData.startTime) {
+    if (!wpmData.words.length || !wpmData.sessionStart) {
         return 0;
     }
     
-    const now = Date.now();
-    const fiveMinutesAgo = now - (5 * 60 * 1000);
-    
-    // Use only recent words (last 5 minutes) for current WPM
-    const recentWords = wpmData.words.filter(word => word.timestamp > fiveMinutesAgo);
-    
-    if (recentWords.length === 0) {
+    // Require at least 3 words for a meaningful WPM calculation
+    if (wpmData.words.length < 3) {
         return 0;
     }
     
-    // Calculate time span in minutes
-    const timeSpanMs = Math.max(now - recentWords[0].timestamp, 1000); // Minimum 1 second
-    const timeSpanMinutes = timeSpanMs / (1000 * 60);
+    // Use actual typing session time, not current time
+    const sessionDurationMs = Math.max(wpmData.lastWordTime - wpmData.sessionStart, 5000); // Minimum 5 seconds
+    const sessionDurationMinutes = sessionDurationMs / (1000 * 60);
     
-    if (timeSpanMinutes <= 0) {
+    if (sessionDurationMinutes <= 0) {
         return 0;
     }
     
-    // Calculate WPM (standard word is 5 characters)
-    const totalCharacters = recentWords.reduce((sum, word) => sum + word.length, 0);
-    const wordsTyped = totalCharacters / 5; // Standard word length
-    const wpm = Math.round(wordsTyped / timeSpanMinutes);
+    // Calculate WPM using standard method: (total characters / 5) / time in minutes
+    const totalCharacters = wpmData.words.reduce((sum, word) => sum + word.length, 0);
+    const standardWords = totalCharacters / 5; // Standard word length is 5 characters
+    let wpm = Math.round(standardWords / sessionDurationMinutes);
+    
+    // Apply smoothing for very short sessions (less than 30 seconds)
+    if (sessionDurationMs < 30000) {
+        // Reduce WPM for very short bursts to avoid inflated numbers
+        const smoothingFactor = sessionDurationMs / 30000; // 0.0 to 1.0
+        wpm = Math.round(wpm * (0.7 + 0.3 * smoothingFactor)); // Scale between 70% and 100%
+    }
+    
+    // Cap maximum WPM at reasonable limit to avoid unrealistic numbers
+    wpm = Math.min(wpm, 300);
     
     return Math.max(0, wpm);
 }
