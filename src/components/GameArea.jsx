@@ -344,23 +344,27 @@ export default function GameArea() {
                                         <div>• 7-letter word: +{FormatMoney(calculateExampleWordValue(7))}</div>
                                         <div>• Gold word: 10x multiplier!</div>
                                         <div>• Multiplier: {wordMultiplier}x</div>
-                                        {typingTestBoostActive && <div className="text-green-400">• Test Boost: {typingTestBoost.toFixed(1)}x</div>}
+                                        {typingTestBoostActive && <div style={{ color: 'var(--accent-green)' }}>• Test Boost: {typingTestBoost.toFixed(1)}x</div>}
                                     </div>
                                 </div>
                             }
                             position="bottom"
                         >
                             <div className="text-center px-6 cursor-help">
-                                <div className="text-3xl font-bold text-white flex items-center justify-center">
+                                <div className="text-3xl font-bold flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>
                                     <span className="mr-2">💰</span>
-                                    <span className={`transition-all duration-500 ${isTyping ? 'animate-pulse text-green-400' : ''}`}>
+                                    <span className="transition-all duration-500" 
+                                          style={{ 
+                                              color: 'var(--text-primary)',
+                                              animation: isTyping ? 'pulse 2s infinite' : 'none'
+                                          }}>
                                         {FormatMoney(money)}
                                     </span>
                                 </div>
-                                <div className="text-sm text-white/60">Balance</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Balance</div>
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -369,7 +373,7 @@ export default function GameArea() {
                                         <div>• Current XP multiplier: {getStreakXPMultiplier()}x</div>
                                         <div>• Lose streak on any mistake</div>
                                         <div>• Higher streaks = more XP!</div>
-                                        <div className="mt-2 text-white/80">Streak Milestones:</div>
+                                        <div className="mt-2" style={{ color: 'var(--text-secondary)' }}>Streak Milestones:</div>
                                         <div>• 5+ words: 1.5x XP</div>
                                         <div>• 10+ words: 1.8x XP</div>
                                         <div>• 25+ words: 2.5x XP</div>
@@ -380,15 +384,17 @@ export default function GameArea() {
                             position="bottom"
                         >
                             <div className="text-center px-6 cursor-help">
-                                <div className={`text-2xl font-bold transition-all duration-300 ${streak >= 10 ? 'text-cyan-400' : 'text-blue-400'}`}>{streak}</div>
-                                <div className="text-sm text-white/60">Streak</div>
+                                <div className="text-2xl font-bold transition-all duration-300" 
+                                     style={{ color: streak >= 10 ? 'var(--accent-cyan)' : 'var(--accent-blue)' }}>{streak}</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Streak</div>
                                 {streak >= 3 && (
-                                    <div className={`text-xs font-semibold transition-all duration-300 ${
-                                        streak >= 50 ? 'text-purple-400' : 
-                                        streak >= 25 ? 'text-yellow-400' : 
-                                        streak >= 15 ? 'text-orange-400' : 
-                                        streak >= 10 ? 'text-green-400' : 'text-cyan-400'
-                                    }`}>
+                                    <div className="text-xs font-semibold transition-all duration-300" 
+                                         style={{ 
+                                             color: streak >= 50 ? 'var(--accent-purple)' : 
+                                                    streak >= 25 ? 'var(--accent-yellow)' : 
+                                                    streak >= 15 ? 'var(--accent-orange)' : 
+                                                    streak >= 10 ? 'var(--accent-green)' : 'var(--accent-cyan)'
+                                         }}>
                                         {streak >= 50 ? '🔥🔥🔥 3.0x' : 
                                          streak >= 25 ? '🔥🔥 2.5x' : 
                                          streak >= 15 ? '🔥 2.0x' :
@@ -398,7 +404,7 @@ export default function GameArea() {
                                 )}
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -414,11 +420,11 @@ export default function GameArea() {
                             position="bottom"
                         >
                             <div className="text-center px-6 cursor-help">
-                                <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
-                                <div className="text-sm text-white/60">Accuracy</div>
+                                <div className="text-2xl font-bold" style={{ color: 'var(--accent-green)' }}>{accuracy}%</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Accuracy</div>
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -429,7 +435,7 @@ export default function GameArea() {
                                         <div>• Requires minimum 3 words for accuracy</div>
                                         <div>• Session resets after 10 second pause</div>
                                         <div>• Smoothed for realistic measurements</div>
-                                        <div className="mt-2 text-white/80">WPM Benchmarks:</div>
+                                        <div className="mt-2" style={{ color: 'var(--text-secondary)' }}>WPM Benchmarks:</div>
                                         <div>• 40+ WPM: Good</div>
                                         <div>• 60+ WPM: Great</div>
                                         <div>• 80+ WPM: Excellent</div>
@@ -440,16 +446,17 @@ export default function GameArea() {
                             position="bottom"
                         >
                             <div className="text-center px-6 cursor-help">
-                                <div className={`text-2xl font-bold transition-all duration-300 ${isTyping ? 'text-orange-400' : 'text-orange-400/60'}`}>{wpm}</div>
-                                <div className="text-sm text-white/60">WPM</div>
+                                <div className="text-2xl font-bold transition-all duration-300" 
+                                     style={{ color: isTyping ? 'var(--accent-orange)' : 'var(--text-muted)' }}>{wpm}</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>WPM</div>
                                 {isTyping && (
-                                    <div className="text-xs text-orange-400">
+                                    <div className="text-xs" style={{ color: 'var(--accent-orange)' }}>
                                         🔥 Active
                                     </div>
                                 )}
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12 bg-white/20"></div>
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -466,13 +473,13 @@ export default function GameArea() {
                             position="bottom"
                         >
                             <div className="text-center px-6 cursor-help">
-                                <div className="text-2xl font-bold text-purple-400">{wordMultiplier}x</div>
-                                <div className="text-sm text-white/60">Multiplier</div>
+                                <div className="text-2xl font-bold" style={{ color: 'var(--accent-purple)' }}>{wordMultiplier}x</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Multiplier</div>
                             </div>
                         </Tooltip>
                         {cashPerSecond > 0 && (
                             <>
-                                <div className="w-px h-12 bg-white/20"></div>
+                                <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                                 <Tooltip 
                                     content={
                                         <div>
@@ -482,25 +489,25 @@ export default function GameArea() {
                                                 <div>• Buy passive income upgrades in shop</div>
                                                 <div>• Works even when not typing</div>
                                                 <div>• Balanced to supplement, not replace typing</div>
-                                                <div className="mt-2 text-emerald-400">Per minute: {FormatMoney(cashPerSecond * 60)}</div>
-                                                <div className="text-emerald-400">Per hour: {FormatMoney(cashPerSecond * 3600)}</div>
+                                                <div className="mt-2" style={{ color: 'var(--accent-green)' }}>Per minute: {FormatMoney(cashPerSecond * 60)}</div>
+                                                <div style={{ color: 'var(--accent-green)' }}>Per hour: {FormatMoney(cashPerSecond * 3600)}</div>
                                             </div>
                                         </div>
                                     }
                                     position="bottom"
                                 >
                                     <div className="text-center px-6 cursor-help">
-                                        <div className="text-2xl font-bold text-emerald-400 flex items-center justify-center">
+                                        <div className="text-2xl font-bold flex items-center justify-center" style={{ color: 'var(--accent-green)' }}>
                                             <span className="mr-1">💸</span>
                                             <span>{FormatMoney(cashPerSecond)}</span>
                                         </div>
-                                        <div className="text-sm text-white/60">Per Second</div>
-                                        <div className="text-xs text-emerald-400">
+                                        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Per Second</div>
+                                        <div className="text-xs" style={{ color: 'var(--accent-green)' }}>
                                             🤖 Passive
                                         </div>
                                     </div>
                                 </Tooltip>
-                                <div className="w-px h-12 bg-white/20"></div>
+                                <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                             </>
                         )}
                     </div>
@@ -514,28 +521,29 @@ export default function GameArea() {
                                     <div className="text-xs space-y-1">
                                         <div>• Level up by earning XP</div>
                                         <div>• XP from typing words correctly</div>
-                                        <div className="mt-2 text-white/80">Level Benefits:</div>
+                                        <div className="mt-2" style={{ color: 'var(--text-secondary)' }}>Level Benefits:</div>
                                         {getLevelBenefits().map((benefit, index) => (
                                             <div key={index}>• {benefit}</div>
                                         ))}
-                                        <div className="mt-2 text-cyan-400">Example XP: 5-letter word = {calculateExampleXP(5)} XP</div>
+                                        <div className="mt-2" style={{ color: 'var(--accent-cyan)' }}>Example XP: 5-letter word = {calculateExampleXP(5)} XP</div>
                                     </div>
                                 </div>
                             }
                             position="bottom"
                         >
                             <div className="text-center cursor-help">
-                                <div className={`text-2xl font-bold transition-all duration-300 ${
-                                    level >= 50 ? 'text-purple-400' :
-                                    level >= 25 ? 'text-yellow-400' :
-                                    level >= 10 ? 'text-orange-400' : 'text-yellow-400'
-                                }`}>
+                                <div className="text-2xl font-bold transition-all duration-300" 
+                                     style={{ 
+                                         color: level >= 50 ? 'var(--accent-purple)' :
+                                                level >= 25 ? 'var(--accent-yellow)' :
+                                                level >= 10 ? 'var(--accent-orange)' : 'var(--accent-yellow)'
+                                     }}>
                                     Level {level}
                                     {level >= 50 && <span className="ml-1">👑</span>}
                                     {level >= 25 && level < 50 && <span className="ml-1">💎</span>}
                                     {level >= 10 && level < 25 && <span className="ml-1">⭐</span>}
                                 </div>
-                                <div className="text-sm text-white/60">Current Level</div>
+                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Current Level</div>
                             </div>
                         </Tooltip>
                         <Tooltip 
@@ -547,24 +555,27 @@ export default function GameArea() {
                                         <div>• XP = word length × 2 × streak multiplier</div>
                                         <div>• Gold words give 2x XP</div>
                                         <div>• Higher streaks = more XP per word</div>
-                                        <div className="mt-2 text-white/80">Current streak multiplier: {getStreakXPMultiplier()}x</div>
+                                        <div className="mt-2" style={{ color: 'var(--text-secondary)' }}>Current streak multiplier: {getStreakXPMultiplier()}x</div>
                                     </div>
                                 </div>
                             }
                             position="bottom"
                         >
                             <div className="text-center min-w-[120px] cursor-help">
-                                <div className="text-lg font-bold text-cyan-400">{xp} XP</div>
-                                <div className="w-full bg-white/10 rounded-full h-2 mt-1">
+                                <div className="text-lg font-bold" style={{ color: 'var(--accent-cyan)' }}>{xp} XP</div>
+                                <div className="w-full rounded-full h-2 mt-1" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                                     <div 
-                                        className={`h-2 rounded-full transition-all duration-500 ${
-                                            xpProgress >= 90 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse' :
-                                            'bg-gradient-to-r from-cyan-400 to-blue-500'
-                                        }`}
-                                        style={{ width: `${xpProgress}%` }}
+                                        className="h-2 rounded-full transition-all duration-500"
+                                        style={{ 
+                                            width: `${xpProgress}%`,
+                                            background: xpProgress >= 90 ? 
+                                                'linear-gradient(to right, var(--accent-yellow), var(--accent-orange))' :
+                                                'linear-gradient(to right, var(--accent-cyan), var(--accent-blue))',
+                                            animation: xpProgress >= 90 ? 'pulse 2s infinite' : 'none'
+                                        }}
                                     ></div>
                                 </div>
-                                <div className="text-xs text-white/50 mt-1">
+                                <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                                     {Math.round(xpProgress)}% to next level
                                     {xpProgress >= 90 && <span className="ml-1">🎯</span>}
                                 </div>
@@ -580,39 +591,49 @@ export default function GameArea() {
                 <div className="max-w-4xl mx-auto px-8">
                     <div className="flex items-center justify-center space-x-4 text-2xl font-medium overflow-hidden">
                         {/* Upcoming words (start from the right) */}
-                        <div className="flex space-x-4 text-white/40">
+                        <div className="flex space-x-4" style={{ color: 'var(--text-muted)' }}>
                             <span>{words[4]}</span>
                             <span>{words[3]}</span>
                         </div>
                         
                         {/* Current Word with enhanced styling */}
-                        <div className={`relative px-6 py-4 rounded-xl transition-all duration-300 ${
-                            isGold 
-                                ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 shadow-lg shadow-yellow-500/25" 
-                                : "text-white bg-white/10 border border-white/20"
-                        } ${isTyping ? 'scale-105 shadow-2xl' : 'scale-100'}`}>
+                        <div className="relative px-6 py-4 rounded-xl transition-all duration-300"
+                             style={{
+                                 color: isGold ? 'var(--accent-yellow)' : 'var(--text-primary)',
+                                 background: isGold ? 'linear-gradient(to right, var(--accent-yellow-bg), var(--accent-yellow-bg))' : 'var(--bg-secondary)',
+                                 border: isGold ? '1px solid var(--accent-yellow-border)' : '1px solid var(--border-primary)',
+                                 boxShadow: isGold ? '0 10px 15px -3px var(--accent-yellow-bg), 0 4px 6px -2px var(--accent-yellow-bg)' : 'none',
+                                 transform: isTyping ? 'scale(1.05)' : 'scale(1)',
+                                 ...(isTyping && { boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' })
+                             }}>
                             
                             <div className="relative text-3xl font-bold">
                                 {/* Render each character of the current word */}
                                 {words[2] && words[2].split('').map((char, index) => {
-                                    let className = '';
+                                    let style = {};
+                                    let className = 'transition-all duration-150';
+                                    
                                     if (index < inputValue.length) {
                                         // Character has been typed
                                         if (inputValue[index] === char) {
-                                            className = 'text-green-400'; // Correct character
+                                            style.color = 'var(--accent-green)'; // Correct character
                                         } else {
-                                            className = 'text-red-400 bg-red-500/30 px-1 rounded'; // Incorrect character
+                                            style.color = 'var(--accent-red)';
+                                            style.backgroundColor = 'var(--accent-red-bg)';
+                                            className += ' px-1 rounded'; // Incorrect character
                                         }
                                     } else if (index === inputValue.length) {
                                         // Current character (cursor position)
-                                        className = 'bg-white/70 text-black animate-pulse px-1 rounded shadow-lg';
+                                        style.backgroundColor = 'var(--cursor-bg)';
+                                        style.color = 'var(--cursor-text)';
+                                        className += ' animate-pulse px-1 rounded shadow-lg';
                                     } else {
                                         // Untyped character
-                                        className = isGold ? 'text-yellow-400/70' : 'text-white/70';
+                                        style.color = isGold ? 'var(--accent-yellow-muted)' : 'var(--text-muted)';
                                     }
                                     
                                     return (
-                                        <span key={index} className={`${className} transition-all duration-150`}>
+                                        <span key={index} className={className} style={style}>
                                             {char}
                                         </span>
                                     );
@@ -620,25 +641,32 @@ export default function GameArea() {
                                 
                                 {/* Show cursor after the word only if there are extra characters beyond the word length */}
                                 {inputValue.length > (words[2] || '').length && (
-                                    <span className="bg-red-500/70 text-white animate-pulse ml-1 px-1 rounded">|</span>
+                                    <span className="animate-pulse ml-1 px-1 rounded text-white" 
+                                          style={{ backgroundColor: 'var(--accent-red-bg)' }}>|</span>
                                 )}
                             </div>
                             
                             {/* Gold indicator */}
                             {isGold && (
-                                <div className="absolute -top-2 -right-2 text-xs font-bold text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded-full border border-yellow-500/30">
+                                <div className="absolute -top-2 -right-2 text-xs font-bold px-2 py-1 rounded-full border" 
+                                     style={{ 
+                                         color: 'var(--accent-yellow)', 
+                                         backgroundColor: 'var(--accent-yellow-bg)',
+                                         borderColor: 'var(--accent-yellow-border)'
+                                     }}>
                                     2x
                                 </div>
                             )}
                             
                             {/* Typing speed indicator */}
                             {isTyping && (
-                                <div className="absolute -top-1 -left-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+                                <div className="absolute -top-1 -left-1 w-3 h-3 rounded-full animate-ping" 
+                                     style={{ backgroundColor: 'var(--accent-green)' }}></div>
                             )}
                         </div>
                         
                         {/* Completed words (move to the left after completion) */}
-                        <div className="flex space-x-4 text-white/20">
+                        <div className="flex space-x-4" style={{ color: 'var(--text-disabled)' }}>
                             <span>{words[1]}</span>
                             <span>{words[0]}</span>
                         </div>
@@ -647,7 +675,12 @@ export default function GameArea() {
                     {/* Error message for extra characters */}
                     {inputValue.length > (words[2] || '').length && (
                         <div className="text-center mt-4">
-                            <div className="text-sm text-red-400 animate-shake inline-block px-3 py-1 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <div className="text-sm animate-shake inline-block px-3 py-1 rounded-lg border" 
+                                 style={{ 
+                                     color: 'var(--accent-red)', 
+                                     backgroundColor: 'var(--accent-red-bg)',
+                                     borderColor: 'var(--accent-red-border)'
+                                 }}>
                                 ❌ Extra characters: {inputValue.slice((words[2] || '').length)}
                             </div>
                         </div>
@@ -657,27 +690,27 @@ export default function GameArea() {
                 {/* Dynamic Typing Instructions */}
                 <div className="text-center space-y-1">
                     {!isTyping ? (
-                        <div className="text-white/40 text-sm animate-pulse">
+                        <div className="text-sm animate-pulse" style={{ color: 'var(--text-muted)' }}>
                             💤 Start typing to earn money and XP! 
                         </div>
                     ) : streak >= 20 ? (
-                        <div className="text-purple-400 text-sm font-semibold">
+                        <div className="text-sm font-semibold" style={{ color: 'var(--accent-purple)' }}>
                             🔥 ON FIRE! Keep the streak alive! 🔥
                         </div>
                     ) : streak >= 10 ? (
-                        <div className="text-yellow-400 text-sm font-semibold">
+                        <div className="text-sm font-semibold" style={{ color: 'var(--accent-yellow)' }}>
                             ⚡ Amazing streak! You're in the zone! ⚡
                         </div>
                     ) : streak >= 5 ? (
-                        <div className="text-green-400 text-sm">
+                        <div className="text-sm" style={{ color: 'var(--accent-green)' }}>
                             ✨ Great streak! Keep it up! ✨
                         </div>
                     ) : (
-                        <div className="text-cyan-400 text-sm">
+                        <div className="text-sm" style={{ color: 'var(--accent-cyan)' }}>
                             🚀 Press Space or Enter to submit word 🚀
                         </div>
                     )}
-                    <div className="text-white/20 text-xs">
+                    <div className="text-xs" style={{ color: 'var(--text-disabled)' }}>
                         Press Tab to restart • Backspace to delete
                     </div>
                 </div>
@@ -687,22 +720,56 @@ export default function GameArea() {
             <div className="flex justify-center space-x-4">
                 {lastTypingTestTime !== null && new Date(lastTypingTestTime.getTime() + 60000 * 11) > Date.now() ? (
                     <button 
-                        className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                            typingTestBoostActive 
-                                ? 'glass-dark border border-green-500/30 text-green-400 hover:border-green-500/50 hover:bg-green-500/10 shadow-lg' 
-                                : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
-                        }`}
+                        className="px-6 py-3 rounded-2xl font-medium transition-all duration-300 shadow-lg"
+                        style={{
+                            background: 'var(--glass-bg)',
+                            borderWidth: '1px',
+                            borderStyle: 'solid',
+                            borderColor: typingTestBoostActive ? 'var(--accent-green-border)' : 'var(--border-primary)',
+                            color: typingTestBoostActive ? 'var(--accent-green)' : 'var(--text-disabled)',
+                            cursor: typingTestBoostActive ? 'pointer' : 'not-allowed'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (typingTestBoostActive) {
+                                e.target.style.borderColor = 'var(--accent-green)';
+                                e.target.style.backgroundColor = 'var(--accent-green-bg)';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (typingTestBoostActive) {
+                                e.target.style.borderColor = 'var(--accent-green-border)';
+                                e.target.style.backgroundColor = 'var(--glass-bg)';
+                            }
+                        }}
                         disabled={!typingTestBoostActive}
                     >
                         {typingTestCountdown}
                     </button>
                 ) : (
                     <button 
-                        className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                            unlockedFeatures.has('typingTest')
-                                ? 'glass-dark border border-blue-500/30 text-blue-400 hover:border-blue-500/50 hover:bg-blue-500/10 shadow-lg hover:shadow-xl'
-                                : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
-                        }`}
+                        className="px-6 py-3 rounded-2xl font-medium transition-all duration-300 shadow-lg"
+                        style={{
+                            background: 'var(--glass-bg)',
+                            borderWidth: '1px',
+                            borderStyle: 'solid',
+                            borderColor: unlockedFeatures.has('typingTest') ? 'var(--accent-blue-border)' : 'var(--border-primary)',
+                            color: unlockedFeatures.has('typingTest') ? 'var(--accent-blue)' : 'var(--text-disabled)',
+                            cursor: unlockedFeatures.has('typingTest') ? 'pointer' : 'not-allowed'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (unlockedFeatures.has('typingTest')) {
+                                e.target.style.borderColor = 'var(--accent-blue)';
+                                e.target.style.backgroundColor = 'var(--accent-blue-bg)';
+                                e.target.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (unlockedFeatures.has('typingTest')) {
+                                e.target.style.borderColor = 'var(--accent-blue-border)';
+                                e.target.style.backgroundColor = 'var(--glass-bg)';
+                                e.target.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                            }
+                        }}
                         onClick={handleTypingTest}
                         disabled={!unlockedFeatures.has('typingTest')}
                     >
@@ -714,11 +781,29 @@ export default function GameArea() {
                 )}
                 
                 <button 
-                    className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
-                        unlockedFeatures.has('difficulty')
-                            ? 'glass-dark border border-orange-500/30 text-orange-400 hover:border-orange-500/50 hover:bg-orange-500/10 shadow-lg hover:shadow-xl'
-                            : 'glass-dark border border-white/10 text-white/40 cursor-not-allowed'
-                    }`}
+                    className="px-6 py-3 rounded-2xl font-medium transition-all duration-300 shadow-lg"
+                    style={{
+                        background: 'var(--glass-bg)',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        borderColor: unlockedFeatures.has('difficulty') ? 'var(--accent-orange-border)' : 'var(--border-primary)',
+                        color: unlockedFeatures.has('difficulty') ? 'var(--accent-orange)' : 'var(--text-disabled)',
+                        cursor: unlockedFeatures.has('difficulty') ? 'pointer' : 'not-allowed'
+                    }}
+                    onMouseEnter={(e) => {
+                        if (unlockedFeatures.has('difficulty')) {
+                            e.target.style.borderColor = 'var(--accent-orange)';
+                            e.target.style.backgroundColor = 'var(--accent-orange-bg)';
+                            e.target.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (unlockedFeatures.has('difficulty')) {
+                            e.target.style.borderColor = 'var(--accent-orange-border)';
+                            e.target.style.backgroundColor = 'var(--glass-bg)';
+                            e.target.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                        }
+                    }}
                     onClick={handleDifficulty}
                     disabled={!unlockedFeatures.has('difficulty')}
                 >
@@ -729,7 +814,24 @@ export default function GameArea() {
                 </button>
                 
                 <button 
-                    className="px-6 py-3 rounded-2xl font-medium glass-dark border border-gray-500/30 text-gray-400 hover:border-gray-500/50 hover:bg-gray-500/10 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="px-6 py-3 rounded-2xl font-medium transition-all duration-300 shadow-lg"
+                    style={{
+                        background: 'var(--glass-bg)',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        borderColor: 'var(--text-secondary)',
+                        color: 'var(--text-secondary)'
+                    }}
+                    onMouseEnter={(e) => {
+                        e.target.style.borderColor = 'var(--text-primary)';
+                        e.target.style.backgroundColor = 'var(--bg-secondary)';
+                        e.target.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.borderColor = 'var(--text-secondary)';
+                        e.target.style.backgroundColor = 'var(--glass-bg)';
+                        e.target.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                    }}
                     onClick={handleImportExport}
                 >
                     <span className="flex items-center space-x-2">

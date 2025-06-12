@@ -45,43 +45,55 @@ export default function OneTimeUpgrade({ upgradeData }) {
     }
 
     return (
-        <div className="glass-dark rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 group relative overflow-hidden">
+        <div className="glass rounded-xl p-4 transition-all duration-300 group relative overflow-hidden" 
+             style={{ 
+                 background: 'var(--glass-bg)', 
+                 borderColor: 'var(--border-primary)' 
+             }}>
             {/* Premium Badge */}
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-bl-full"></div>
+            <div className="absolute top-0 right-0 w-16 h-16 rounded-bl-full gradient-bg-alt" 
+                 style={{ opacity: '0.2' }}></div>
             
             <div className="relative">
                 <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white group-hover:text-green-400 transition-colors">
+                        <h3 className="text-lg font-semibold transition-colors" 
+                            style={{ color: 'var(--text-primary)' }}>
                             {name}
                         </h3>
                         <div className="flex items-center mt-2">
-                            <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                            <span className="text-xs font-medium text-green-400 uppercase tracking-wide">
+                            <span className="w-2 h-2 rounded-full mr-2 animate-pulse" 
+                                  style={{ backgroundColor: 'var(--accent-green)' }}></span>
+                            <span className="text-xs font-medium uppercase tracking-wide" 
+                                  style={{ color: 'var(--accent-green)' }}>
                                 One-Time Unlock
                             </span>
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-lg font-bold text-white">
+                        <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
                             {FormatMoney(cost)}
                         </div>
-                        <div className="text-xs text-white/60">
+                        <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                             Forever
                         </div>
                     </div>
                 </div>
 
-                <p className="text-white/70 text-sm mb-4 leading-relaxed">
+                <p className="text-sm mb-4 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {description}
                 </p>
 
                 <button
                     className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
                         isAffordable
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl'
-                            : 'bg-white/10 text-white/50 cursor-not-allowed'
+                            ? 'text-white shadow-lg hover:shadow-xl gradient-bg-alt'
+                            : 'cursor-not-allowed'
                     }`}
+                    style={{
+                        backgroundColor: !isAffordable ? 'var(--bg-tertiary)' : undefined,
+                        color: !isAffordable ? 'var(--text-muted)' : undefined
+                    }}
                     onClick={handleUpgradePurchase}
                     disabled={!isAffordable}
                 >

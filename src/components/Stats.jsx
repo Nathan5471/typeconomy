@@ -19,17 +19,26 @@ export default function Stats() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="glass-dark rounded-2xl p-6 border border-white/10">
-                <h2 className="text-3xl font-bold text-white mb-2 flex items-center">
+            <div className="glass rounded-2xl p-6" 
+                 style={{ 
+                     background: 'var(--glass-bg)', 
+                     borderColor: 'var(--border-primary)' 
+                 }}>
+                <h2 className="text-3xl font-bold mb-2 flex items-center" 
+                    style={{ color: 'var(--text-primary)' }}>
                     <span className="mr-3">📊</span>
                     Statistics
                 </h2>
-                <p className="text-white/60">Track your typing performance</p>
+                <p style={{ color: 'var(--text-secondary)' }}>Track your typing performance</p>
             </div>
 
             {/* Performance Overview */}
-            <div className="glass-dark rounded-2xl p-6 border border-white/10">
-                <h3 className="text-xl font-semibold text-white mb-4">Performance Overview</h3>
+            <div className="glass rounded-2xl p-6" 
+                 style={{ 
+                     background: 'var(--glass-bg)', 
+                     borderColor: 'var(--border-primary)' 
+                 }}>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Performance Overview</h3>
                 <div className="space-y-4">
                     {/* Performance Metrics */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -41,7 +50,7 @@ export default function Stats() {
                                         cx="60"
                                         cy="60"
                                         r="50"
-                                        stroke="rgba(255,255,255,0.1)"
+                                        stroke="var(--border-primary)"
                                         strokeWidth="8"
                                         fill="none"
                                     />
@@ -58,15 +67,15 @@ export default function Stats() {
                                     />
                                     <defs>
                                         <linearGradient id="gradient-accuracy" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stopColor="#3B82F6" />
-                                            <stop offset="100%" stopColor="#8B5CF6" />
+                                            <stop offset="0%" stopColor="var(--accent-blue)" />
+                                            <stop offset="100%" stopColor="var(--accent-purple)" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold text-white">{accuracy}%</div>
-                                        <div className="text-xs text-white/60">Accuracy</div>
+                                        <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{accuracy}%</div>
+                                        <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Accuracy</div>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +89,7 @@ export default function Stats() {
                                         cx="60"
                                         cy="60"
                                         r="50"
-                                        stroke="rgba(255,255,255,0.1)"
+                                        stroke="var(--border-primary)"
                                         strokeWidth="8"
                                         fill="none"
                                     />
@@ -97,15 +106,15 @@ export default function Stats() {
                                     />
                                     <defs>
                                         <linearGradient id="gradient-wpm" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stopColor="#F97316" />
-                                            <stop offset="100%" stopColor="#EAB308" />
+                                            <stop offset="0%" stopColor="var(--accent-orange)" />
+                                            <stop offset="100%" stopColor="var(--accent-yellow)" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center">
-                                        <div className="text-2xl font-bold text-orange-400">{wpm}</div>
-                                        <div className="text-xs text-white/60">WPM</div>
+                                        <div className="text-2xl font-bold" style={{ color: 'var(--accent-orange)' }}>{wpm}</div>
+                                        <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>WPM</div>
                                     </div>
                                 </div>
                             </div>
@@ -115,35 +124,43 @@ export default function Stats() {
             </div>
 
             {/* Leveling Progress */}
-            <div className="glass-dark rounded-2xl p-6 border border-white/10">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+            <div className="glass rounded-2xl p-6" 
+                 style={{ 
+                     background: 'var(--glass-bg)', 
+                     borderColor: 'var(--border-primary)' 
+                 }}>
+                <h3 className="text-xl font-semibold mb-4 flex items-center" 
+                    style={{ color: 'var(--text-primary)' }}>
                     <span className="mr-2">🎯</span>
                     Leveling Progress
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Current Level Status */}
                     <div className="space-y-4">
-                        <h4 className="text-lg font-semibold text-white flex items-center">
+                        <h4 className="text-lg font-semibold flex items-center" 
+                            style={{ color: 'var(--text-primary)' }}>
                             <span className="mr-2">📊</span>
                             Current Progress
                         </h4>
-                        <div className="bg-white/5 rounded-lg p-4 space-y-3">
+                        <div className="rounded-lg p-4 space-y-3" 
+                             style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                             <div className="flex items-center justify-between">
-                                <span className="text-white/70">Level</span>
-                                <span className="text-yellow-400 font-bold">{level}</span>
+                                <span style={{ color: 'var(--text-secondary)' }}>Level</span>
+                                <span className="font-bold" style={{ color: 'var(--accent-yellow)' }}>{level}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-white/70">Total XP</span>
-                                <span className="text-cyan-400 font-bold">{xp}</span>
+                                <span style={{ color: 'var(--text-secondary)' }}>Total XP</span>
+                                <span className="font-bold" style={{ color: 'var(--accent-cyan)' }}>{xp}</span>
                             </div>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-white/60">Next Level Progress</span>
-                                    <span className="text-white/60">{Math.round(xpProgress)}%</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>Next Level Progress</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>{Math.round(xpProgress)}%</span>
                                 </div>
-                                <div className="w-full bg-white/10 rounded-full h-3">
+                                <div className="w-full rounded-full h-3" 
+                                     style={{ backgroundColor: 'var(--border-primary)' }}>
                                     <div 
-                                        className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500 animate-glow"
+                                        className="h-3 rounded-full transition-all duration-500 animate-glow gradient-bg-alt"
                                         style={{ width: `${xpProgress}%` }}
                                     ></div>
                                 </div>
@@ -153,31 +170,40 @@ export default function Stats() {
 
                     {/* XP Bonuses Guide */}
                     <div className="space-y-4">
-                        <h4 className="text-lg font-semibold text-white flex items-center">
+                        <h4 className="text-lg font-semibold flex items-center" 
+                            style={{ color: 'var(--text-primary)' }}>
                             <span className="mr-2">🚀</span>
                             XP Bonus System
                         </h4>
                         <div className="space-y-2">
-                            <div className="bg-white/5 rounded-lg p-3">
+                            <div className="rounded-lg p-3" 
+                                 style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-white/70 text-sm">Base XP</span>
-                                    <span className="text-blue-400 font-semibold">2 XP per character</span>
+                                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Base XP</span>
+                                    <span className="font-semibold" style={{ color: 'var(--accent-blue)' }}>2 XP per character</span>
                                 </div>
                             </div>
-                            <div className="bg-white/5 rounded-lg p-3">
+                            <div className="rounded-lg p-3" 
+                                 style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-white/70 text-sm">Gold Words</span>
-                                    <span className="text-yellow-400 font-semibold">2x XP Multiplier</span>
+                                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Gold Words</span>
+                                    <span className="font-semibold" style={{ color: 'var(--accent-yellow)' }}>2x XP Multiplier</span>
                                 </div>
                             </div>
-                            <div className="bg-white/5 rounded-lg p-3">
+                            <div className="rounded-lg p-3" 
+                                 style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-white/70 text-sm">Streak Bonus</span>
-                                    <span className="text-green-400 font-semibold">1.0x - 3.0x XP</span>
+                                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Streak Bonus</span>
+                                    <span className="font-semibold" style={{ color: 'var(--accent-green)' }}>1.0x - 3.0x XP</span>
                                 </div>
                             </div>
-                            <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg p-3 border border-cyan-500/20">
-                                <div className="text-xs text-cyan-400 font-semibold">
+                            <div className="rounded-lg p-3" 
+                                 style={{ 
+                                     background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-blue))', 
+                                     opacity: '0.1',
+                                     borderColor: 'var(--accent-cyan)' 
+                                 }}>
+                                <div className="text-xs font-semibold" style={{ color: 'var(--accent-cyan)' }}>
                                     💡 Tip: Maintain long streaks for maximum XP gains!
                                 </div>
                             </div>
@@ -189,15 +215,19 @@ export default function Stats() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 gap-4">
                 {stats.map((stat, index) => (
-                    <div key={index} className="glass-dark rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300">
+                    <div key={index} className="glass rounded-xl p-4 transition-all duration-300" 
+                         style={{ 
+                             background: 'var(--glass-bg)', 
+                             borderColor: 'var(--border-primary)' 
+                         }}>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center text-white font-semibold`}>
                                     {stat.icon}
                                 </div>
                                 <div>
-                                    <div className="text-sm text-white/60">{stat.label}</div>
-                                    <div className="text-xl font-bold text-white">{stat.value}</div>
+                                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
+                                    <div className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
                                 </div>
                             </div>
                         </div>
