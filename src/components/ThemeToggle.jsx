@@ -39,13 +39,6 @@ export default function ThemeToggle() {
                     </button>
                 ))}
             </div>
-            
-            {/* Current theme indicator */}
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                <div className="text-xs whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>
-                    {isDark ? 'Dark Mode' : 'Light Mode'}
-                </div>
-            </div>
         </div>
     );
 }

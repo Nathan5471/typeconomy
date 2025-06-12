@@ -1,4 +1,4 @@
-    @import "tailwindcss";
+@import "tailwindcss";
 
 /* Theme CSS Variables */
 :root {
@@ -75,6 +75,8 @@
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(0, 0, 0, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.1);
+  --bg-disabled: rgba(0, 0, 0, 0.3);
+  --border-disabled: rgba(0, 0, 0, 0.2);
 }
 
 :root.dark {
@@ -113,6 +115,8 @@
   --glass-bg: rgba(0, 0, 0, 0.2);
   --glass-border: rgba(255, 255, 255, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.5);
+  --bg-disabled: rgba(255, 255, 255, 0.1);
+  --border-disabled: rgba(255, 255, 255, 0.05);
 }
 
 /* Modern UI Custom Styles */
@@ -207,4 +211,131 @@ body {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-2px); }
   75% { transform: translateX(2px); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Base mobile layout adjustments */
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Touch-friendly button sizes */
+  button {
+    min-height: 44px; /* Apple's recommended touch target size */
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Responsive text sizes */
+  .mobile-text-sm { font-size: 0.75rem; }
+  .mobile-text-base { font-size: 0.875rem; }
+  .mobile-text-lg { font-size: 1rem; }
+  .mobile-text-xl { font-size: 1.125rem; }
+  .mobile-text-2xl { font-size: 1.25rem; }
+  .mobile-text-3xl { font-size: 1.5rem; }
+  .mobile-text-4xl { font-size: 1.75rem; }
+
+  /* Mobile spacing adjustments */
+  .mobile-p-2 { padding: 0.5rem; }
+  .mobile-p-4 { padding: 1rem; }
+  .mobile-p-6 { padding: 1.5rem; }
+  .mobile-py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .mobile-py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .mobile-px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .mobile-px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .mobile-m-2 { margin: 0.5rem; }
+  .mobile-mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
+  .mobile-space-y-2 > * + * { margin-top: 0.5rem; }
+  .mobile-space-y-4 > * + * { margin-top: 1rem; }
+  .mobile-space-x-2 > * + * { margin-left: 0.5rem; }
+
+  /* Mobile grid adjustments */
+  .mobile-grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .mobile-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mobile-flex-col { flex-direction: column; }
+  .mobile-gap-2 { gap: 0.5rem; }
+  .mobile-gap-4 { gap: 1rem; }
+
+  /* Mobile-specific animations */
+  .mobile-pulse {
+    animation: mobile-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes mobile-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
+@media (max-width: 640px) {
+  /* Small mobile adjustments */
+  .sm-text-xs { font-size: 0.625rem; }
+  .sm-text-sm { font-size: 0.75rem; }
+  .sm-text-base { font-size: 0.875rem; }
+  .sm-text-lg { font-size: 1rem; }
+  .sm-text-xl { font-size: 1.125rem; }
+  .sm-text-2xl { font-size: 1.25rem; }
+  .sm-text-3xl { font-size: 1.5rem; }
+
+  /* Very small screen spacing */
+  .sm-p-2 { padding: 0.5rem; }
+  .sm-p-3 { padding: 0.75rem; }
+  .sm-py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+  .sm-px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .sm-space-y-1 > * + * { margin-top: 0.25rem; }
+  .sm-space-y-2 > * + * { margin-top: 0.5rem; }
+  .sm-space-x-1 > * + * { margin-left: 0.25rem; }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .no-touch-hover:hover {
+    background-color: inherit !important;
+    border-color: inherit !important;
+    box-shadow: inherit !important;
+    transform: inherit !important;
+  }
+
+  /* Enhance active states for touch feedback */
+  button:active, 
+  input:active,
+  .touch-active:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  /* Larger touch targets */
+  input[type="text"], 
+  input[type="password"], 
+  textarea {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Responsive breakpoint utilities */
+.hide-mobile { display: block; }
+.show-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: block !important; }
+  .show-mobile-flex { display: flex !important; }
+  .show-mobile-grid { display: grid !important; }
+}
+
+/* Mobile keyboard adjustments */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  /* Landscape mobile optimizations */
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .landscape-text-sm {
+    font-size: 0.75rem;
+  }
 }

@@ -4,25 +4,42 @@ import { useOverlayContext } from '../contexts/OverlayContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
 import { calculateWordValue, calculateWordXP } from '../utils/StorageHandler.js';
+import { addSessionWPM } from '../utils/StatsHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 import DifficultyFormat from '../utils/DifficultFormat.js';
 import TypingTest from './TypingTest.jsx';
 import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
+import SessionSummary from './SessionSummary.jsx';
 import Tooltip from './Tooltip.jsx';
 
 export default function GameArea() {
     const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity, typingTestBoost } = useMoney();
-    const { openOverlay } = useOverlayContext();
+    const { openOverlay, closeOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
     const [fetchNewWord, setFetchNewWord] = useState(true);
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
+    
+    // Session control states
+    const [sessionActive, setSessionActive] = useState(false);
+    const [sessionStartTime, setSessionStartTime] = useState(null);
+    const [sessionWordsTyped, setSessionWordsTyped] = useState(0);
+    const [sessionMoney, setSessionMoney] = useState(0);
+    const [sessionDuration, setSessionDuration] = useState(0);
+    const [targetWordCount, setTargetWordCount] = useState(100); // Default session length
+    const [sessionAccuracy, setSessionAccuracy] = useState(100);
+    const [sessionCorrectWords, setSessionCorrectWords] = useState(0);
+    const [sessionIncorrectWords, setSessionIncorrectWords] = useState(0);
+    const [sessionPeakStreak, setSessionPeakStreak] = useState(0);
 
     // Create a single, persistent AudioContext instance
     const audioContextRef = useRef(null);
+    
+    // Session timer ref
+    const sessionTimerRef = useRef(null);
     
     // Initialize AudioContext once
     useEffect(() => {
@@ -36,6 +53,9 @@ export default function GameArea() {
         return () => {
             if (audioContextRef.current) {
                 audioContextRef.current.close();
+            }
+            if (sessionTimerRef.current) {
+                clearInterval(sessionTimerRef.current);
             }
         };
     }, []);
@@ -68,6 +88,70 @@ export default function GameArea() {
         if (level >= 15) benefits.push("Higher Gold Word Chance");
         if (level >= 20) benefits.push("Better Streak Bonuses");
         return benefits.length > 0 ? benefits : ["No special benefits yet"];
+    };
+
+    // Session control functions
+    const startSession = () => {
+        setSessionActive(true);
+        setSessionStartTime(new Date());
+        setSessionWordsTyped(0);
+        setSessionMoney(0);
+        setSessionDuration(0);
+        setSessionAccuracy(100);
+        setSessionCorrectWords(0);
+        setSessionIncorrectWords(0);
+        setSessionPeakStreak(0);
+        
+        // Start session timer
+        sessionTimerRef.current = setInterval(() => {
+            setSessionDuration(prev => prev + 1);
+        }, 1000);
+    };
+
+    const stopSession = () => {
+        setSessionActive(false);
+        if (sessionTimerRef.current) {
+            clearInterval(sessionTimerRef.current);
+            sessionTimerRef.current = null;
+        }
+        
+        // Calculate final session stats
+        const avgWPM = sessionDuration > 0 ? Math.round((sessionWordsTyped * 60) / sessionDuration) : 0;
+        const finalAccuracy = sessionWordsTyped > 0 ? (sessionCorrectWords / sessionWordsTyped) * 100 : 100;
+        
+        // Save session WPM to history for stats display
+        addSessionWPM(avgWPM);
+        
+        const sessionStats = {
+            duration: sessionDuration,
+            wordsTyped: sessionWordsTyped,
+            moneyEarned: sessionMoney,
+            avgWPM: avgWPM,
+            accuracy: finalAccuracy,
+            streak: sessionPeakStreak
+        };
+        
+        // Show session summary
+        openOverlay(<SessionSummary sessionStats={sessionStats} onClose={() => closeOverlay()} />);
+    };
+
+    const resetSession = () => {
+        setSessionWordsTyped(0);
+        setSessionMoney(0);
+        setSessionDuration(0);
+        setSessionAccuracy(100);
+        setSessionCorrectWords(0);
+        setSessionIncorrectWords(0);
+        setSessionPeakStreak(0);
+        if (sessionActive) {
+            setSessionStartTime(new Date());
+        }
+    };
+
+    const formatSessionTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
     useEffect(() => {
@@ -232,26 +316,81 @@ export default function GameArea() {
 
     const compareWords = useCallback(() => {
         if (inputValue === words[2]) {
+            const wordValue = calculateWordValue(words[2], isGold, typingTestBoost, typingTestBoostActive);
             handleCorrectWord(words[2], isGold);
+            
+            // Track session progress
+            if (sessionActive) {
+                setSessionWordsTyped(prev => prev + 1);
+                setSessionMoney(prev => prev + wordValue);
+                setSessionCorrectWords(prev => prev + 1);
+                
+                // Update peak streak
+                if (streak + 1 > sessionPeakStreak) {
+                    setSessionPeakStreak(streak + 1);
+                }
+                
+                // Auto-stop session if target reached
+                if (sessionWordsTyped + 1 >= targetWordCount) {
+                    // Small delay to let stats update
+                    setTimeout(() => stopSession(), 100);
+                }
+            }
             
             // Play success sound effect with current streak
             playSuccessSound(isGold, streak + 1); // +1 because streak will be incremented
         } else {
             handleIncorrectWord();
+            
+            // Track session mistakes
+            if (sessionActive) {
+                setSessionWordsTyped(prev => prev + 1);
+                setSessionIncorrectWords(prev => prev + 1);
+            }
         }
+        
+        // Update session accuracy in real time
+        if (sessionActive) {
+            const totalWords = sessionWordsTyped + 1;
+            const correctWords = inputValue === words[2] ? sessionCorrectWords + 1 : sessionCorrectWords;
+            setSessionAccuracy((correctWords / totalWords) * 100);
+        }
+        
         setIsGold(getIsGoldWord());
         setFetchNewWord(prev => !prev);
         setInputValue('');
-    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak]);
+    }, [inputValue, words, handleCorrectWord, handleIncorrectWord, isGold, streak, sessionActive, sessionWordsTyped, sessionCorrectWords, sessionPeakStreak, targetWordCount, typingTestBoost, typingTestBoostActive, stopSession]);
 
     // Handle direct keyboard input (Monkeytype style)
     const handleKeyDown = useCallback((event) => {
         if (isTypingTestOpen) return; // Prevent keydown events when typing test is open
         
+        // Prevent typing when session is not active (except for session control keys)
+        if (!sessionActive && event.key !== 'F1' && event.key !== 'F2') {
+            return;
+        }
+        
         // Quick restart with Tab key
         if (event.key === 'Tab') {
             event.preventDefault();
             setInputValue('');
+            return;
+        }
+        
+        // Session controls
+        if (event.key === 'F1') {
+            event.preventDefault();
+            if (!sessionActive) {
+                startSession();
+            } else {
+                stopSession();
+            }
+            return;
+        }
+        
+        if (event.key === 'F2') {
+            event.preventDefault();
+            resetSession();
             return;
         }
         
@@ -274,7 +413,7 @@ export default function GameArea() {
             updateTypingActivity();
             playKeyboardSound();
         }
-    }, [inputValue, compareWords, isTypingTestOpen, playKeyboardSound, updateTypingActivity]);
+    }, [inputValue, compareWords, isTypingTestOpen, playKeyboardSound, updateTypingActivity, sessionActive, startSession, stopSession, resetSession]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -331,6 +470,98 @@ export default function GameArea() {
 
     return (
         <div className="h-full w-full space-y-8 relative">
+            {/* Session Control Panel */}
+            <div className="glass-dark rounded-2xl p-4 border border-white/10">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                        <div className="text-center">
+                            <div className="text-xl font-bold flex items-center" 
+                                 style={{ color: sessionActive ? 'var(--accent-green)' : 'var(--text-muted)' }}>
+                                <span className="mr-2">{sessionActive ? '▶️' : '⏸️'}</span>
+                                <span>{formatSessionTime(sessionDuration)}</span>
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                                {sessionActive ? 'Session Active' : 'Session Stopped'}
+                            </div>
+                        </div>
+                        
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
+                        
+                        <div className="text-center">
+                            <div className="text-lg font-bold" style={{ color: 'var(--accent-blue)' }}>
+                                {sessionWordsTyped}/{targetWordCount}
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Words</div>
+                        </div>
+                        
+                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
+                        
+                        <div className="text-center">
+                            <div className="text-lg font-bold" style={{ color: 'var(--accent-yellow)' }}>
+                                {FormatMoney(sessionMoney)}
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Session Earned</div>
+                        </div>
+                        
+                        {sessionActive && sessionWordsTyped > 0 && (
+                            <>
+                                <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
+                                <div className="text-center">
+                                    <div className="text-lg font-bold" style={{ color: 'var(--accent-green)' }}>
+                                        {sessionAccuracy.toFixed(1)}%
+                                    </div>
+                                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Session Accuracy</div>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                        <select 
+                            value={targetWordCount} 
+                            onChange={(e) => setTargetWordCount(Number(e.target.value))}
+                            className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm"
+                            disabled={sessionActive}
+                        >
+                            <option value={50}>50 Words</option>
+                            <option value={100}>100 Words</option>
+                            <option value={200}>200 Words</option>
+                            <option value={500}>500 Words</option>
+                            <option value={1000}>1000 Words</option>
+                        </select>
+                        
+                        <button 
+                            onClick={sessionActive ? stopSession : startSession}
+                            className="px-4 py-2 rounded-lg font-medium transition-all duration-300"
+                            style={{
+                                background: sessionActive ? 'var(--accent-red-bg)' : 'var(--accent-green-bg)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                borderColor: sessionActive ? 'var(--accent-red-border)' : 'var(--accent-green-border)',
+                                color: sessionActive ? 'var(--accent-red)' : 'var(--accent-green)'
+                            }}
+                        >
+                            {sessionActive ? 'Stop (F1)' : 'Start (F1)'}
+                        </button>
+                        
+                        <button 
+                            onClick={resetSession}
+                            className="px-4 py-2 rounded-lg font-medium transition-all duration-300"
+                            style={{
+                                background: 'var(--glass-bg)',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                borderColor: 'var(--border-primary)',
+                                color: 'var(--text-secondary)'
+                            }}
+                            disabled={sessionActive}
+                        >
+                            Reset (F2)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {/* Header Stats */}
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <div className="flex items-center justify-between">
@@ -364,11 +595,10 @@ export default function GameArea() {
                                 <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Balance</div>
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">🔥 Typing Streak</div>
+                                    <div className="font-semibold mb-1">Typing Streak</div>
                                     <div className="text-xs space-y-1">
                                         <div>• Current XP multiplier: {getStreakXPMultiplier()}x</div>
                                         <div>• Lose streak on any mistake</div>
@@ -395,16 +625,15 @@ export default function GameArea() {
                                                     streak >= 15 ? 'var(--accent-orange)' : 
                                                     streak >= 10 ? 'var(--accent-green)' : 'var(--accent-cyan)'
                                          }}>
-                                        {streak >= 50 ? '🔥🔥🔥 3.0x' : 
-                                         streak >= 25 ? '🔥🔥 2.5x' : 
-                                         streak >= 15 ? '🔥 2.0x' :
-                                         streak >= 10 ? '⚡ 1.8x' : 
-                                         streak >= 5 ? '✨ 1.5x' : '💫 1.2x'} XP
+                                        {streak >= 50 ? '3.0x' : 
+                                         streak >= 25 ? '2.5x' : 
+                                         streak >= 15 ? '2.0x' :
+                                         streak >= 10 ? '1.8x' : 
+                                         streak >= 5 ? '1.5x' : '1.2x'} XP
                                     </div>
                                 )}
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -424,39 +653,6 @@ export default function GameArea() {
                                 <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Accuracy</div>
                             </div>
                         </Tooltip>
-                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
-                        <Tooltip 
-                            content={
-                                <div>
-                                    <div className="font-semibold mb-1">⚡ Words Per Minute</div>
-                                    <div className="text-xs space-y-1">
-                                        <div>• Based on current typing session</div>
-                                        <div>• Uses standard 5-character word method</div>
-                                        <div>• Requires minimum 3 words for accuracy</div>
-                                        <div>• Session resets after 10 second pause</div>
-                                        <div>• Smoothed for realistic measurements</div>
-                                        <div className="mt-2" style={{ color: 'var(--text-secondary)' }}>WPM Benchmarks:</div>
-                                        <div>• 40+ WPM: Good</div>
-                                        <div>• 60+ WPM: Great</div>
-                                        <div>• 80+ WPM: Excellent</div>
-                                        <div>• 100+ WPM: Expert</div>
-                                    </div>
-                                </div>
-                            }
-                            position="bottom"
-                        >
-                            <div className="text-center px-6 cursor-help">
-                                <div className="text-2xl font-bold transition-all duration-300" 
-                                     style={{ color: isTyping ? 'var(--accent-orange)' : 'var(--text-muted)' }}>{wpm}</div>
-                                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>WPM</div>
-                                {isTyping && (
-                                    <div className="text-xs" style={{ color: 'var(--accent-orange)' }}>
-                                        🔥 Active
-                                    </div>
-                                )}
-                            </div>
-                        </Tooltip>
-                        <div className="w-px h-12" style={{ backgroundColor: 'var(--border-primary)' }}></div>
                         <Tooltip 
                             content={
                                 <div>
@@ -599,12 +795,17 @@ export default function GameArea() {
                         {/* Current Word with enhanced styling */}
                         <div className="relative px-6 py-4 rounded-xl transition-all duration-300"
                              style={{
-                                 color: isGold ? 'var(--accent-yellow)' : 'var(--text-primary)',
-                                 background: isGold ? 'linear-gradient(to right, var(--accent-yellow-bg), var(--accent-yellow-bg))' : 'var(--bg-secondary)',
-                                 border: isGold ? '1px solid var(--accent-yellow-border)' : '1px solid var(--border-primary)',
-                                 boxShadow: isGold ? '0 10px 15px -3px var(--accent-yellow-bg), 0 4px 6px -2px var(--accent-yellow-bg)' : 'none',
-                                 transform: isTyping ? 'scale(1.05)' : 'scale(1)',
-                                 ...(isTyping && { boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' })
+                                 color: !sessionActive ? 'var(--text-disabled)' : 
+                                        isGold ? 'var(--accent-yellow)' : 'var(--text-primary)',
+                                 background: !sessionActive ? 'var(--bg-disabled)' :
+                                            isGold ? 'linear-gradient(to right, var(--accent-yellow-bg), var(--accent-yellow-bg))' : 'var(--bg-secondary)',
+                                 border: !sessionActive ? '1px solid var(--border-disabled)' :
+                                        isGold ? '1px solid var(--accent-yellow-border)' : '1px solid var(--border-primary)',
+                                 boxShadow: !sessionActive ? 'none' :
+                                           isGold ? '0 10px 15px -3px var(--accent-yellow-bg), 0 4px 6px -2px var(--accent-yellow-bg)' : 'none',
+                                 transform: (isTyping && sessionActive) ? 'scale(1.05)' : 'scale(1)',
+                                 ...(isTyping && sessionActive && { boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }),
+                                 opacity: sessionActive ? 1 : 0.5
                              }}>
                             
                             <div className="relative text-3xl font-bold">
@@ -689,13 +890,17 @@ export default function GameArea() {
 
                 {/* Dynamic Typing Instructions */}
                 <div className="text-center space-y-1">
-                    {!isTyping ? (
+                    {!sessionActive ? (
+                        <div className="text-sm animate-pulse" style={{ color: 'var(--accent-blue)' }}>
+                            🚀 Press Start or F1 to begin your typing session! 
+                        </div>
+                    ) : !isTyping ? (
                         <div className="text-sm animate-pulse" style={{ color: 'var(--text-muted)' }}>
-                            💤 Start typing to earn money and XP! 
+                            💤 Session active - Start typing to earn money and XP! 
                         </div>
                     ) : streak >= 20 ? (
                         <div className="text-sm font-semibold" style={{ color: 'var(--accent-purple)' }}>
-                            🔥 ON FIRE! Keep the streak alive! 🔥
+                            ON FIRE! Keep the streak alive!
                         </div>
                     ) : streak >= 10 ? (
                         <div className="text-sm font-semibold" style={{ color: 'var(--accent-yellow)' }}>
@@ -711,7 +916,10 @@ export default function GameArea() {
                         </div>
                     )}
                     <div className="text-xs" style={{ color: 'var(--text-disabled)' }}>
-                        Press Tab to restart • Backspace to delete
+                        {sessionActive ? 
+                            `Session: ${sessionWordsTyped}/${targetWordCount} words • Press Tab to restart • F1 to stop` :
+                            'Press F1 to start session • Tab to restart • Backspace to delete'
+                        }
                     </div>
                 </div>
             </div>

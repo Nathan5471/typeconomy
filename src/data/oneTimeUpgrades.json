@@ -69,6 +69,104 @@
             "description": "Increases the combo bonus",
             "cost": 50000,
             "feature": "none"
+        },
+        {
+            "id": "11",
+            "name": "Word Master",
+            "description": "Increases word multiplier by 2x",
+            "cost": 75000,
+            "feature": "none"
+        },
+        {
+            "id": "12",
+            "name": "Legendary Keyboard",
+            "description": "The ultimate typing experience. Increases word multiplier by 3x",
+            "cost": 150000,
+            "feature": "none"
+        },
+        {
+            "id": "13",
+            "name": "Golden Words",
+            "description": "Dramatically increases gold word chance",
+            "cost": 300000,
+            "feature": "none"
+        },
+        {
+            "id": "14",
+            "name": "Speed Demon",
+            "description": "Increases streak bonus effectiveness by 50%",
+            "cost": 600000,
+            "feature": "none"
+        },
+        {
+            "id": "15",
+            "name": "Word Sage",
+            "description": "Increases XP gain from all sources by 25%",
+            "cost": 1200000,
+            "feature": "none"
+        },
+        {
+            "id": "16",
+            "name": "Typing Transcendence",
+            "description": "Unlocks the ability to earn money from longer words (16+ letters)",
+            "cost": 2500000,
+            "feature": "longerWords"
+        },
+        {
+            "id": "17",
+            "name": "Dictionary Mastery",
+            "description": "Increases multiplier by 5x for words longer than 10 letters",
+            "cost": 5000000,
+            "feature": "none"
+        },
+        {
+            "id": "18",
+            "name": "Ultimate Typist",
+            "description": "The pinnacle of typing evolution. Massive multiplier boost!",
+            "cost": 25000000,
+            "feature": "none"
+        },
+        {
+            "id": "19",
+            "name": "Typing Marathon",
+            "description": "Unlocks extended session modes (500-1000+ words)",
+            "cost": 100000,
+            "feature": "marathonMode"
+        },
+        {
+            "id": "20",
+            "name": "Speed Burst",
+            "description": "Unlock 5-second typing bursts with 3x multiplier",
+            "cost": 250000,
+            "feature": "speedBurst"
+        },
+        {
+            "id": "21",
+            "name": "Word Wizard",
+            "description": "10% chance for words to give double XP",
+            "cost": 500000,
+            "feature": "none"
+        },
+        {
+            "id": "22",
+            "name": "Platinum Fingers",
+            "description": "Reduces minimum time between keystrokes",
+            "cost": 1000000,
+            "feature": "none"
+        },
+        {
+            "id": "23",
+            "name": "Typing Savant",
+            "description": "Unlocks difficulty modifiers (CAPS, symbols, numbers)",
+            "cost": 2000000,
+            "feature": "advancedDifficulty"
+        },
+        {
+            "id": "24",
+            "name": "Session Master",
+            "description": "Session stats tracking and achievements",
+            "cost": 3000000,
+            "feature": "sessionStats"
         }
     ]
 }

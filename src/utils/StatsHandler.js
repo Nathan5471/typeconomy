@@ -126,3 +126,30 @@ export function calculateWPM() {
     
     return Math.max(0, wpm);
 }
+
+// Session WPM Average Functions
+export function getSessionWPMHistory() {
+    return getStorage('sessionWPMHistory') || [];
+}
+
+export function addSessionWPM(avgWPM) {
+    if (avgWPM <= 0) return;
+    
+    const history = getSessionWPMHistory();
+    history.push(avgWPM);
+    
+    // Keep only last 50 sessions to prevent unlimited growth
+    if (history.length > 50) {
+        history.shift();
+    }
+    
+    setStorage('sessionWPMHistory', history);
+}
+
+export function getAverageSessionWPM() {
+    const history = getSessionWPMHistory();
+    if (history.length === 0) return 0;
+    
+    const sum = history.reduce((total, wpm) => total + wpm, 0);
+    return Math.round(sum / history.length);
+}

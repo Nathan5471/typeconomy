@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getMoney, increaseMoney, decreaseMoney, calculateWordValue, getTypingTestInformation, updateTypingTestInformation, getLevel, getXP, addXP, checkLevelUp, getXPProgress, calculateWordXP, calculateStreakXPBonus } from '../utils/StorageHandler.js';
 import { getWordMultiplier, getAverageLength, getTotalCashPerSecond, getPurchasedOneTimeUpgrades, markOneTimeUpgradeAsPurchased, getDifficulty, changeDifficulty, getUnlockedFeatures, unlockFeature } from '../utils/EffectsHandler.js';
-import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy, addWordForWPM, calculateWPM } from '../utils/StatsHandler.js';
+import { getWordsTyped, incrementWordsTyped, getStreak, incrementStreak, clearStreak, getHighestStreak, getAccuracy, addWordToAccuracy, addWordForWPM, calculateWPM, getAverageSessionWPM } from '../utils/StatsHandler.js';
 
 const MoneyContext = createContext();
 
@@ -61,6 +61,11 @@ export const MoneyProvider = ({ children }) => {
         if (storedAccuracy) setAccuracy(Number(storedAccuracy));
         if (storedCorrectWords) setWordsTypedCorrectly(Number(storedCorrectWords));
         if (storedIncorrectWords) setWordsTypedIncorrectly(Number(storedIncorrectWords));
+        
+        // Load average session WPM instead of current WPM
+        const avgSessionWPM = getAverageSessionWPM();
+        setWPM(avgSessionWPM);
+        
         if (storedOneTimeUpgrades) setPurchasedOneTimeUpgrades(new Set(storedOneTimeUpgrades));
         if (storedUnlockedFeatures) setUnlockedFeatures(new Set(storedUnlockedFeatures));
         if (storedDifficulty) setDifficulty(storedDifficulty);
@@ -200,16 +205,17 @@ export const MoneyProvider = ({ children }) => {
     // Update WPM periodically with idle detection
     useEffect(() => {
         const interval = setInterval(() => {
-            // Always update WPM from the calculation (no decay needed as it's session-based)
-            const currentWPM = calculateWPM();
-            setWPM(currentWPM);
-            
-            // Only update WPM if user has been typing recently (within last 3 seconds)
+            // Check if user is actively typing
             const timeSinceLastTyping = Date.now() - lastTypingTime;
             if (timeSinceLastTyping < 3000) {
+                // User is actively typing - show current session WPM
+                const currentWPM = calculateWPM();
+                setWPM(currentWPM);
                 setIsTyping(true);
             } else {
-                // User is idle
+                // User is idle - show average session WPM from completed sessions
+                const avgSessionWPM = getAverageSessionWPM();
+                setWPM(avgSessionWPM);
                 setIsTyping(false);
             }
         }, 2000); // Update every 2 seconds

@@ -16,8 +16,12 @@ export default function UpgradeShop() {
     useEffect(() => {
         const fetchUpgrades = async () => {
             try {
-                setUpgrades(upgradesData.data);
-                setOneTimeUpgrades(oneTimeUpgradesData.data);
+                // Sort upgrades by cost in ascending order
+                const sortedUpgrades = [...upgradesData.data].sort((a, b) => a.baseCost - b.baseCost);
+                const sortedOneTimeUpgrades = [...oneTimeUpgradesData.data].sort((a, b) => a.cost - b.cost);
+                
+                setUpgrades(sortedUpgrades);
+                setOneTimeUpgrades(sortedOneTimeUpgrades);
             } catch (error) {
                 console.error("Error fetching upgrades:", error);
             }
@@ -26,29 +30,29 @@ export default function UpgradeShop() {
     }, []);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 mobile-space-y-4">
             {/* Header */}
-            <div className="glass rounded-2xl p-6" 
+            <div className="glass rounded-2xl p-6 mobile-p-4" 
                  style={{ 
                      background: 'var(--glass-bg)', 
                      borderColor: 'var(--border-primary)' 
                  }}>
-                <h2 className="text-3xl font-bold mb-2 flex items-center" 
+                <h2 className="text-3xl mobile-text-xl font-bold mb-2 flex items-center" 
                     style={{ color: 'var(--text-primary)' }}>
                     <span className="mr-3">🏪</span>
                     Upgrade Store
                 </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Enhance your typing capabilities</p>
+                <p className="mobile-text-sm" style={{ color: 'var(--text-secondary)' }}>Enhance your typing capabilities</p>
             </div>
 
             {/* Balance Display */}
-            <div className="glass rounded-2xl p-6" 
+            <div className="glass rounded-2xl p-6 mobile-p-4" 
                  style={{ 
                      background: 'var(--glass-bg)', 
                      borderColor: 'var(--border-primary)' 
                  }}>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-8">
+                <div className="flex items-center justify-between mobile-flex-col mobile-space-y-4">
+                    <div className="flex items-center space-x-8 mobile-grid mobile-grid-cols-2 mobile-gap-4 mobile-space-x-0 w-full">
                         <div className="text-center">
                             <div className="text-3xl font-bold flex items-center justify-center" 
                                  style={{ color: 'var(--text-primary)' }}>

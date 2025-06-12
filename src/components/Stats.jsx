@@ -9,7 +9,7 @@ export default function Stats() {
         { label: 'Words Typed', value: wordsTyped, icon: '⌨️', color: 'from-blue-500 to-cyan-500' },
         { label: 'Correct Words', value: wordsTypedCorrectly, icon: '✅', color: 'from-green-500 to-emerald-500' },
         { label: 'Incorrect Words', value: wordsTypedIncorrectly, icon: '❌', color: 'from-red-500 to-rose-500' },
-        { label: 'Highest Streak', value: highestStreak, icon: '🔥', color: 'from-orange-500 to-yellow-500' },
+        { label: 'Highest Streak', value: highestStreak, icon: '🚀', color: 'from-orange-500 to-yellow-500' },
         { label: 'Current Level', value: level, icon: '⭐', color: 'from-yellow-500 to-orange-500' },
         { label: 'Total XP', value: xp, icon: '🚀', color: 'from-cyan-500 to-blue-500' },
     ];
@@ -17,35 +17,35 @@ export default function Stats() {
     const accuracy = wordsTyped > 0 ? Math.round((wordsTypedCorrectly / wordsTyped) * 100) : 0;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 mobile-space-y-4">
             {/* Header */}
-            <div className="glass rounded-2xl p-6" 
+            <div className="glass rounded-2xl p-6 mobile-p-4" 
                  style={{ 
                      background: 'var(--glass-bg)', 
                      borderColor: 'var(--border-primary)' 
                  }}>
-                <h2 className="text-3xl font-bold mb-2 flex items-center" 
+                <h2 className="text-3xl mobile-text-xl font-bold mb-2 flex items-center" 
                     style={{ color: 'var(--text-primary)' }}>
                     <span className="mr-3">📊</span>
                     Statistics
                 </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Track your typing performance</p>
+                <p className="mobile-text-sm" style={{ color: 'var(--text-secondary)' }}>Track your typing performance</p>
             </div>
 
             {/* Performance Overview */}
-            <div className="glass rounded-2xl p-6" 
+            <div className="glass rounded-2xl p-6 mobile-p-4" 
                  style={{ 
                      background: 'var(--glass-bg)', 
                      borderColor: 'var(--border-primary)' 
                  }}>
-                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Performance Overview</h3>
-                <div className="space-y-4">
+                <h3 className="text-xl mobile-text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Performance Overview</h3>
+                <div className="space-y-4 mobile-space-y-3">
                     {/* Performance Metrics */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 mobile-grid-cols-1 gap-6 mobile-gap-4">
                         {/* Accuracy Circle */}
                         <div className="flex items-center justify-center">
-                            <div className="relative w-32 h-32">
-                                <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                            <div className="relative w-32 h-32 mobile-w-24 mobile-h-24">
+                                <svg className="w-32 h-32 mobile-w-24 mobile-h-24 transform -rotate-90" viewBox="0 0 120 120">
                                     <circle
                                         cx="60"
                                         cy="60"

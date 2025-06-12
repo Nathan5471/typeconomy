@@ -46,7 +46,7 @@ export function decreaseMoney(amount) {
 }
 
 export function generateRandomLength(averageLength) {
-    const possibleLengths = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    const possibleLengths = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     const weights = possibleLengths.map(length => Math.exp(-Math.abs(length - averageLength)));
 
     // Normalize weights to sum to 1 for Math.random selection
@@ -69,9 +69,21 @@ export async function getRandomWord(count = 1) {
     const length = generateRandomLength(averageLength);
     async function fetchWordByLength(length) {
         try {
-            const response = await fetch(`/words/words_${length}.txt`)
+            // For lengths > 15, use the 15-letter word file but filter for longer words
+            const fileLength = length > 15 ? 15 : length;
+            const response = await fetch(`/words/words_${fileLength}.txt`)
             const wordList = await response.text();
-            const words = wordList.split('\n').filter(word => word.trim() !== '');
+            let words = wordList.split('\n').filter(word => word.trim() !== '');
+            
+            // If we need words longer than 15 letters, filter the 15-letter file
+            if (length > 15) {
+                words = words.filter(word => word.trim().length >= length);
+                // If no words of desired length found, fallback to any long words
+                if (words.length === 0) {
+                    words = wordList.split('\n').filter(word => word.trim().length >= 12);
+                }
+            }
+            
             if (words.length === 0) {
                 console.error(`No words found for length ${length}`);
                 return null;
