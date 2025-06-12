@@ -3,6 +3,7 @@ import { useMoney } from '../contexts/MoneyContext';
 import { useOverlayContext } from '../contexts/OverlayContext';
 import { getRandomWord } from '../utils/StorageHandler.js'
 import { getIsGoldWord } from '../utils/EffectsHandler.js';
+import { calculateWordValue, calculateWordXP } from '../utils/StorageHandler.js';
 import FormatMoney from '../utils/FormatMoney.js';
 import DifficultyFormat from '../utils/DifficultFormat.js';
 import TypingTest from './TypingTest.jsx';
@@ -10,7 +11,7 @@ import Difficulty from './Difficulty.jsx';
 import ImportExport from './ImportExport.jsx';
 
 export default function GameArea() {
-    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity } = useMoney();
+    const { money, streak, wordMultiplier, averageLength, accuracy, wpm, isTyping, cashPerSecond, unlockedFeatures, typingTestBoostActive, lastTypingTestTime, level, xp, xpProgress, handleCorrectWord, handleIncorrectWord, updateTypingActivity, typingTestBoost } = useMoney();
     const { openOverlay } = useOverlayContext();
     const [words, setWords] = useState([]); // Used to store 5 words (next2, next2, current, last1, last2)
     const [inputValue, setInputValue] = useState('');
@@ -18,6 +19,9 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
+    
+    // Floating numbers state
+    const [floatingNumbers, setFloatingNumbers] = useState([]);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -77,6 +81,27 @@ export default function GameArea() {
         } catch (e) {
             // Audio not supported, continue silently
         }
+    };
+
+    // Function to create floating numbers for money and XP gains
+    const createFloatingNumbers = (word, isGoldWord) => {
+        const moneyGained = calculateWordValue(word, isGoldWord, typingTestBoost, typingTestBoostActive);
+        const xpGained = calculateWordXP(word, isGoldWord, streak + 1); // +1 because streak will be incremented
+        
+        const id = Date.now() + Math.random(); // Unique ID for this animation
+        
+        setFloatingNumbers(prev => [...prev, {
+            id,
+            money: moneyGained,
+            xp: xpGained,
+            isGold: isGoldWord,
+            timestamp: Date.now()
+        }]);
+        
+        // Remove the floating number after animation completes
+        setTimeout(() => {
+            setFloatingNumbers(prev => prev.filter(item => item.id !== id));
+        }, 2000); // 2 seconds for animation
     };
 
     // Function to create success sound effect for completed words
@@ -170,6 +195,7 @@ export default function GameArea() {
     const compareWords = useCallback(() => {
         if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
+            createFloatingNumbers(words[2], isGold); // Create floating numbers effect
             
             // Play success sound effect with current streak
             playSuccessSound(isGold, streak + 1); // +1 because streak will be incremented
@@ -531,6 +557,53 @@ export default function GameArea() {
                     </span>
                 </button>
             </div>
+
+            {/* Floating Numbers for Money and XP Gains */}
+            <div className="fixed inset-0 pointer-events-none z-50">
+                {floatingNumbers.map(floatingNumber => (
+                    <div
+                        key={floatingNumber.id}
+                        className="absolute flex flex-col items-start"
+                        style={{
+                            left: '60%',
+                            top: '48%',
+                            animation: `floatUpNext 2s ease-out forwards`,
+                        }}
+                    >
+                        {/* Money gain */}
+                        <div className={`text-lg font-bold mb-1 ${
+                            floatingNumber.isGold 
+                                ? 'text-yellow-400 drop-shadow-lg' 
+                                : 'text-green-400 drop-shadow-lg'
+                        }`}>
+                            +{FormatMoney(floatingNumber.money)}
+                        </div>
+                        
+                        {/* XP gain */}
+                        <div className="text-md font-bold text-cyan-400 drop-shadow-lg">
+                            +{floatingNumber.xp} XP
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* CSS Animation for floating numbers */}
+            <style jsx>{`
+                @keyframes floatUpNext {
+                    0% {
+                        opacity: 1;
+                        transform: translate(0px, 0px) scale(0.8);
+                    }
+                    20% {
+                        opacity: 1;
+                        transform: translate(10px, -15px) scale(1);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: translate(20px, -50px) scale(0.9);
+                    }
+                }
+            `}</style>
         </div>
     );
 }
