@@ -415,8 +415,8 @@ export default function GameArea() {
                                 );
                             })}
                             
-                            {/* Show cursor after the word if we've typed more than the word length */}
-                            {inputValue.length >= (words[2] || '').length && (
+                            {/* Show cursor after the word only if there are extra characters beyond the word length */}
+                            {inputValue.length > (words[2] || '').length && (
                                 <span className="bg-red-500/70 text-white animate-pulse ml-1 px-1 rounded">|</span>
                             )}
                         </div>
