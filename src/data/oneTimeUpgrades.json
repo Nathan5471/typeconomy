@@ -3,119 +3,119 @@
         {
             "id": "1",
             "name": "Mechanical Keyboard",
-            "description": "Increase word multiplier by 1x",
+            "description": "Increase word multiplier by 1x.",
             "cost": 250,
             "feature": "none"
         },
         {
             "id": "2",
             "name": "More Gold",
-            "description": "Increases the odds of getting a goldend word",
+            "description": "Increases the odds of getting a golden word.",
             "cost": 500,
             "feature": "none"
         },
         {
             "id": "3",
              "name": "Better Switches",
-             "description": "Increase word multiplier by 1.5x",
+             "description": "Increase word multiplier by 1.5x.",
              "cost": 1000,
              "feature": "none"
         },
         {
             "id": "4",
             "name": "Typing Test",
-            "description": "Unlocks the typing test feature",
+            "description": "Unlocks the typing test feature.",
             "cost":1750,
             "feature": "typingTest"
         },
         {
             "id": "5",
             "name": "Even Better Switches",
-            "description": "Increases word multiplier by 1.5x",
+            "description": "Increases word multiplier by 1.5x.",
             "cost": 2500,
             "feature": "none"
         },
         {
             "id": "6",
             "name": "Difficulty",
-            "description": "Unlocks the difficulty feature",
+            "description": "Unlocks the difficulty feature.",
             "cost": 3500,
             "feature": "difficulty"
         },
         {
             "id": "7",
-            "name": "Event More Gold",
-            "description": "Increases the odds of getting a goldend word",
+            "name": "Even More Gold",
+            "description": "Increases the odds of getting a golden word.",
             "cost": 5000,
             "feature": "none"
         },
         {
             "id": "8",
             "name": "The Best Mechanical Keyboard",
-            "description": "$10000 for a keyboard? Increases word multiplier by 2x",
+            "description": "$10,000 for a keyboard? Increases word multiplier by 2x.",
             "cost": 10000,
             "feature": "none"
         },
         {
             "id": "9",
             "name": "Gold Rush",
-            "description": "Increases the odds of getting a goldend word",
+            "description": "Increases the odds of getting a golden word.",
             "cost": 15000,
             "feature": "none"
         },
         {
             "id": "10",
             "name": "Typing Master",
-            "description": "Increases the combo bonus",
+            "description": "Increases the combo bonus.",
             "cost": 50000,
             "feature": "none"
         },
         {
             "id": "11",
             "name": "Word Master",
-            "description": "Increases word multiplier by 2x",
+            "description": "Increases word multiplier by 2x.",
             "cost": 75000,
             "feature": "none"
         },
         {
             "id": "12",
             "name": "Legendary Keyboard",
-            "description": "The ultimate typing experience. Increases word multiplier by 3x",
+            "description": "The ultimate typing experience. Increases word multiplier by 3x.",
             "cost": 150000,
             "feature": "none"
         },
         {
             "id": "13",
             "name": "Golden Words",
-            "description": "Dramatically increases gold word chance",
+            "description": "Dramatically increases gold word chance.",
             "cost": 300000,
             "feature": "none"
         },
         {
             "id": "14",
             "name": "Speed Demon",
-            "description": "Increases streak bonus effectiveness by 50%",
+            "description": "Increases streak bonus effectiveness by 50%.",
             "cost": 600000,
             "feature": "none"
         },
         {
             "id": "15",
             "name": "Word Sage",
-            "description": "Increases XP gain from all sources by 25%",
+            "description": "Increases XP gain from all sources by 25%.",
             "cost": 1200000,
             "feature": "none"
         },
         {
             "id": "16",
             "name": "Typing Transcendence",
-            "description": "Unlocks the ability to earn money from longer words (16+ letters)",
+            "description": "Unlocks the ability to earn money from longer words (16+ letters).",
             "cost": 2500000,
             "feature": "longerWords"
         },
         {
             "id": "17",
             "name": "Dictionary Mastery",
-            "description": "Increases multiplier by 5x for words longer than 10 letters",
+            "description": "Increases multiplier by 5x for words longer than 10 letters.",
             "cost": 5000000,
             "feature": "none"
         },
@@ -129,42 +129,42 @@
         {
             "id": "19",
             "name": "Typing Marathon",
-            "description": "Unlocks extended session modes (500-1000+ words)",
+            "description": "Unlocks extended session modes (500-1000+ words).",
             "cost": 100000,
             "feature": "marathonMode"
         },
         {
             "id": "20",
             "name": "Speed Burst",
-            "description": "Unlock 5-second typing bursts with 3x multiplier",
+            "description": "Unlock 5-second typing bursts with 3x multiplier.",
             "cost": 250000,
             "feature": "speedBurst"
         },
         {
             "id": "21",
             "name": "Word Wizard",
-            "description": "10% chance for words to give double XP",
+            "description": "10% chance for words to give double XP.",
             "cost": 500000,
             "feature": "none"
         },
         {
             "id": "22",
             "name": "Platinum Fingers",
-            "description": "Reduces minimum time between keystrokes",
+            "description": "Reduces minimum time between keystrokes.",
             "cost": 1000000,
             "feature": "none"
         },
         {
             "id": "23",
             "name": "Typing Savant",
-            "description": "Unlocks difficulty modifiers (CAPS, symbols, numbers)",
+            "description": "Unlocks difficulty modifiers (CAPS, symbols, numbers).",
             "cost": 2000000,
             "feature": "advancedDifficulty"
         },
         {
             "id": "24",
             "name": "Session Master",
-            "description": "Session stats tracking and achievements",
+            "description": "Session stats tracking and achievements.",
             "cost": 3000000,
             "feature": "sessionStats"
         }

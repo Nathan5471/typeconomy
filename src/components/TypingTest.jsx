@@ -162,7 +162,7 @@ export default function TypingTest({closeTypingTest}) {
                         <div className="text-white">
                             For the next minute, words will be worth 
                             <span className="text-green-400 font-bold mx-1">{typingTestBoost.toFixed(2)}x</span>
-                            multiplier
+                            multiplier.
                         </div>
                     </div>
                 </div>

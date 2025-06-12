@@ -85,7 +85,7 @@ export default function UpgradeShop() {
                     <div className="text-right">
                         <div className="text-lg" style={{ color: 'var(--text-secondary)' }}>💡 Tip</div>
                         <div className="text-sm max-w-xs" style={{ color: 'var(--text-muted)' }}>
-                            Upgrades improve your typing earnings and unlock new features
+                            Upgrades improve your typing earnings and unlock new features.
                         </div>
                     </div>
                 </div>

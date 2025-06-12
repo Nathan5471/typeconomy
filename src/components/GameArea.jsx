@@ -849,11 +849,11 @@ export default function GameArea() {
                 <div className="text-center space-y-1">
                     {!sessionActive ? (
                         <div className="text-sm animate-pulse" style={{ color: 'var(--accent-blue)' }}>
-                            🚀 Press Start or F1 to begin your typing session! 
+                            🚀 Press Start or F1 to begin your typing session!
                         </div>
                     ) : !isTyping ? (
                         <div className="text-sm animate-pulse" style={{ color: 'var(--text-muted)' }}>
-                            💤 Session active - Start typing to earn money and XP! 
+                            💤 Session active - Start typing to earn money and XP!
                         </div>
                     ) : streak >= 20 ? (
                         <div className="text-sm font-semibold" style={{ color: 'var(--accent-purple)' }}>
