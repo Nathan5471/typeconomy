@@ -17,7 +17,7 @@
         {
             "id": "3",
             "name": "Monkey Typist",
-            "description": "Increase your cash per second by $10. (He's been practicing on moneytype)",
+            "description": "Increase your cash per second by $0.50. (He's been practicing on moneytype)",
             "baseCost": 1000,
             "costMultiplier": 1.25
         },
@@ -31,49 +31,49 @@
         {
             "id": "5",
             "name": "Automatic Keyboard",
-            "description": "Increase your cash per second by $75.",
+            "description": "Increase your cash per second by $2.",
             "baseCost": 6000,
             "costMultiplier": 1.35
         },
         {
             "id": "6",
             "name": "Word Printer",
-            "description": "Increase your cash per second by $250.",
+            "description": "Increase your cash per second by $8.",
             "baseCost": 15000,
             "costMultiplier": 1.4
         },
         {
             "id": "7",
             "name": "Word Factory",
-            "description": "Increase your cash per second by $1.5K.",
+            "description": "Increase your cash per second by $25.",
             "baseCost": 40000,
             "costMultiplier": 1.45
         },
         {
             "id": "8",
             "name": "1000 Monkeys",
-            "description": "Every hear about the infinite monkey theorem? Well, now you have 1000 monkeys typing away. Increase your cash per second by $10K.",
+            "description": "Every hear about the infinite monkey theorem? Well, now you have 1000 monkeys typing away. Increase your cash per second by $100.",
             "baseCost": 85000,
             "costMultiplier": 1.5
         },
         {
             "id": "9",
             "name": "ChatGPT",
-            "description": "An AI that gets you an extra $100K per second.",
+            "description": "An AI that gets you an extra $500 per second.",
             "baseCost": 500000,
             "costMultiplier": 1.55
         },
         {
             "id": "10",
             "name": "Word Bank",
-            "description": "A bank that gives you $1M per second.",
+            "description": "A bank that gives you $2K per second.",
             "baseCost": 10000000,
             "costMultiplier": 1.6
         },
         {
             "id": "11",
             "name": "Word Cartel",
-            "description": "A cartel that gives you $10M per second.",
+            "description": "A cartel that gives you $10K per second.",
             "baseCost": 500000000,
             "costMultiplier": 1.65
         }

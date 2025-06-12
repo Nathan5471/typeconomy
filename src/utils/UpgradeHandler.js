@@ -64,23 +64,23 @@ function applyUpgradeEffects(upgradeId, amount) {
     } else if (upgradeId === '2') {
         increaseWordMultiplier(.1 * amount);
     } else if (upgradeId === '3') {
-        increaseUpgradeCashPerSecond(upgradeId, 10 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 0.5 * amount);
     } else if (upgradeId === '4') {
         increaseStreakBonus(1 * amount);
     } else if (upgradeId === '5') {
-        increaseUpgradeCashPerSecond(upgradeId, 75 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 2 * amount);
     } else if (upgradeId === '6') {
-        increaseUpgradeCashPerSecond(upgradeId, 250 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 8 * amount);
     } else if (upgradeId === '7') {
-        increaseUpgradeCashPerSecond(upgradeId, 1500 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 25 * amount);
     } else if (upgradeId === '8') {
-        increaseUpgradeCashPerSecond(upgradeId, 10000 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 100 * amount);
     } else if (upgradeId === '9') {
-        increaseUpgradeCashPerSecond(upgradeId, 100000 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 500 * amount);
     } else if (upgradeId === '10') {
-        increaseUpgradeCashPerSecond(upgradeId, 1000000 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 2000 * amount);
     } else if (upgradeId === '11') {
-        increaseUpgradeCashPerSecond(upgradeId, 10000000 * amount);
+        increaseUpgradeCashPerSecond(upgradeId, 10000 * amount);
     }
 }
 

@@ -19,9 +19,6 @@ export default function GameArea() {
     const [isGold, setIsGold] = useState(false);
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
-    
-    // Floating numbers state
-    const [floatingNumbers, setFloatingNumbers] = useState([]);
 
     useEffect(() => {
         const fetchNewWords = async () => {
@@ -81,27 +78,6 @@ export default function GameArea() {
         } catch (e) {
             // Audio not supported, continue silently
         }
-    };
-
-    // Function to create floating numbers for money and XP gains
-    const createFloatingNumbers = (word, isGoldWord) => {
-        const moneyGained = calculateWordValue(word, isGoldWord, typingTestBoost, typingTestBoostActive);
-        const xpGained = calculateWordXP(word, isGoldWord, streak + 1); // +1 because streak will be incremented
-        
-        const id = Date.now() + Math.random(); // Unique ID for this animation
-        
-        setFloatingNumbers(prev => [...prev, {
-            id,
-            money: moneyGained,
-            xp: xpGained,
-            isGold: isGoldWord,
-            timestamp: Date.now()
-        }]);
-        
-        // Remove the floating number after animation completes
-        setTimeout(() => {
-            setFloatingNumbers(prev => prev.filter(item => item.id !== id));
-        }, 2000); // 2 seconds for animation
     };
 
     // Function to create success sound effect for completed words
@@ -195,7 +171,6 @@ export default function GameArea() {
     const compareWords = useCallback(() => {
         if (inputValue === words[2]) {
             handleCorrectWord(words[2], isGold);
-            createFloatingNumbers(words[2], isGold); // Create floating numbers effect
             
             // Play success sound effect with current streak
             playSuccessSound(isGold, streak + 1); // +1 because streak will be incremented
@@ -416,6 +391,7 @@ export default function GameArea() {
                                 ? "text-yellow-400 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 shadow-lg shadow-yellow-500/25" 
                                 : "text-white bg-white/10 border border-white/20"
                         } ${isTyping ? 'scale-105 shadow-2xl' : 'scale-100'}`}>
+                            
                             <div className="relative text-3xl font-bold">
                                 {/* Render each character of the current word */}
                                 {words[2] && words[2].split('').map((char, index) => {
@@ -562,53 +538,6 @@ export default function GameArea() {
                     </span>
                 </button>
             </div>
-
-            {/* Floating Numbers for Money and XP Gains */}
-            <div className="fixed inset-0 pointer-events-none z-50">
-                {floatingNumbers.map(floatingNumber => (
-                    <div
-                        key={floatingNumber.id}
-                        className="absolute flex flex-col items-start"
-                        style={{
-                            left: '60%',
-                            top: '48%',
-                            animation: `floatUpNext 2s ease-out forwards`,
-                        }}
-                    >
-                        {/* Money gain */}
-                        <div className={`text-lg font-bold mb-1 ${
-                            floatingNumber.isGold 
-                                ? 'text-yellow-400 drop-shadow-lg' 
-                                : 'text-green-400 drop-shadow-lg'
-                        }`}>
-                            +{FormatMoney(floatingNumber.money)}
-                        </div>
-                        
-                        {/* XP gain */}
-                        <div className="text-md font-bold text-cyan-400 drop-shadow-lg">
-                            +{floatingNumber.xp} XP
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* CSS Animation for floating numbers */}
-            <style jsx>{`
-                @keyframes floatUpNext {
-                    0% {
-                        opacity: 1;
-                        transform: translate(0px, 0px) scale(0.8);
-                    }
-                    20% {
-                        opacity: 1;
-                        transform: translate(10px, -15px) scale(1);
-                    }
-                    100% {
-                        opacity: 0;
-                        transform: translate(20px, -50px) scale(0.9);
-                    }
-                }
-            `}</style>
         </div>
     );
 }
