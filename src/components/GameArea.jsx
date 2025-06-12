@@ -21,6 +21,25 @@ export default function GameArea() {
     const [isTypingTestOpen, setIsTypingTestOpen] = useState(false);
     const [typingTestCountdown, setTypingTestCountdown] = useState(null);
 
+    // Create a single, persistent AudioContext instance
+    const audioContextRef = useRef(null);
+    
+    // Initialize AudioContext once
+    useEffect(() => {
+        try {
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.warn('Audio not supported');
+        }
+        
+        // Cleanup on unmount
+        return () => {
+            if (audioContextRef.current) {
+                audioContextRef.current.close();
+            }
+        };
+    }, []);
+
     // Helper functions for tooltip calculations
     const calculateExampleWordValue = (wordLength = 5) => {
         const exampleWord = 'a'.repeat(wordLength);
@@ -72,7 +91,13 @@ export default function GameArea() {
     // Function to create double-click keyboard sound effect
     const playKeyboardSound = () => {
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const audioContext = audioContextRef.current;
+            if (!audioContext || audioContext.state === 'closed') return;
+            
+            // Resume audio context if suspended (required by browser policy)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
             
             // Create double-click sound (two quick clicks)
             const createClick = (delay = 0) => {
@@ -114,7 +139,13 @@ export default function GameArea() {
     // Function to create success sound effect for completed words
     const playSuccessSound = (isGold = false, currentStreak = 0) => {
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const audioContext = audioContextRef.current;
+            if (!audioContext || audioContext.state === 'closed') return;
+            
+            // Resume audio context if suspended (required by browser policy)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
             
             if (isGold) {
                 // Special gold success - triumphant chord progression
