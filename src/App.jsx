@@ -10,9 +10,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('typing');
 
   const navigation = [
-    { id: 'typing', label: 'Typing', icon: '⌨️' },
-    { id: 'upgrades', label: 'Store', icon: '🏪' },
-    { id: 'stats', label: 'Stats', icon: '📊' },
+    { id: 'typing', label: 'Typing' },
+    { id: 'upgrades', label: 'Store' },
+    { id: 'stats', label: 'Stats' },
   ];
 
   const renderContent = () => {
