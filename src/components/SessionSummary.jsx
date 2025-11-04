@@ -12,11 +12,11 @@ export default function SessionSummary({ sessionStats, onClose }) {
     
     const getPerformanceRating = () => {
         const score = (avgWPM * 0.4) + (accuracy * 0.4) + (streak * 0.2);
-        if (score >= 80) return { rating: 'Exceptional', color: 'var(--accent-purple)', icon: '👑' };
-        if (score >= 65) return { rating: 'Excellent', color: 'var(--accent-yellow)', icon: '⭐' };
-        if (score >= 50) return { rating: 'Great', color: 'var(--accent-green)', icon: '✨' };
-        if (score >= 35) return { rating: 'Good', color: 'var(--accent-blue)', icon: '👍' };
-        return { rating: 'Keep Practicing', color: 'var(--accent-orange)', icon: '💪' };
+        if (score >= 80) return { rating: 'Exceptional', color: 'var(--accent-purple)' };
+        if (score >= 65) return { rating: 'Excellent', color: 'var(--accent-yellow)' };
+        if (score >= 50) return { rating: 'Great', color: 'var(--accent-green)' };
+        if (score >= 35) return { rating: 'Good', color: 'var(--accent-blue)' };
+        return { rating: 'Keep Practicing', color: 'var(--accent-orange)' };
     };
     
     const performance = getPerformanceRating();
@@ -82,26 +82,26 @@ export default function SessionSummary({ sessionStats, onClose }) {
             {/* Achievement Badges */}
             {(avgWPM >= 60 || accuracy >= 95 || streak >= 25) && (
                 <div className="glass-dark rounded-2xl p-6 border border-yellow-500/30">
-                    <h3 className="text-lg font-semibold text-yellow-400 mb-4 text-center">🏆 Session Achievements</h3>
+                    <h3 className="text-lg font-semibold text-yellow-400 mb-4 text-center">Session Achievements</h3>
                     <div className="flex flex-wrap justify-center gap-2">
                         {avgWPM >= 60 && (
                             <div className="px-3 py-1 bg-orange-500/20 border border-orange-500/30 rounded-full text-orange-400 text-sm">
-                                ⚡ Speed Demon (60+ WPM)
+                                Speed Demon (60+ WPM)
                             </div>
                         )}
                         {accuracy >= 95 && (
                             <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-green-400 text-sm">
-                                🎯 Precision Master (95%+ Accuracy)
+                                Precision Master (95%+ Accuracy)
                             </div>
                         )}
                         {streak >= 25 && (
                             <div className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-400 text-sm">
-                                🚀 Streak Legend (25+ Words)
+                                Streak Legend (25+ Words)
                             </div>
                         )}
                         {avgWPM >= 80 && (
                             <div className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full text-cyan-400 text-sm">
-                                🚀 Typing Rocket (80+ WPM)
+                                Typing Rocket (80+ WPM)
                             </div>
                         )}
                     </div>
