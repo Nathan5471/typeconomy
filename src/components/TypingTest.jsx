@@ -124,7 +124,7 @@ export default function TypingTest({closeTypingTest}) {
             <div className="text-white space-y-6 mobile-space-y-4">
                 <div className="text-center">
                     <h1 className="text-4xl mobile-text-2xl sm-text-xl font-bold text-white mb-4 flex items-center justify-center">
-                        <span className="mr-3">🎉</span>
+                        <span className="mr-3"></span>
                         {testMode === 'marathon' ? 'Marathon Complete!' : 
                          testMode === 'sprint' ? 'Sprint Complete!' : 'Test Complete!'}
                     </h1>
@@ -158,7 +158,7 @@ export default function TypingTest({closeTypingTest}) {
                 
                 <div className="glass-dark rounded-2xl p-6 border border-green-500/30">
                     <div className="text-center">
-                        <div className="text-green-400 font-semibold mb-2">🚀 Boost Earned!</div>
+                        <div className="text-green-400 font-semibold mb-2">Boost Earned!</div>
                         <div className="text-white">
                             For the next minute, words will be worth 
                             <span className="text-green-400 font-bold mx-1">{typingTestBoost.toFixed(2)}x</span>
@@ -180,7 +180,7 @@ export default function TypingTest({closeTypingTest}) {
         <div className="text-white space-y-6 mobile-space-y-4">
             <div className="text-center">
                 <h1 className="text-4xl mobile-text-2xl sm-text-xl font-bold text-white mb-2 flex items-center justify-center">
-                    <span className="mr-3">⚡</span>
+                    <span className="mr-3"></span>
                     Typing Test
                 </h1>
                 <p className="text-white/70 text-sm mobile-text-sm">Type the text as quickly and accurately as possible</p>
