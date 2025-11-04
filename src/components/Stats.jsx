@@ -6,12 +6,12 @@ export default function Stats() {
     const { wordsTyped, wordsTypedCorrectly, wordsTypedIncorrectly, highestStreak, level, xp, xpProgress, wpm } = useMoney();
 
     const stats = [
-        { label: 'Words Typed', value: wordsTyped, icon: '⌨️', color: 'from-blue-500 to-cyan-500' },
-        { label: 'Correct Words', value: wordsTypedCorrectly, icon: '✅', color: 'from-green-500 to-emerald-500' },
-        { label: 'Incorrect Words', value: wordsTypedIncorrectly, icon: '❌', color: 'from-red-500 to-rose-500' },
-        { label: 'Highest Streak', value: highestStreak, icon: '🚀', color: 'from-orange-500 to-yellow-500' },
-        { label: 'Current Level', value: level, icon: '⭐', color: 'from-yellow-500 to-orange-500' },
-        { label: 'Total XP', value: xp, icon: '🚀', color: 'from-cyan-500 to-blue-500' },
+        { label: 'Words Typed', value: wordsTyped, color: 'from-blue-500 to-cyan-500' },
+        { label: 'Correct Words', value: wordsTypedCorrectly, color: 'from-green-500 to-emerald-500' },
+        { label: 'Incorrect Words', value: wordsTypedIncorrectly, color: 'from-red-500 to-rose-500' },
+        { label: 'Highest Streak', value: highestStreak, color: 'from-orange-500 to-yellow-500' },
+        { label: 'Current Level', value: level, color: 'from-yellow-500 to-orange-500' },
+        { label: 'Total XP', value: xp, color: 'from-cyan-500 to-blue-500' },
     ];
 
     const accuracy = wordsTyped > 0 ? Math.round((wordsTypedCorrectly / wordsTyped) * 100) : 0;
@@ -26,7 +26,7 @@ export default function Stats() {
                  }}>
                 <h2 className="text-3xl mobile-text-xl font-bold mb-2 flex items-center" 
                     style={{ color: 'var(--text-primary)' }}>
-                    <span className="mr-3">📊</span>
+                    <span className="mr-3"></span>
                     Statistics
                 </h2>
                 <p className="mobile-text-sm" style={{ color: 'var(--text-secondary)' }}>Track your typing performance</p>
@@ -131,7 +131,7 @@ export default function Stats() {
                  }}>
                 <h3 className="text-xl font-semibold mb-4 flex items-center" 
                     style={{ color: 'var(--text-primary)' }}>
-                    <span className="mr-2">🎯</span>
+                    <span className="mr-2"></span>
                     Leveling Progress
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -139,7 +139,7 @@ export default function Stats() {
                     <div className="space-y-4">
                         <h4 className="text-lg font-semibold flex items-center" 
                             style={{ color: 'var(--text-primary)' }}>
-                            <span className="mr-2">📊</span>
+                            <span className="mr-2"></span>
                             Current Progress
                         </h4>
                         <div className="rounded-lg p-4 space-y-3" 
@@ -172,7 +172,7 @@ export default function Stats() {
                     <div className="space-y-4">
                         <h4 className="text-lg font-semibold flex items-center" 
                             style={{ color: 'var(--text-primary)' }}>
-                            <span className="mr-2">🚀</span>
+                            <span className="mr-2"></span>
                             XP Bonus System
                         </h4>
                         <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function Stats() {
                                      borderColor: 'var(--accent-cyan)' 
                                  }}>
                                 <div className="text-xs font-semibold" style={{ color: 'var(--accent-cyan)' }}>
-                                    💡 Tip: Maintain long streaks for maximum XP gains!
+                                     Tip: Maintain long streaks for maximum XP gains!
                                 </div>
                             </div>
                         </div>
