@@ -529,7 +529,7 @@ export default function GameArea() {
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">💰 Current Balance</div>
+                                    <div className="font-semibold mb-1">Current Balance</div>
                                     <div className="text-xs space-y-1">
                                         <div>• 5-letter word: +{FormatMoney(calculateExampleWordValue(5))}</div>
                                         <div>• 7-letter word: +{FormatMoney(calculateExampleWordValue(7))}</div>
@@ -543,7 +543,7 @@ export default function GameArea() {
                         >
                             <div className="text-center px-6 cursor-help">
                                 <div className="text-3xl font-bold flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>
-                                    <span className="mr-2">💰</span>
+                                    <span className="mr-2"></span>
                                     <span className="transition-all duration-500" 
                                           style={{ 
                                               color: 'var(--text-primary)',
@@ -597,7 +597,7 @@ export default function GameArea() {
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">✅ Typing Accuracy</div>
+                                    <div className="font-semibold mb-1">Typing Accuracy</div>
                                     <div className="text-xs space-y-1">
                                         <div>• Calculated from all-time performance</div>
                                         <div>• Perfect words improve accuracy</div>
@@ -616,7 +616,7 @@ export default function GameArea() {
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">⚡ Word Value Multiplier</div>
+                                    <div className="font-semibold mb-1">Word Value Multiplier</div>
                                     <div className="text-xs space-y-1">
                                         <div>• Increases money from each word</div>
                                         <div>• Buy "Better Keys" upgrades to increase</div>
@@ -639,7 +639,7 @@ export default function GameArea() {
                                 <Tooltip 
                                     content={
                                         <div>
-                                            <div className="font-semibold mb-1">💸 Passive Income</div>
+                                            <div className="font-semibold mb-1">Passive Income</div>
                                             <div className="text-xs space-y-1">
                                                 <div>• Earn money automatically</div>
                                                 <div>• Buy passive income upgrades in shop</div>
@@ -654,7 +654,7 @@ export default function GameArea() {
                                 >
                                     <div className="text-center px-6 cursor-help">
                                         <div className="text-2xl font-bold flex items-center justify-center" style={{ color: 'var(--accent-green)' }}>
-                                            <span className="mr-1">💸</span>
+                                            <span className="mr-1"></span>
                                             <span>{FormatMoney(cashPerSecond)}</span>
                                         </div>
                                         <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Per Second</div>
@@ -673,7 +673,7 @@ export default function GameArea() {
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">🌟 Current Level</div>
+                                    <div className="font-semibold mb-1">Current Level</div>
                                     <div className="text-xs space-y-1">
                                         <div>• Level up by earning XP</div>
                                         <div>• XP from typing words correctly</div>
@@ -695,9 +695,9 @@ export default function GameArea() {
                                                 level >= 10 ? 'var(--accent-orange)' : 'var(--accent-yellow)'
                                      }}>
                                     Level {level}
-                                    {level >= 50 && <span className="ml-1">👑</span>}
-                                    {level >= 25 && level < 50 && <span className="ml-1">💎</span>}
-                                    {level >= 10 && level < 25 && <span className="ml-1">⭐</span>}
+                                    {level >= 50 && <span className="ml-1"></span>}
+                                    {level >= 25 && level < 50 && <span className="ml-1"></span>}
+                                    {level >= 10 && level < 25 && <span className="ml-1"></span>}
                                 </div>
                                 <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Current Level</div>
                             </div>
@@ -705,7 +705,7 @@ export default function GameArea() {
                         <Tooltip 
                             content={
                                 <div>
-                                    <div className="font-semibold mb-1">⭐ Experience Points</div>
+                                    <div className="font-semibold mb-1">Experience Points</div>
                                     <div className="text-xs space-y-1">
                                         <div>• Gain XP by typing words correctly</div>
                                         <div>• XP = word length × 2 × streak multiplier</div>
@@ -733,7 +733,7 @@ export default function GameArea() {
                                 </div>
                                 <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                                     {Math.round(xpProgress)}% to next level
-                                    {xpProgress >= 90 && <span className="ml-1">🎯</span>}
+                                    {xpProgress >= 90 && <span className="ml-1"></span>}
                                 </div>
                             </div>
                         </Tooltip>
@@ -839,7 +839,7 @@ export default function GameArea() {
                                      backgroundColor: 'var(--accent-red-bg)',
                                      borderColor: 'var(--accent-red-border)'
                                  }}>
-                                ❌ Extra characters: {inputValue.slice((words[2] || '').length)}
+                                 Extra characters: {inputValue.slice((words[2] || '').length)}
                             </div>
                         </div>
                     )}
@@ -849,11 +849,11 @@ export default function GameArea() {
                 <div className="text-center space-y-1">
                     {!sessionActive ? (
                         <div className="text-sm animate-pulse" style={{ color: 'var(--accent-blue)' }}>
-                            🚀 Press Start or F1 to begin your typing session!
+                             Press Start or F1 to begin your typing session!
                         </div>
                     ) : !isTyping ? (
                         <div className="text-sm animate-pulse" style={{ color: 'var(--text-muted)' }}>
-                            💤 Session active - Start typing to earn money and XP!
+                             Session active - Start typing to earn money and XP!
                         </div>
                     ) : streak >= 20 ? (
                         <div className="text-sm font-semibold" style={{ color: 'var(--accent-purple)' }}>
@@ -861,15 +861,15 @@ export default function GameArea() {
                         </div>
                     ) : streak >= 10 ? (
                         <div className="text-sm font-semibold" style={{ color: 'var(--accent-yellow)' }}>
-                            ⚡ Amazing streak! You're in the zone! ⚡
+                             Amazing streak! You're in the zone! 
                         </div>
                     ) : streak >= 5 ? (
                         <div className="text-sm" style={{ color: 'var(--accent-green)' }}>
-                            ✨ Great streak! Keep it up! ✨
+                             Great streak! Keep it up! 
                         </div>
                     ) : (
                         <div className="text-sm" style={{ color: 'var(--accent-cyan)' }}>
-                            🚀 Press Space or Enter to submit word 🚀
+                             Press Space or Enter to submit word 
                         </div>
                     )}
                     <div className="text-xs" style={{ color: 'var(--text-disabled)' }}>
@@ -939,7 +939,7 @@ export default function GameArea() {
                         disabled={!unlockedFeatures.has('typingTest')}
                     >
                         <span className="flex items-center space-x-2">
-                            <span>⚡</span>
+                            <span></span>
                             <span>Typing Test</span>
                         </span>
                     </button>
