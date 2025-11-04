@@ -36,7 +36,7 @@ export default function UpgradeShop() {
                  }}>
                 <h2 className="text-3xl mobile-text-xl font-bold mb-2 flex items-center" 
                     style={{ color: 'var(--text-primary)' }}>
-                    <span className="mr-3">🏪</span>
+                    <span className="mr-3"></span>
                     Upgrade Store
                 </h2>
                 <p className="mobile-text-sm" style={{ color: 'var(--text-secondary)' }}>Enhance your typing capabilities</p>
@@ -53,7 +53,7 @@ export default function UpgradeShop() {
                         <div className="text-center">
                             <div className="text-3xl font-bold flex items-center justify-center" 
                                  style={{ color: 'var(--text-primary)' }}>
-                                <span className="mr-2">💰</span>
+                                <span className="mr-2"></span>
                                 <span style={{ color: 'var(--accent-green)' }}>{FormatMoney(money)}</span>
                             </div>
                             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Your Balance</div>
@@ -83,7 +83,7 @@ export default function UpgradeShop() {
                         )}
                     </div>
                     <div className="text-right">
-                        <div className="text-lg" style={{ color: 'var(--text-secondary)' }}>💡 Tip</div>
+                        <div className="text-lg" style={{ color: 'var(--text-secondary)' }}>Tip</div>
                         <div className="text-sm max-w-xs" style={{ color: 'var(--text-muted)' }}>
                             Upgrades improve your typing earnings and unlock new features.
                         </div>
@@ -95,7 +95,7 @@ export default function UpgradeShop() {
             <div className="space-y-6">
                 <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center gradient-bg">
-                        <span className="text-white text-sm">⚡</span>
+                        <span className="text-white text-sm"></span>
                     </div>
                     <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Power Upgrades</h3>
                 </div>
@@ -113,7 +113,7 @@ export default function UpgradeShop() {
                             />
                         )) : (
                             <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>
-                                <div className="text-4xl mb-2">📦</div>
+                                <div className="text-4xl mb-2"></div>
                                 <div>No upgrades available</div>
                             </div>
                         )}
@@ -125,7 +125,7 @@ export default function UpgradeShop() {
             <div className="space-y-6">
                 <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center gradient-bg-alt">
-                        <span className="text-white text-sm">💎</span>
+                        <span className="text-white text-sm"></span>
                     </div>
                     <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Special Unlocks</h3>
                 </div>
@@ -143,7 +143,7 @@ export default function UpgradeShop() {
                             />
                         )) : (
                             <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>
-                                <div className="text-4xl mb-2">🎁</div>
+                                <div className="text-4xl mb-2"></div>
                                 <div>No special upgrades available</div>
                             </div>
                         )}
