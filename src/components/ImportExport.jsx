@@ -58,7 +58,7 @@ export default function ImportExport() {
         <div className="text-white space-y-6">
             <div className="text-center">
                 <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center">
-                    <span className="mr-3">💾</span>
+                    <span className="mr-3"></span>
                     Import/Export Game Data
                 </h1>
                 <p className="text-white/70">Backup or restore your game progress</p>
@@ -66,7 +66,7 @@ export default function ImportExport() {
             
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                    <span className="mr-2">📁</span>
+                    <span className="mr-2"></span>
                     Import Save Data
                 </h2>
                 <div className="space-y-4">
@@ -89,7 +89,7 @@ export default function ImportExport() {
             
             <div className="glass-dark rounded-2xl p-6 border border-white/10">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                    <span className="mr-2">📤</span>
+                    <span className="mr-2"></span>
                     Export Save Data
                 </h2>
                 <button 
