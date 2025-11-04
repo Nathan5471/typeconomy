@@ -5,8 +5,8 @@ export default function ThemeToggle() {
     const { theme, isDark, changeTheme } = useTheme();
 
     const themeOptions = [
-        { value: 'light', label: 'Light', icon: '☀️' },
-        { value: 'dark', label: 'Dark', icon: '🌙' }
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' }
     ];
 
     return (
